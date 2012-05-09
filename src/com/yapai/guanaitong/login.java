@@ -129,7 +129,7 @@ public class login extends Activity implements OnClickListener,OnFocusChangeList
 		}
 	}
 
-	LinearLayout popupLinear;
+	LinearLayout mLinear;
 	ImageButton mPopupImageButton;
 	public PopupWindow pop;
 	public EditText mAccountsEditText;
@@ -145,11 +145,13 @@ public class login extends Activity implements OnClickListener,OnFocusChangeList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         prepare();
+        mLinear = (LinearLayout)findViewById(R.id.mLinearLayout);
         mPopupImageButton=(ImageButton)findViewById(R.id.popupwindow);
         mRemPassCheck=(CheckBox)findViewById(R.id.login_cb_savepwd);
         mLoginButton=(Button)findViewById(R.id.login_btn_login);
         mAccountsEditText=(EditText)findViewById(R.id.login_edit_account);
         mPassEditText=(EditText)findViewById(R.id.login_edit_pwd);
+        mLinear.setOnTouchListener(this);
         mPassEditText.setOnFocusChangeListener(this);
         mAccountsEditText.setOnFocusChangeListener(this);
         mPopupImageButton.setOnClickListener(this);
@@ -283,7 +285,10 @@ public class login extends Activity implements OnClickListener,OnFocusChangeList
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		// TODO Auto-generated method stub
-		Log.d("dddd", "onTouch:"+v+":"+event);
+		if(pop != null){
+			pop.dismiss();
+			pop = null;
+		}
 		return false;
 	}
     
