@@ -49,7 +49,7 @@ public class MainMap extends Activity {
 	
 	void initWebView(){
 		wv=(WebView)findViewById(R.id.wv);
-        wv.getSettings().setJavaScriptEnabled(true);//可用JS
+//        wv.getSettings().setJavaScriptEnabled(true);//可用JS
         wv.setScrollBarStyle(0);//滚动条风格，为0就是不给滚动条留空间，滚动条覆盖在网页上
         wv.setWebViewClient(new WebViewClient(){   
             public boolean shouldOverrideUrlLoading(final WebView view, final String url) {

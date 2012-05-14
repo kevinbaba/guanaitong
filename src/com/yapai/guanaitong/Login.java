@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 public class Login extends Activity implements OnClickListener,OnFocusChangeListener,OnTouchListener {
 
+	LoginDb db;
 	LinearLayout mLinear;
 	ImageButton mPopupImageButton;
 	public PopupWindow pop;
@@ -136,22 +137,16 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 			MyApplication.userName = account;
 			MyApplication.userID = Integer.parseInt(result);
 
-			LoginDb db=new LoginDb(Login.this);
-			db.open();
 			Cursor cursor=db.getCursorArgs(new String[]{db.getKEY()}, new String[]{account});
 			int keyindex=cursor.getColumnIndexOrThrow(db.getKEY());
 			if(mRemPassCheck.isChecked()){
 				//保存密码
 				if(cursor.getCount()>0){
 					int id=cursor.getInt(keyindex);
-					safeReleaseCursor(cursor);
 					db.update(id, pass);
-					safeReleaseDatabase(db);
 				}
 				else {
-					safeReleaseCursor(cursor);
 					db.create(account, pass);
-					safeReleaseDatabase(db);
 				}
 				list.put(account, pass);//重新替换或者添加记录
 			}
@@ -160,17 +155,15 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 				//不保存密码
 				if(cursor.getCount()>0){
 					int id=cursor.getInt(keyindex);
-					safeReleaseCursor(cursor);
 					db.update(id, "");
-					safeReleaseDatabase(db);
 				}
-
 				list.put(account, "");//重新替换或者添加记录
 			}
+			safeReleaseCursor(cursor);
 			
 			//保存最后登陆的用户
-            SharedPreferences uiState=getPreferences(0);
-            SharedPreferences.Editor editor=uiState.edit();
+            SharedPreferences settings=getPreferences(0);
+            SharedPreferences.Editor editor=settings.edit();
             editor.putString(LASTLOGIN, account);
             editor.commit();
             
@@ -193,7 +186,9 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        prepare();
+		db=new LoginDb(Login.this);
+		db.open();
+        prepareAccountsList();
         mLinear = (LinearLayout)findViewById(R.id.mLinearLayout);
         mPopupImageButton=(ImageButton)findViewById(R.id.popupwindow);
         mRemPassCheck=(CheckBox)findViewById(R.id.login_cb_savepwd);
@@ -219,10 +214,8 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
     
-    private void prepare(){
+    private void prepareAccountsList(){
     	list=new HashMap<String, String>();
-    	LoginDb db=new LoginDb(this);
-    	db.open();
     	Cursor cursor=db.getCursor(db.getKEY(),db.getACCOUNTS(),db.getPASSWORD());
     	int accountsindex=cursor.getColumnIndexOrThrow(db.getACCOUNTS());
     	int passindex=cursor.getColumnIndexOrThrow(db.getPASSWORD());
@@ -236,7 +229,6 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
         	}while(cursor.moveToNext());
     	}
     	safeReleaseCursor(cursor);
-    	safeReleaseDatabase(db);
     }
     
     private void safeReleaseCursor(Cursor cursor){
@@ -316,8 +308,6 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     					// TODO Auto-generated method stub
     					String accounts=account[position].toString();
     					list.remove(accounts);
-    					LoginDb db=new LoginDb(Login.this);
-    					db.open();
     					Cursor cursor=db.getCursorArgs(new String[]{db.getKEY()}, new String[]{accounts});
     					int keyindex=cursor.getColumnIndexOrThrow(db.getKEY());
     					int id=cursor.getInt(keyindex);
@@ -351,6 +341,12 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 			pop = null;
 		}
 		return false;
+	}
+	
+	@Override
+	protected void onDestroy() {
+		safeReleaseDatabase(db);
+		super.onDestroy();
 	}
     
 }
