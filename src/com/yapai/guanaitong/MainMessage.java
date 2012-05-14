@@ -30,10 +30,9 @@ public class MainMessage extends ListActivity {
 	private List<Map<String, Object>> mItems_unRead;
 	private List<Map<String, Object>> mItems_readed;
 	private List<Map<String, Object>> mData;
-	private MyAdapter mAdapter_unRead;
-	private MyAdapter mAdapter_readed;
-	private final int READED = 0;
-	private final int UNREAD = 1;
+	private MyAdapter mAdapter;
+	private final int UNREAD = 0;
+	private final int READED = 1;
 	private int mCurrentIsReadedOrUnread = UNREAD;
 	private View foot;
 
@@ -44,7 +43,7 @@ public class MainMessage extends ListActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_message);
-		mListView = (ListView) findViewById(R.id.listView);
+		mListView = getListView();
 		mUnread = (TextView)findViewById(R.id.unread);
 		mReaded = (TextView)findViewById(R.id.readed);
 		
@@ -56,7 +55,8 @@ public class MainMessage extends ListActivity {
 				Log.d(TAG, "mUnread clicked");
 				mUnread.setBackgroundResource(R.drawable.home_btn_bg_d);
 				mReaded.setBackgroundResource(0);
-				mListView.setAdapter(mAdapter_unRead);
+				mData = mItems_unRead;
+				mAdapter.notifyDataSetChanged(); // 通知适配器重新适配
 				mCurrentIsReadedOrUnread = UNREAD;
 			}
 		});
@@ -69,14 +69,15 @@ public class MainMessage extends ListActivity {
 				Log.d(TAG, "mReaded clicked");
 				mUnread.setBackgroundResource(0);
 				mReaded.setBackgroundResource(R.drawable.home_btn_bg_d);
-				mListView.setAdapter(mAdapter_readed);
+				mData = mItems_readed;
+				mAdapter.notifyDataSetChanged(); // 通知适配器重新适配
 				mCurrentIsReadedOrUnread = READED;
 			}
 		});
 
 		//TODO 获取数据
-		mItems_unRead = getData();
-		mItems_readed = getData();
+		mItems_unRead = addData(mItems_unRead, UNREAD);
+		mItems_readed = addData(mItems_readed, READED);
 		mData = mItems_unRead;
 
 		/* 将footview的布局转换成View对象 */
@@ -90,11 +91,13 @@ public class MainMessage extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				if(mCurrentIsReadedOrUnread == UNREAD){
-					mItems_unRead = getData();
-					mAdapter_unRead.notifyDataSetChanged(); // 通知适配器重新适配
+					mItems_unRead = addData(mItems_unRead, 99);
+					mData = mItems_unRead;
+					mAdapter.notifyDataSetChanged(); // 通知适配器重新适配
 				}else if(mCurrentIsReadedOrUnread == READED){
-					mItems_readed = getData();
-					mAdapter_readed.notifyDataSetChanged(); // 通知适配器重新适配
+					mItems_readed = addData(mItems_readed, 100);
+					mData = mItems_readed;
+					mAdapter.notifyDataSetChanged(); // 通知适配器重新适配
 				}
 			}
 		});
@@ -120,33 +123,34 @@ public class MainMessage extends ListActivity {
 		/* 给listview添加footview */
 		mListView.addFooterView(foot);
 
-		mAdapter_unRead = new MyAdapter(this);
-		mAdapter_readed = new MyAdapter(this);
+		mAdapter = new MyAdapter(this);
 
 		/* listview添加适配器 */
-		mListView.setAdapter(mAdapter_unRead);
+		mListView.setAdapter(mAdapter);
 
 	}
 	
     // ListView 中某项被选中后的逻辑
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-         
-        Log.v(TAG, (String)mData.get(position).get("title"));
+    	
+        showInfo(0, (String)mData.get(position).get("msg"));
     }
      
     /**
      * listview中点击按键弹出对话框
      */
-    public void showInfo(){
-        new AlertDialog.Builder(this)
-        .setTitle("我的listview")
-        .setMessage("介绍...")
+    public void showInfo(int status, String msg){
+    	AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+        .setIcon(R.drawable.header)
+        .setTitle(R.string.main_message)
+        .setMessage(msg)
         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
-        }).show();
+        });
+    	dlg.show();
          
     }
      
@@ -155,7 +159,6 @@ public class MainMessage extends ListActivity {
     public final class ViewHolder{
         public ImageView img;
         public TextView msg;
-        public TextView arrow;
     }
      
      
@@ -196,7 +199,6 @@ public class MainMessage extends ListActivity {
                 convertView = mInflater.inflate(R.layout.main_message_list, null);
                 holder.img = (ImageView)convertView.findViewById(R.id.img);
                 holder.msg = (TextView)convertView.findViewById(R.id.msg);
-                holder.arrow = (TextView)convertView.findViewById(R.id.arrow);
                 convertView.setTag(holder);
                  
             }else {
@@ -206,38 +208,51 @@ public class MainMessage extends ListActivity {
              
              
             holder.img.setBackgroundResource((Integer)mData.get(position).get("img"));
-            holder.msg.setText((String)mData.get(position).get("msg"));
-            holder.arrow.setText((String)mData.get(position).get("arrow"));
-             
-            holder.arrow.setOnClickListener(new View.OnClickListener() {
-                 
-                @Override
-                public void onClick(View v) {
-                    showInfo();                 
-                }
-            });
-             
+            holder.msg.setText((String)mData.get(position).get("msg"));      
              
             return convertView;
         }
          
     }
 
-	private List<Map<String, Object>> getData() {
+	private List<Map<String, Object>> getData(int status) {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
  
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("msg", "111");
+        map.put("msg", status+"-->111");
         map.put("img", R.drawable.header);
         list.add(map);
  
         map = new HashMap<String, Object>();
-        map.put("msg", "222");
+        map.put("msg", status+"-->222");
         map.put("img", R.drawable.header);
         list.add(map);
  
         map = new HashMap<String, Object>();
-        map.put("msg", "333");
+        map.put("msg", status+"-->333");
+        map.put("img", R.drawable.header);
+        list.add(map);
+         
+        return list;
+    }
+	
+	private List<Map<String, Object>> addData(List<Map<String, Object>> list, int status) {
+		if(list == null){
+			list = new ArrayList<Map<String, Object>>();
+		}
+ 
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("msg", status+"-->111");
+        map.put("img", R.drawable.header);
+        list.add(map);
+ 
+        map = new HashMap<String, Object>();
+        map.put("msg", status+"-->222");
+        map.put("img", R.drawable.header);
+        list.add(map);
+ 
+        map = new HashMap<String, Object>();
+        map.put("msg", status+"-->333");
         map.put("img", R.drawable.header);
         list.add(map);
          

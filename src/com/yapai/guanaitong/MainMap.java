@@ -13,7 +13,8 @@ public class MainMap extends Activity {
 	WebView wv;
 	Handler handler;
 	ProgressDialog pd;
-	final String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
+//	final String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
+	final String URL = "file:///android_asset/ditu.html";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

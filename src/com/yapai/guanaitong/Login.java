@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,8 +36,22 @@ import android.widget.Toast;
 
 public class Login extends Activity implements OnClickListener,OnFocusChangeListener,OnTouchListener {
 
+	LinearLayout mLinear;
+	ImageButton mPopupImageButton;
+	public PopupWindow pop;
+	public EditText mAccountsEditText;
+	EditText mPassEditText;
+	CheckBox mRemPassCheck;
+	Button mLoginButton;
+	public myAdapter adapter;
+	public HashMap<String,String> list;
+	String mAccount_last_logined;
+	Object[] account;
+	TextView mNotify;
+
 	final String TAG = "login";
 	final String FAILED = "failed";
+	final String LASTLOGIN = "lastLogin";
 	
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
@@ -50,17 +65,19 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 				if(list.containsKey(account)){
 					mPassEditText.setText(list.get(account));
 				}
+				mPassEditText.selectAll();
 			}
 			break;
 		case R.id.login_edit_account:
-//			if(hasFocus){
+			if(hasFocus){
 //				mAccountsEditText.setText("");
 //				mPassEditText.setText("");
-//			}
+				mAccountsEditText.selectAll();
+			}
 			break;
 		}
 	}
-//	
+
 	ListView listView;
 	@Override
 	public void onClick(View v) {
@@ -89,24 +106,31 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		case R.id.login_btn_login:
 			String account=mAccountsEditText.getText().toString();
 			String pass=mPassEditText.getText().toString();
+			if(account.equals("") || pass.equals("")){
+				mNotify.setText("用户名和密码不能为空");
+				break;
+			}
+			
 			if(pass.length() != 32){
 				//条件：用户密码最大长度必须小于３２位
 				pass = EncryptUtil.md5(pass);
 			}
 
-			if(account.equals("") || pass.equals("")){
-				break;
-			}
-			
 			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(mAccountsEditText.getWindowToken(), 0);
 			imm.hideSoftInputFromWindow(mPassEditText.getWindowToken(), 0);
 			
 			// 验证用户
+			mNotify.setText("正在验证用户...");
 			MyHttpClient mhc = new MyHttpClient();
 			String result = mhc.CheckAccount(account, pass);
-			if(FAILED.equals(result) || result == null){
-				Toast.makeText(this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+			if(result == null){
+//				Toast.makeText(this, "连接服务器失败", Toast.LENGTH_SHORT).show();
+				mNotify.setText("连接服务器失败");
+				return;
+			}else if(FAILED.equals(result)){
+//				Toast.makeText(this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+				mNotify.setText("用户名或密码错误");
 				return;
 			}
 			MyApplication.userName = account;
@@ -140,14 +164,16 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 					db.update(id, "");
 					safeReleaseDatabase(db);
 				}
-				else {
-					safeReleaseCursor(cursor);
-					db.create(account, "");
-					safeReleaseDatabase(db);
-				}
-				
+
 				list.put(account, "");//重新替换或者添加记录
 			}
+			
+			//保存最后登陆的用户
+            SharedPreferences uiState=getPreferences(0);
+            SharedPreferences.Editor editor=uiState.edit();
+            editor.putString(LASTLOGIN, account);
+            editor.commit();
+            
 			//	进入主界面
 			Intent intent = new Intent(this, MainBoard.class);
 			try{
@@ -162,16 +188,6 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		}
 	}
 
-	LinearLayout mLinear;
-	ImageButton mPopupImageButton;
-	public PopupWindow pop;
-	public EditText mAccountsEditText;
-	EditText mPassEditText;
-	CheckBox mRemPassCheck;
-	Button mLoginButton;
-	public myAdapter adapter;
-	public HashMap<String,String> list;
-	Object[] account;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -184,13 +200,22 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
         mLoginButton=(Button)findViewById(R.id.login_btn_login);
         mAccountsEditText=(EditText)findViewById(R.id.login_edit_account);
         mPassEditText=(EditText)findViewById(R.id.login_edit_pwd);
+        mNotify = (TextView)findViewById(R.id.Notify);
         mLinear.setOnTouchListener(this);
         mPassEditText.setOnFocusChangeListener(this);
         mAccountsEditText.setOnFocusChangeListener(this);
         mPopupImageButton.setOnClickListener(this);
         mLoginButton.setOnClickListener(this);
         
-        //设置焦点
+        SharedPreferences settings=getPreferences(Activity.MODE_PRIVATE);
+        String lastLogin = settings.getString(LASTLOGIN, null);
+        String lastLoginpwd = list.get(lastLogin);
+        if(lastLogin != null && lastLoginpwd != null){
+        	mAccountsEditText.setText(lastLogin);
+        	mPassEditText.setText(lastLoginpwd);
+        }
+        
+        //默认不显示软键盘
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
     

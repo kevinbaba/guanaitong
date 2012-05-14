@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;"/>
+<title>°¢Àï°Í°ÍµØÍ¼ÑÝÊ¾</title>
+<script language="javascript" src="http://api.ditu.aliyun.com/map.js" ></script>
+</head>
+<body>
+<div id="mapDiv" style="width:800px;height:600px"></div>
+ 
+<script language="javascript">
+ 
+          map=new AliMap("mapDiv"); //Ê¹ÓÃidÎªmapDivµÄ²ã´´½¨Ò»¸öµØÍ¼¶ÔÏó
+ 
+          map.centerAndZoom(new AliLatLng(30.238747,120.14532),15);//ÏÔÊ¾µØÍ¼
+
+	//¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+	Jla.require("Ali.Map.Control.Large.Mobile",1,function(AliMapLargeControl){
+		map.addControl(new AliMapLargeControl());
+	});
+
+	var latlng=new AliLatLng(30.23869,120.14550); //¿¿¿¿¿¿¿¿¿¿¿ 
+	var marker=new AliMarker(latlng); //¿¿¿¿¿¿¿¿¿ 
+	map.addOverlay(marker); 
+           
+</script>
+</body>
+</html>

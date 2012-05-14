@@ -14,63 +14,31 @@ public class LoginDb {
 	public String getACCOUNTS() {
 		return ACCOUNTS;
 	}
-	public String getSAVED() {
-		return SAVED;
-	}
-	public String getCHECKED() {
-		return CHECKED;
-	}
-	public String getCREATED() {
-		return CREATED;
-	}
-	public String getRECOG() {
-		return RECOG;
+	public String getCREATETIME() {
+		return CREATETIME;
 	}
 	public String getKEY() {
 		return KEY;
 	}
-	public String getIMG_PATH() {
-		return IMG_PATH;
-	}
-	public String getTHUMB_PATH() {
-		return THUMB_PATH;
-	}
-	
-	
-	
-	
 	
 	private final String KEY="_id";
-	private final String IMG_PATH="image";
-	private final String THUMB_PATH="thumb";
-	private final String RECOG="recog";
-	private final String CHECKED="checked";
-	private final String CREATED="created";
-	private final String SAVED="saved";
+	private final String CREATETIME="created";
 	private final String ACCOUNTS="accounts";
 	private final String PASSWORD="pass";
 	
-	private final String TAG="ImagedbUtil.java";
+	private final String TAG="LoginDb";
 	
-	private final String DABABASE_NAME="dbForQQ.db";
-	private final String TABLE_NAME="qq";
+	private final String DABABASE_NAME="login.db";
+	private final String TABLE_NAME="login";
 //	注意创建表的SQL语句应该是：create table tableName ();所以要注意加空格，还有表名不能为table
-	private final String TABLE_CREATED="create table "+TABLE_NAME+" (_id integer primary key autoincrement,accounts text not null, "
+	private final String TABLE_CREATETIME="create table "+TABLE_NAME+" (_id integer primary key autoincrement,accounts text not null, "
 			+ "pass text not null,created text not null);";
-	private final String TABLE_NOT_EXISTS_CREATED="create table if not exists "+TABLE_NAME+" (_id integer primary key autoincrement,image text not null, "
-			+ "thumb text not null,recog text not null,checked text not null,saved text not null);";
 	private Context mContext;
 	private SQLiteDatabase mdb;
 	private DatabaseHelper mdbHelper;
 	private final int DATABASE_VERSION=1;
 	
 	public class DatabaseHelper extends SQLiteOpenHelper{
-		
-//		@Override
-//		public void onOpen(SQLiteDatabase db) {
-//			// TODO Auto-generated method stub
-//			db.execSQL(TABLE_NOT_EXISTS_CREATED);
-//		}
 
 		public DatabaseHelper(Context context) {
 			super(context, DABABASE_NAME, null, DATABASE_VERSION);
@@ -80,13 +48,13 @@ public class LoginDb {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			// TODO Auto-generated method stub
-			db.execSQL(TABLE_CREATED);
+			db.execSQL(TABLE_CREATETIME);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			// TODO Auto-generated method stub
-			db.execSQL("drop table if exists path");
+			db.execSQL("drop table if exists "+TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -110,7 +78,7 @@ public class LoginDb {
 		ContentValues values=new ContentValues();
 		values.put(ACCOUNTS, accounts);
 		values.put(PASSWORD, pass);
-		values.put(CREATED, createdTime());
+		values.put(CREATETIME, createTime());
 		return mdb.insert(TABLE_NAME, null,values);
 	}
 	
@@ -136,42 +104,12 @@ public class LoginDb {
 	public boolean update(int id,String password){
 		ContentValues values=new ContentValues();
 		values.put(PASSWORD,password);
+		values.put(CREATETIME, createTime());
 		return mdb.update(TABLE_NAME, values, KEY+"="+id, null)>0;
 	}
 	
-	public boolean updateOcrAndSaved(int id,String Ocr,String saved){
-		ContentValues values=new ContentValues();
-		values.put(RECOG, Ocr);
-		values.put(SAVED, saved);
-		return mdb.update(TABLE_NAME, values, KEY+"="+id, null)>0;
-	}
-	
-	public boolean updateChecked(int id,String checked){
-		ContentValues values=new ContentValues();
-		values.put(CHECKED,checked);
-		return mdb.update(TABLE_NAME, values, KEY+"="+id, null)>0;
-	}
-	
-	public boolean updateThumb(int id,String thumb){
-		ContentValues values=new ContentValues();
-		values.put(THUMB_PATH,thumb);
-		return mdb.update(TABLE_NAME, values, KEY+"="+id, null)>0;
-	}
-
-	public boolean updatePathAndOcr(int id,String imagePath,String OcrResult){
-		ContentValues values=new ContentValues();
-		values.put(IMG_PATH, imagePath);
-		values.put(RECOG, OcrResult);
-		return mdb.update(TABLE_NAME, values, KEY+"="+id, null)>0;
-	}
-	
-	public void addColumn() throws SQLException{
-		String sql="alter table "+TABLE_NAME+" add "+RECOG+" text null;";
-		mdb.execSQL(sql);
-	}
-	
-	public String createdTime(){
-		java.text.SimpleDateFormat sdf =new java.text.SimpleDateFormat("yyyy年MM月dd日   HH:mm:ss");
+	public String createTime(){
+		java.text.SimpleDateFormat sdf =new java.text.SimpleDateFormat("yyyyMMddHHmmss");
 		java.util.Date date=new java.util.Date(System.currentTimeMillis());
 		String str=sdf.format(date);
 		return str;
