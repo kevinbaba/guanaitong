@@ -11,4 +11,8 @@
     <string name="opt_silent">静音登录</string>
     <string name="opt_openVibra">开启振动</string>
     <string name="opt_acceptGroupMsg">接收群消息</string>
+    <string name="main_map">地图</string>
+    <string name="main_message">信息</string>
+    <string name="main_setting">设置</string>
+    <string name="main_more">更多</string>
 </resources>
