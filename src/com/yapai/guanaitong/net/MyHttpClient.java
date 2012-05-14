@@ -20,7 +20,8 @@ import com.yapai.guanaitong.MyApplication;
 public class MyHttpClient {
 	HttpClient mHttpClient;
 	final String TAG = "MyHttpClient";
-	final String HOST = "http://192.168.0.244/";
+//	final String HOST = "http://192.168.0.244/";
+	final String HOST = "http://192.168.1.103/";
 	
 	public MyHttpClient() {
 		mHttpClient = MyApplication.httpClient;    //»ñÈ¡HttpClientÊµÀý  

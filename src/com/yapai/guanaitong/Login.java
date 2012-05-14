@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,10 +51,17 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	String mAccount_last_logined;
 	Object[] account;
 	TextView mNotify;
+	ListView listView;
 
 	final String TAG = "login";
-	final String FAILED = "failed";
+	final String FAILEDRETURN = "failed";
 	final String LASTLOGIN = "lastLogin";
+	final String USERID = "userid";
+	final String ACCOUNT = "account";
+	final String PASSWORD = "password";
+	final int CONNECTTIMEOUT = 0;
+	final int ACCOUNTORPWDERROR = 1;
+	final int SUCCESS = 2;
 	
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
@@ -79,7 +88,119 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		}
 	}
 
-	ListView listView;
+	void LoadSuccess(Message msg) {
+    	Bundle data = msg.getData();
+    	String uerID = data.getString(USERID);
+    	String account = data.getString(ACCOUNT);
+    	String pass = data.getString(PASSWORD);
+
+		MyApplication.userName = account;
+		MyApplication.userID = Integer.parseInt(uerID);
+
+		Cursor cursor = db.getCursorArgs(new String[] { db.getKEY() },
+				new String[] { account });
+		int keyindex = cursor.getColumnIndexOrThrow(db.getKEY());
+		if (mRemPassCheck.isChecked()) {
+			// 保存密码
+			if (cursor.getCount() > 0) {
+				int id = cursor.getInt(keyindex);
+				db.update(id, pass);
+			} else {
+				db.create(account, pass);
+			}
+			list.put(account, pass);// 重新替换或者添加记录
+		} else {
+			// 不保存密码
+			if (cursor.getCount() > 0) {
+				int id = cursor.getInt(keyindex);
+				db.update(id, "");
+			}
+			list.put(account, "");// 重新替换或者添加记录
+		}
+		safeReleaseCursor(cursor);
+
+		// 保存最后登陆的用户
+		SharedPreferences settings = getPreferences(0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString(LASTLOGIN, account);
+		editor.commit();
+
+		// 进入主界面
+		Intent intent = new Intent(this, MainBoard.class);
+		try {
+			startActivity(intent);
+		} catch (ActivityNotFoundException e) {
+			Log.e(TAG, "" + e);
+		}
+
+		finish();
+	}
+	
+	void setUIenable(boolean enable){
+		if(enable){
+			mAccountsEditText.setEnabled(true);
+			mPassEditText.setEnabled(true);	
+			mLoginButton.setEnabled(true);
+			mRemPassCheck.setClickable(true);
+		}else{
+			mAccountsEditText.setEnabled(false);
+			mPassEditText.setEnabled(false);	
+			mLoginButton.setEnabled(false);
+			mRemPassCheck.setClickable(false);
+		}
+	}
+	
+	Handler mHandler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what)
+            {
+            case CONNECTTIMEOUT:
+            	mNotify.setText("连接服务器失败");
+            	break;
+            case ACCOUNTORPWDERROR:
+            	mNotify.setText("用户名或密码错误");
+            	break;
+            case SUCCESS:
+            	LoadSuccess(msg);
+            	break;
+            }
+			setUIenable(true);
+			
+			super.handleMessage(msg);
+		}
+	};
+	
+	void checkAccount(final String account, final String pass) {
+		new Thread() {
+			public void run() {
+
+				MyHttpClient mhc = new MyHttpClient();
+				String result = mhc.CheckAccount(account, pass);
+				if (result == null) {
+					// Toast.makeText(this, "连接服务器失败",
+					// Toast.LENGTH_SHORT).show();
+					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
+					return;
+				} else if (FAILEDRETURN.equals(result)) {
+					// Toast.makeText(this, "用户名或密码错误",
+					// Toast.LENGTH_SHORT).show();
+					mHandler.sendEmptyMessage(ACCOUNTORPWDERROR);
+					return;
+				} else {
+					Bundle data = new Bundle();
+					data.putString(USERID, result);
+					data.putString(ACCOUNT, account);
+					data.putString(PASSWORD, pass);
+					Message msg = new Message();
+					msg.setData(data);
+					msg.what = SUCCESS;
+					mHandler.sendMessage(msg);
+				}
+			}
+		}.start();
+	}
+	
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
@@ -123,60 +244,8 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 			
 			// 验证用户
 			mNotify.setText("正在验证用户...");
-			MyHttpClient mhc = new MyHttpClient();
-			String result = mhc.CheckAccount(account, pass);
-			if(result == null){
-//				Toast.makeText(this, "连接服务器失败", Toast.LENGTH_SHORT).show();
-				mNotify.setText("连接服务器失败");
-				return;
-			}else if(FAILED.equals(result)){
-//				Toast.makeText(this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
-				mNotify.setText("用户名或密码错误");
-				return;
-			}
-			MyApplication.userName = account;
-			MyApplication.userID = Integer.parseInt(result);
-
-			Cursor cursor=db.getCursorArgs(new String[]{db.getKEY()}, new String[]{account});
-			int keyindex=cursor.getColumnIndexOrThrow(db.getKEY());
-			if(mRemPassCheck.isChecked()){
-				//保存密码
-				if(cursor.getCount()>0){
-					int id=cursor.getInt(keyindex);
-					db.update(id, pass);
-				}
-				else {
-					db.create(account, pass);
-				}
-				list.put(account, pass);//重新替换或者添加记录
-			}
-			
-			else{
-				//不保存密码
-				if(cursor.getCount()>0){
-					int id=cursor.getInt(keyindex);
-					db.update(id, "");
-				}
-				list.put(account, "");//重新替换或者添加记录
-			}
-			safeReleaseCursor(cursor);
-			
-			//保存最后登陆的用户
-            SharedPreferences settings=getPreferences(0);
-            SharedPreferences.Editor editor=settings.edit();
-            editor.putString(LASTLOGIN, account);
-            editor.commit();
-            
-			//	进入主界面
-			Intent intent = new Intent(this, MainBoard.class);
-			try{
-				startActivity(intent);
-			}catch(ActivityNotFoundException e){
-				Log.e(TAG, ""+e);
-			}
-			
-			finish();
-			
+			setUIenable(false);
+			checkAccount(account, pass);
 			break;
 		}
 	}

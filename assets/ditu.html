@@ -3,28 +3,11 @@
 <head>
 <meta http-equiv="content-type" content="text/html;charset=gb2312"/>
 <title>阿里巴巴地图演示</title>
-<script language="javascript" src="http://api.ditu.aliyun.com/map.js" ></script>
 </head>
 <body>
-<div id="mapDiv" style="width:800px;height:600px"></div>
- 
-<script language="javascript">
- 
-          map=new AliMap("mapDiv"); //使用id为mapDiv的层创建一个地图对象
- 
-          map.centerAndZoom(new AliLatLng(30.238747,120.14532),15);//显示地图
+<div id="mapDiv" style="width:240px;height:240px"></div>
 
-	//靠靠靠靠靠靠靠
-	Jla.require("Ali.Map.Control.Large.Mobile",1,function(AliMapLargeControl){
-		map.addControl(new AliMapLargeControl());
-	});
-
-	var latlng=new AliLatLng(30.23869,120.14550); //靠靠靠靠靠?
-	var marker=new AliMarker(latlng); //靠靠靠靠?
-	map.addOverlay(marker); 
-           
-</script>
-<table width="600" border="1">
+<table width="240" border="1">
   <tr>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
@@ -46,5 +29,25 @@
   <input type="submit" name="Submit" value="提交">
   </label>
 </p>
+
+<script language="javascript" src="http://api.ditu.aliyun.com/map.js" ></script>
+
+<script language="javascript">
+ 
+          map=new AliMap("mapDiv"); //使用id为mapDiv的层创建一个地图对象
+ 
+          map.centerAndZoom(new AliLatLng(30.238747,120.14532),15);//显示地图
+
+	//靠靠靠靠靠靠靠
+	Jla.require("Ali.Map.Control.Large.Mobile",1,function(AliMapLargeControl){
+		map.addControl(new AliMapLargeControl());
+	});
+
+	var latlng=new AliLatLng(30.23869,120.14550); //靠靠靠靠靠?
+	var marker=new AliMarker(latlng); //靠靠靠靠?
+	map.addOverlay(marker); 
+           
+</script>
+
 </body>
 </html>
