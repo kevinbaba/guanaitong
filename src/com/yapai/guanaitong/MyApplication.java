@@ -13,11 +13,14 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;  
 import org.apache.http.params.HttpProtocolParams;  
 import org.apache.http.protocol.HTTP;  
+
+import com.yapai.guanaitong.db.DatabaseHelper;
   
 import android.app.Application;
 
 public class MyApplication extends Application {
     public static HttpClient httpClient; 
+    public static DatabaseHelper mdbHelper;
     public static String userName;
     public static int userID;
     
@@ -25,18 +28,21 @@ public class MyApplication extends Application {
     public void onCreate() {  
         super.onCreate();  
         httpClient = this.createHttpClient();  
+        mdbHelper=new DatabaseHelper(this);
     }  
       
     @Override  
     public void onLowMemory() {  
         super.onLowMemory();  
-        this.shutdownHttpClient();  
+        this.shutdownHttpClient(); 
+        mdbHelper.close();
     }  
       
     @Override  
     public void onTerminate() {  
         super.onTerminate();  
         this.shutdownHttpClient();  
+        mdbHelper.close();
     }  
       
     //´´½¨HttpClientÊµÀý  

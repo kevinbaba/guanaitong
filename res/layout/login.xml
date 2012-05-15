@@ -5,8 +5,8 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/mLinearLayout"
+    <RelativeLayout
+        android:id="@+id/mRelativeLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
@@ -19,10 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15.0px"
             android:layout_marginRight="15.0px"
-            android:layout_marginTop="200.0px"
-            android:background="@drawable/login_back"
-            android:paddingBottom="20.0px"
-            android:paddingTop="20.0px" >
+            android:layout_centerInParent="true"
+            android:background="@drawable/login_back" >
 
             <ImageView
                 android:id="@+id/faceImg"
@@ -35,7 +33,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="5.0px"
+                android:layout_marginBottom="5.0dip"
                 android:layout_marginLeft="5.0dip"
                 android:layout_marginRight="5.0dip"
                 android:layout_marginTop="5.0dip"
@@ -102,70 +100,36 @@
 
             <CheckBox
                 android:id="@+id/login_cb_savepwd"
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/login_btn_login"
                 android:button="@drawable/qq_btn_check"
                 android:checked="true"
-                android:paddingLeft="42.0px"
                 android:text="@string/opt_remember"
                 android:textColor="#ff222222"
                 android:textSize="16.0sp" />
 
             <Button
                 android:id="@+id/login_btn_login"
-                android:layout_width="130.0px"
-                android:layout_height="52.0px"
+                android:layout_width="120.0px"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/TextView02"
                 android:layout_marginRight="12.0dip"
-                android:layout_marginTop="20.0px"
+                android:layout_marginTop="12.0dip"
                 android:text="@string/login" />
         </RelativeLayout>
-        <!--
-        TableLayout android:id="@+id/TableLayout01"
-			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:layout_marginLeft="20.0px" android:layout_marginRight="20.0px"
-			android:stretchColumns="1">
-			<TableRow>
-				<CheckBox android:textColor="#7fffffff" android:id="@+id/login_cb_visible"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/opt_hideLogin" style="@style/MyCheckBox" />
-				<CheckBox android:textColor="#7fffffff"
-					android:layout_gravity="right" android:id="@+id/login_cb_openvibra"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/opt_openVibra" style="@style/MyCheckBox" />
-			</TableRow>
-			<TableRow>
-				<CheckBox android:textColor="#7fffffff" android:id="@+id/login_cb_receivegroupmsg"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/opt_acceptGroupMsg" style="@style/MyCheckBox" />
-				<CheckBox android:textColor="#7fffffff"
-					android:layout_gravity="right" android:id="@+id/login_cb_quite"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/opt_silent" style="@style/MyCheckBox" />
-			</TableRow>
-		</TableLayout
-        -->
 
         <TextView
             android:id="@+id/Notify"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/RelativeLayout02"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="2dip"
             android:gravity="center"
             android:textColor="#ffffffff"
-            android:textSize="16.0dip" />
-    </LinearLayout>
-    <!--
-    RelativeLayout android:id="@+id/RelativeLayout01"
-		android:background="@drawable/bottom" android:layout_width="fill_parent"
-		android:layout_height="44.0dip">
-		<ImageButton android:id="@+id/login_option"
-			android:background="@drawable/option" android:clickable="true"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_marginLeft="13.0dip" android:layout_marginTop="2.0dip"
-			android:layout_centerVertical="true" />
-	</RelativeLayout
-    -->
+            android:textSize="16.0sp" />
+    </RelativeLayout>
 
 </LinearLayout>

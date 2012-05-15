@@ -1,18 +1,22 @@
 package com.yapai.guanaitong;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 public class MainMap extends Activity {
 	WebView wv;
 	Handler handler;
-	ProgressDialog pd;
+	LinearLayout mProgress;
+	
 //	final String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
 	final String URL = "file:///android_asset/ditu.html";
 	
@@ -21,6 +25,8 @@ public class MainMap extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_map);
+		
+		mProgress = (LinearLayout)findViewById(R.id.progress);
 		
 		initWebView();
 
@@ -32,10 +38,10 @@ public class MainMap extends Activity {
     	        switch (msg.what)
     	        {
     	        case 0:
-    	        	pd.show();//显示进度对话框        	
+    	        	mProgress.setVisibility(View.VISIBLE);//显示进度条      	
     	        	break;
     	        case 1:
-    	        	pd.hide();//隐藏进度对话框，不可使用dismiss()、cancel(),否则再次调用show()时，显示的对话框小圆圈不会动。
+    	        	mProgress.setVisibility(View.INVISIBLE);
     	        	break;
     	        }
     	      }
@@ -49,6 +55,8 @@ public class MainMap extends Activity {
 	
 	void initWebView(){
 		wv=(WebView)findViewById(R.id.wv);
+		wv.setBackgroundColor(0);
+		wv.setBackgroundResource(R.drawable.default_bg);
         wv.getSettings().setJavaScriptEnabled(true);//可用JS
         wv.setScrollBarStyle(0);//滚动条风格，为0就是不给滚动条留空间，滚动条覆盖在网页上
         wv.setWebViewClient(new WebViewClient(){   
@@ -67,9 +75,6 @@ public class MainMap extends Activity {
             }   
         });
         
-    	pd=new ProgressDialog(this);
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.setMessage("地图载入中，请稍候！");
 	}
 	
     public void loadURL(final WebView view,final String url){

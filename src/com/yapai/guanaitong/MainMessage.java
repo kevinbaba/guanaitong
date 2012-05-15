@@ -54,7 +54,7 @@ public class MainMessage extends ListActivity {
 				if(mCurrentIsReadedOrUnread == UNREAD) return;
 				Log.d(TAG, "mUnread clicked");
 				mUnread.setBackgroundResource(R.drawable.home_btn_bg_d);
-				mReaded.setBackgroundResource(0);
+				mReaded.setBackgroundResource(R.drawable.home_btn_bg_n);
 				mData = mItems_unRead;
 				mAdapter.notifyDataSetChanged(); // Í¨ÖªÊÊÅäÆ÷ÖØÐÂÊÊÅä
 				mCurrentIsReadedOrUnread = UNREAD;
@@ -67,7 +67,7 @@ public class MainMessage extends ListActivity {
 			public void onClick(View v) {
 				if(mCurrentIsReadedOrUnread == READED) return;
 				Log.d(TAG, "mReaded clicked");
-				mUnread.setBackgroundResource(0);
+				mUnread.setBackgroundResource(R.drawable.home_btn_bg_n);
 				mReaded.setBackgroundResource(R.drawable.home_btn_bg_d);
 				mData = mItems_readed;
 				mAdapter.notifyDataSetChanged(); // Í¨ÖªÊÊÅäÆ÷ÖØÐÂÊÊÅä
@@ -108,7 +108,7 @@ public class MainMessage extends ListActivity {
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				float y = event.getY();
-//				Log.d(TAG,"y:"+y+" top:"+v.getTop()+" bo:"+v.getBottom());
+				Log.d(TAG,"y:"+y+" top:"+v.getTop()+" bo:"+v.getBottom());
 				if(y > v.getBottom() - v.getTop())
 					foot.setBackgroundResource(0);
 				int action = event.getAction();

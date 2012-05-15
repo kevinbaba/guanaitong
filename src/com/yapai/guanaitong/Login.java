@@ -33,13 +33,14 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class Login extends Activity implements OnClickListener,OnFocusChangeListener,OnTouchListener {
 
 	LoginDb db;
-	LinearLayout mLinear;
+	RelativeLayout mRelative;
 	ImageButton mPopupImageButton;
 	public PopupWindow pop;
 	public EditText mAccountsEditText;
@@ -97,9 +98,9 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		MyApplication.userName = account;
 		MyApplication.userID = Integer.parseInt(uerID);
 
-		Cursor cursor = db.getCursorArgs(new String[] { db.getKEY() },
+		Cursor cursor = db.getCursorArgs(new String[] { LoginDb.KEY },
 				new String[] { account });
-		int keyindex = cursor.getColumnIndexOrThrow(db.getKEY());
+		int keyindex = cursor.getColumnIndexOrThrow(LoginDb.KEY);
 		if (mRemPassCheck.isChecked()) {
 			// ±£´æÃÜÂë
 			if (cursor.getCount() > 0) {
@@ -142,11 +143,13 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 			mPassEditText.setEnabled(true);	
 			mLoginButton.setEnabled(true);
 			mRemPassCheck.setClickable(true);
+			mPopupImageButton.setClickable(true);
 		}else{
 			mAccountsEditText.setEnabled(false);
 			mPassEditText.setEnabled(false);	
 			mLoginButton.setEnabled(false);
 			mRemPassCheck.setClickable(false);
+			mPopupImageButton.setClickable(false);
 		}
 	}
 	
@@ -255,17 +258,16 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-		db=new LoginDb(Login.this);
-		db.open();
+		db = LoginDb.getDBInstanc(this);
         prepareAccountsList();
-        mLinear = (LinearLayout)findViewById(R.id.mLinearLayout);
+        mRelative = (RelativeLayout)findViewById(R.id.mRelativeLayout);
         mPopupImageButton=(ImageButton)findViewById(R.id.popupwindow);
         mRemPassCheck=(CheckBox)findViewById(R.id.login_cb_savepwd);
         mLoginButton=(Button)findViewById(R.id.login_btn_login);
         mAccountsEditText=(EditText)findViewById(R.id.login_edit_account);
         mPassEditText=(EditText)findViewById(R.id.login_edit_pwd);
         mNotify = (TextView)findViewById(R.id.Notify);
-        mLinear.setOnTouchListener(this);
+        mRelative.setOnTouchListener(this);
         mPassEditText.setOnFocusChangeListener(this);
         mAccountsEditText.setOnFocusChangeListener(this);
         mPopupImageButton.setOnClickListener(this);
@@ -285,9 +287,9 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     
     private void prepareAccountsList(){
     	list=new HashMap<String, String>();
-    	Cursor cursor=db.getCursor(db.getKEY(),db.getACCOUNTS(),db.getPASSWORD());
-    	int accountsindex=cursor.getColumnIndexOrThrow(db.getACCOUNTS());
-    	int passindex=cursor.getColumnIndexOrThrow(db.getPASSWORD());
+    	Cursor cursor=db.getCursor(LoginDb.KEY,LoginDb.ACCOUNTS,LoginDb.PASSWORD);
+    	int accountsindex=cursor.getColumnIndexOrThrow(LoginDb.ACCOUNTS);
+    	int passindex=cursor.getColumnIndexOrThrow(LoginDb.PASSWORD);
     	String accounts;
     	String pass;
     	if(cursor.getCount()>0){
@@ -303,12 +305,6 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     private void safeReleaseCursor(Cursor cursor){
     	cursor.close();
     	cursor=null;
-    }
-    
-    
-    private void safeReleaseDatabase(LoginDb db){
-    	db.close();
-    	db=null;
     }
     
     class myAdapter extends BaseAdapter {
@@ -377,8 +373,8 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     					// TODO Auto-generated method stub
     					String accounts=account[position].toString();
     					list.remove(accounts);
-    					Cursor cursor=db.getCursorArgs(new String[]{db.getKEY()}, new String[]{accounts});
-    					int keyindex=cursor.getColumnIndexOrThrow(db.getKEY());
+    					Cursor cursor=db.getCursorArgs(new String[]{LoginDb.KEY}, new String[]{accounts});
+    					int keyindex=cursor.getColumnIndexOrThrow(LoginDb.KEY);
     					int id=cursor.getInt(keyindex);
     					cursor.close();
     					db.delete(id);
@@ -414,7 +410,6 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	
 	@Override
 	protected void onDestroy() {
-		safeReleaseDatabase(db);
 		super.onDestroy();
 	}
     
