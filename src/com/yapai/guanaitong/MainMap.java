@@ -5,7 +5,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -17,8 +19,8 @@ public class MainMap extends Activity {
 	Handler handler;
 	LinearLayout mProgress;
 	
-//	final String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
-	final String URL = "file:///android_asset/ditu.html";
+//	String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
+	String URL = "file:///android_asset/ditu.html";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,13 @@ public class MainMap extends Activity {
     	      super.handleMessage(msg);
     	    }
         };
+        
+        //获得屏幕大小
+        WindowManager wm = (WindowManager) this.getSystemService(WINDOW_SERVICE);
+        Display dip = wm.getDefaultDisplay();
+        int width =dip.getWidth() - 16;
+        int height = dip.getHeight() - 200;
+        URL = URL + "?width="+width+"&height="+height;
         
         loadURL(wv, URL);
         
