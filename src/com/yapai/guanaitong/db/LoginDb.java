@@ -39,7 +39,7 @@ public class LoginDb {
 		return instanc;
 	}
 	
-	public long create(String accounts,String pass){
+	public long insert(String accounts,String pass){
 		ContentValues values=new ContentValues();
 		values.put(ACCOUNTS, accounts);
 		values.put(PASSWORD, pass);

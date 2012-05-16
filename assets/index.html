@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=gb2312"/>
+<title>阿里巴巴地图演示</title>
+</head>
+<body>
+<div id="mapDiv" style="width:480px;height:800px"></div>
+
+<p>
+  <label>
+  <input type="submit" name="Submit" value="提交">
+  </label>
+</p>
+
+<script language="javascript">
+ 
+	function getQueryString(key){
+	    var searchString = document.location.search.toString(); 
+	    var returnValue = '';
+	    if (searchString.substr(0,1)=='?' && searchString.length>1)
+	    {
+		var queryString = searchString.substring(1,searchString.length)
+		var queryList = queryString.split('&');
+		for (var i=0; i<queryList.length; i++)
+		{
+		    var oneQuery = queryList[i].split('=');
+		    if (oneQuery[0]==key && oneQuery.length==2)
+		    {
+		        returnValue = oneQuery[1];
+		    }
+		}
+	    }
+	    return returnValue;
+	}
+
+	document.getElementById("mapDiv").style.width=contact.getWidth()+"px";
+	document.getElementById("mapDiv").style.height=contact.getHeight()+"px";
+
+</script>
+
+<script language="javascript" src="http://api.ditu.aliyun.com/map.js" ></script>
+
+<script language="javascript">
+
+          map=new AliMap("mapDiv"); //使用id为mapDiv的层创建一个地图对象
+ 
+          map.centerAndZoom(new AliLatLng(30.238747,120.14532),15);//显示地图
+
+	//靠靠靠靠靠靠靠
+	Jla.require("Ali.Map.Control.Large.Mobile",1,function(AliMapLargeControl){
+		map.addControl(new AliMapLargeControl());
+	});
+
+	var latlng=new AliLatLng(30.23869,120.14550); //靠靠靠靠靠?
+	var marker=new AliMarker(latlng); //靠靠靠靠?
+	map.addOverlay(marker); 
+           
+</script>
+
+</body>
+</html>

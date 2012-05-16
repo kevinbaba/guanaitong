@@ -13,7 +13,7 @@ public class MessageDb {
 	static MessageDb instanc;
 	private SQLiteDatabase mdb;
 	
-	public static final String KEY="_id";
+	public static final String ID="_id";
 	public static final String RANK="rank";
 	public static final String READED="readed";
 	public static final String MSG="msg";
@@ -24,9 +24,11 @@ public class MessageDb {
 	public final static String TABLE_MESSAGE_CREATE_SQL=
 			" create table if not exists "+TABLE_MESSAGE_NAME
 			+" ( "
-			+KEY+" integer primary key autoincrement, "
+			+ID+" integer primary key, "
 			+RANK+" text not null, "
-			+READED+" text not null "
+			+READED+" text not null, "
+			+MSG+" text not null, "
+			+TIME+" text not null "
 			+" ); ";
 	
 	public MessageDb(Context mContext) {
@@ -41,37 +43,34 @@ public class MessageDb {
 		return instanc;
 	}
 	
-/*	public long create(String accounts,String pass){
+	public long insert(String id,String rank, String readed, String msg, String time){
 		ContentValues values=new ContentValues();
-		values.put(ACCOUNTS, accounts);
-		values.put(PASSWORD, pass);
-		return mdb.insert(TABLE_LOGIN_NAME, null,values);
+		values.put(ID, id);
+		values.put(RANK, rank);
+		values.put(READED, readed);
+		values.put(MSG, msg);
+		values.put(TIME, time);
+		return mdb.insert(TABLE_MESSAGE_NAME, null,values);
 	}
-	
+		
 //	删除对应id的所有记录
 	public boolean delete(int id){
-		return mdb.delete(TABLE_LOGIN_NAME, KEY+"="+id, null)>0;
+		return mdb.delete(TABLE_MESSAGE_NAME, ID+"="+id, null)>0;
 	}
 	
 	public Cursor getCursor(String... args){
-		Cursor mCursor=mdb.query(TABLE_LOGIN_NAME, args, null, null, null, null, null);
+		Cursor mCursor=mdb.query(TABLE_MESSAGE_NAME, args, null, null, null, null, null);
 		if(mCursor!=null&&!mCursor.isFirst())
 			mCursor.moveToFirst();
 		return mCursor;
 	}
 	
 	public Cursor getCursorArgs(String[] args,String[]selection){
-		Cursor mCursor=mdb.query(TABLE_LOGIN_NAME, args, ACCOUNTS+"=?", selection, null, null, null);
+		Cursor mCursor=mdb.query(TABLE_MESSAGE_NAME, args, ID+"=?", selection, null, null, null);
 		if(mCursor!=null&&!mCursor.isFirst())
 			mCursor.moveToFirst();
 		return mCursor;
 	}
-	
-	public boolean update(int id,String password){
-		ContentValues values=new ContentValues();
-		values.put(PASSWORD,password);
-		return mdb.update(TABLE_LOGIN_NAME, values, KEY+"="+id, null)>0;
-	}*/
 
 }
 

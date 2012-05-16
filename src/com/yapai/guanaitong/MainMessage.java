@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,8 +36,9 @@ public class MainMessage extends ListActivity {
 	private final int READED = 1;
 	private int mCurrentIsReadedOrUnread = UNREAD;
 	private View foot;
+	Button buttonMore;
 
-	private int itemsCount = 10; // 新添加的数据个数
+	private int itemsCount = 5; // 新添加的数据个数
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +86,11 @@ public class MainMessage extends ListActivity {
 		foot = ((LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
 				R.layout.main_message_foot, null, false);
+		
+		buttonMore = (Button) foot.findViewById(R.id.more);
 
-		/* 给footview添加点击事件监听器 */
-		foot.setOnClickListener(new View.OnClickListener() {
+		/* 给button添加点击事件监听器 */
+		buttonMore.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -99,24 +103,6 @@ public class MainMessage extends ListActivity {
 					mData = mItems_readed;
 					mAdapter.notifyDataSetChanged(); // 通知适配器重新适配
 				}
-			}
-		});
-		
-		foot.setOnTouchListener(new View.OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				float y = event.getY();
-				Log.d(TAG,"y:"+y+" top:"+v.getTop()+" bo:"+v.getBottom());
-				if(y > v.getBottom() - v.getTop())
-					foot.setBackgroundResource(0);
-				int action = event.getAction();
-				if(action == MotionEvent.ACTION_DOWN)
-					foot.setBackgroundResource(R.drawable.home_btn_bg_s);
-				else if(action == MotionEvent.ACTION_UP)
-					foot.setBackgroundResource(0);
-				return false;
 			}
 		});
 		
@@ -153,8 +139,6 @@ public class MainMessage extends ListActivity {
     	dlg.show();
          
     }
-     
-     
      
     public final class ViewHolder{
         public ImageView img;

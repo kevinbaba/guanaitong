@@ -107,7 +107,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 				int id = cursor.getInt(keyindex);
 				db.update(id, pass);
 			} else {
-				db.create(account, pass);
+				db.insert(account, pass);
 			}
 			list.put(account, pass);// 重新替换或者添加记录
 		} else {
