@@ -53,6 +53,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	Object[] accounts;
 	TextView mNotify;
 	ListView listView;
+	InputMethodManager imm;
 
 	final String TAG = "login";
 	final String FAILEDRETURN = "failed";
@@ -117,7 +118,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		safeReleaseCursor(cursor);
 
 		// 保存最后登陆的用户
-		SharedPreferences settings = getPreferences(0);
+		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(LASTLOGIN, account);
 		editor.commit();
@@ -237,7 +238,6 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 				pass = EncryptUtil.md5(pass);
 			}
 
-			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(mAccountsEditText.getWindowToken(), 0);
 			imm.hideSoftInputFromWindow(mPassEditText.getWindowToken(), 0);
 			
@@ -277,10 +277,12 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
         	mPassEditText.setText(lastLoginpwd);
         }
         
+        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         //默认不显示软键盘
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
     
+    // 准备已保存的用户列表
     private void prepareAccountsList(){
     	list=new HashMap<String, String>();
     	Cursor cursor=db.getCursor(LoginDb.ACCOUNTS,LoginDb.PASSWORD);
@@ -303,6 +305,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     	cursor=null;
     }
     
+    //下拉框Adapter
     class myAdapter extends BaseAdapter {
     	LayoutInflater mInflater;
     	public myAdapter() {
@@ -368,7 +371,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     				public void onClick(View v) {
     					// TODO Auto-generated method stub
     					String account=accounts[position].toString();
-    					list.remove(accounts);
+    					list.remove(account);
     					db.delete(account);
     					accounts=list.keySet().toArray();
     					adapter.notifyDataSetChanged();
@@ -392,11 +395,13 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		// TODO Auto-generated method stub
+		// 收起下拉框和软键盘
 		if(pop != null){
 			pop.dismiss();
 			pop = null;
 		}
+		imm.hideSoftInputFromWindow(mAccountsEditText.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(mPassEditText.getWindowToken(), 0);
 		return false;
 	}
 	

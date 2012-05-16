@@ -72,5 +72,12 @@ public class MessageDb {
 		return mCursor;
 	}
 
+	public boolean update(String id, String readed){
+		ContentValues values=new ContentValues();
+		values.put(ID, id);
+		values.put(READED, readed);
+		return mdb.update(TABLE_MESSAGE_NAME, values, ID+"="+id, null)>0;
+	}
+
 }
 

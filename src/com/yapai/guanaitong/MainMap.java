@@ -1,7 +1,10 @@
 package com.yapai.guanaitong;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.CacheManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -25,6 +29,9 @@ public class MainMap extends Activity {
 	LinearLayout mProgress;
 	final int MARGIN_HORI = 15;
 	final int MARGIN_BOTTOM = 320;
+	
+	final long WEBVIEW_CACHE_TIME = (1000*60*60*24)*30L; //?天
+	final String LAST_CLEAR_TIME = "lastClearTime";
 	
 //	String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
 	String URL_INDEX = "file:///android_asset/index.html";
@@ -62,8 +69,8 @@ public class MainMap extends Activity {
         
 	}
 	
-	//js访问
-	//如需要调用js方法，使用类似：webView.loadUrl("javascript:fun()"); 
+	//js访问类
+	//注：如需要调用js方法，使用类似：webView.loadUrl("javascript:fun()"); 
 	private class Contact{
 		int width;
 		int height;
@@ -96,7 +103,7 @@ public class MainMap extends Activity {
 		wv.setBackgroundColor(0);
 		wv.setBackgroundResource(R.drawable.default_bg);
         wv.getSettings().setJavaScriptEnabled(true);//可用JS
-        wv.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        wv.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //打开cache
         wv.addJavascriptInterface(new Contact(this), "contact");
         wv.setScrollBarStyle(/*View.SCROLLBARS_OUTSIDE_OVERLAY*/0);//滚动条风格，为0就是不给滚动条留空间，滚动条覆盖在网页上
         wv.setWebViewClient(new WebViewClient(){   
@@ -109,15 +116,16 @@ public class MainMap extends Activity {
         wv.setWebChromeClient(new WebChromeClient(){
         	public void onProgressChanged(WebView view,int progress){//载入进度改变而触发 
              	if(progress==100){
-            		handler.sendEmptyMessage(1);//如果全部载入,隐藏进度对话框
+            		handler.sendEmptyMessage(1);//如果全部载入,隐藏进度条
             	}   
                 super.onProgressChanged(view, progress);   
             }   
         });
-        
+
 	}
 	
     public void loadURL(final WebView view,final String url){
+    	//如在非主线程中执行，会出现警告
 //    	new Thread(){
 //        	public void run(){
         		handler.sendEmptyMessage(0);//显示进度
@@ -125,5 +133,32 @@ public class MainMap extends Activity {
         	}
 //        }.start();
 //    }
+    
+    @Override
+    protected void onDestroy() {
+    	// TODO Auto-generated method stub
+    	clearCache();
+    	super.onDestroy();
+    }
+	
+    //第隔多长时间清理一次cache
+	private void clearCache() {
+		SharedPreferences settings=getPreferences(Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+        long lastClearTime = settings.getLong(LAST_CLEAR_TIME, 0);
+        long now = System.currentTimeMillis();
+        if (lastClearTime == 0) {
+        	lastClearTime = now;
+        	editor.putLong(LAST_CLEAR_TIME, now);
+        	editor.commit();
+        }
+        Log.d(TAG, "now:"+now+",lastClearTime:"+lastClearTime+" WEBVIEW_CACHE_TIME:"+WEBVIEW_CACHE_TIME);
+        if (now - lastClearTime > WEBVIEW_CACHE_TIME){
+        	Log.d(TAG, "clearCache...");
+        	wv.clearCache(true);
+        	editor.putLong(LAST_CLEAR_TIME, now);
+        	editor.commit();
+        }
+	}
 
 }
