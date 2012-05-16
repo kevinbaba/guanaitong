@@ -13,7 +13,6 @@ public class LoginDb {
 	static LoginDb instanc;
 	private SQLiteDatabase mdb;
 	
-	public final static String KEY="_id";
 	public final static String ACCOUNTS="accounts";
 	public final static String PASSWORD="pass";
 		
@@ -22,8 +21,7 @@ public class LoginDb {
 	public final static String TABLE_LOGIN_CREATE_SQL=
 			" create table if not exists "+TABLE_LOGIN_NAME
 			+" ( "
-			+KEY+" integer primary key autoincrement, "
-			+ACCOUNTS+" text not null, "
+			+ACCOUNTS+" text primary key, "
 			+PASSWORD+" text not null "
 			+" ); ";
 	
@@ -46,9 +44,9 @@ public class LoginDb {
 		return mdb.insert(TABLE_LOGIN_NAME, null,values);
 	}
 	
-//	删除对应id的所有记录
-	public boolean delete(int id){
-		return mdb.delete(TABLE_LOGIN_NAME, KEY+"="+id, null)>0;
+//	删除用户的所有记录
+	public boolean delete(String account){
+		return mdb.delete(TABLE_LOGIN_NAME, ACCOUNTS+"="+account, null)>0;
 	}
 	
 	public Cursor getCursor(String... args){
@@ -65,10 +63,10 @@ public class LoginDb {
 		return mCursor;
 	}
 	
-	public boolean update(int id,String password){
+	public boolean update(String account,String password){
 		ContentValues values=new ContentValues();
 		values.put(PASSWORD,password);
-		return mdb.update(TABLE_LOGIN_NAME, values, KEY+"="+id, null)>0;
+		return mdb.update(TABLE_LOGIN_NAME, values, ACCOUNTS+"="+account, null)>0;
 	}
 
 }

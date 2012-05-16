@@ -50,7 +50,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	public myAdapter adapter;
 	public HashMap<String,String> list;
 	String mAccount_last_logined;
-	Object[] account;
+	Object[] accounts;
 	TextView mNotify;
 	ListView listView;
 
@@ -98,14 +98,11 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		MyApplication.userName = account;
 		MyApplication.userID = Integer.parseInt(uerID);
 
-		Cursor cursor = db.getCursorArgs(new String[] { LoginDb.KEY },
-				new String[] { account });
-		int keyindex = cursor.getColumnIndexOrThrow(LoginDb.KEY);
+		Cursor cursor = db.getCursorArgs(new String[] { LoginDb.ACCOUNTS }, new String[] { account });
 		if (mRemPassCheck.isChecked()) {
 			// 保存密码
 			if (cursor.getCount() > 0) {
-				int id = cursor.getInt(keyindex);
-				db.update(id, pass);
+				db.update(account, pass);
 			} else {
 				db.insert(account, pass);
 			}
@@ -113,8 +110,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		} else {
 			// 不保存密码
 			if (cursor.getCount() > 0) {
-				int id = cursor.getInt(keyindex);
-				db.update(id, "");
+				db.update(account, "");
 			}
 			list.put(account, "");// 重新替换或者添加记录
 		}
@@ -217,7 +213,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 					pop.showAsDropDown(mAccountsEditText);
 				}
 				else{
-					account=list.keySet().toArray();
+					accounts=list.keySet().toArray();
 					adapter.notifyDataSetChanged();
 					pop=new PopupWindow(listView, mAccountsEditText.getWidth(), LayoutParams.WRAP_CONTENT);
 					pop.showAsDropDown(mAccountsEditText);
@@ -287,16 +283,16 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     
     private void prepareAccountsList(){
     	list=new HashMap<String, String>();
-    	Cursor cursor=db.getCursor(LoginDb.KEY,LoginDb.ACCOUNTS,LoginDb.PASSWORD);
+    	Cursor cursor=db.getCursor(LoginDb.ACCOUNTS,LoginDb.PASSWORD);
     	int accountsindex=cursor.getColumnIndexOrThrow(LoginDb.ACCOUNTS);
     	int passindex=cursor.getColumnIndexOrThrow(LoginDb.PASSWORD);
-    	String accounts;
+    	String account;
     	String pass;
     	if(cursor.getCount()>0){
     		do{
-    			accounts=cursor.getString(accountsindex);
+    			account=cursor.getString(accountsindex);
     			pass=cursor.getString(passindex);
-    			list.put(accounts, pass);
+    			list.put(account, pass);
         	}while(cursor.moveToNext());
     	}
     	safeReleaseCursor(cursor);
@@ -311,14 +307,14 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     	LayoutInflater mInflater;
     	public myAdapter() {
     		mInflater=LayoutInflater.from(Login.this);
-    		account=list.keySet().toArray();
+    		accounts=list.keySet().toArray();
     		// TODO Auto-generated constructor stub
     	}
 
     	@Override
     	public int getCount() {
     		// TODO Auto-generated method stub
-    		return account.length;
+    		return accounts.length;
     	}
 
     	@Override
@@ -350,7 +346,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     		if(holder!=null){
     			convertView.setId(position);
     			holder.setId(position);
-    			holder.view.setText(account[position].toString());
+    			holder.view.setText(accounts[position].toString());
     			holder.view.setOnTouchListener(new OnTouchListener() {
     				
     				@Override
@@ -360,8 +356,8 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	    					pop.dismiss();
 	    					pop = null;
     					}
-    					mAccountsEditText.setText(account[position].toString());
-    					mPassEditText.setText(list.get(account[position]));
+    					mAccountsEditText.setText(accounts[position].toString());
+    					mPassEditText.setText(list.get(accounts[position]));
     					return true;
     				}
     			});
@@ -371,14 +367,10 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     				@Override
     				public void onClick(View v) {
     					// TODO Auto-generated method stub
-    					String accounts=account[position].toString();
+    					String account=accounts[position].toString();
     					list.remove(accounts);
-    					Cursor cursor=db.getCursorArgs(new String[]{LoginDb.KEY}, new String[]{accounts});
-    					int keyindex=cursor.getColumnIndexOrThrow(LoginDb.KEY);
-    					int id=cursor.getInt(keyindex);
-    					cursor.close();
-    					db.delete(id);
-    					account=list.keySet().toArray();
+    					db.delete(account);
+    					accounts=list.keySet().toArray();
     					adapter.notifyDataSetChanged();
     				}
     			});
