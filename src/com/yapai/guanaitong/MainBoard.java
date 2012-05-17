@@ -2,6 +2,8 @@ package com.yapai.guanaitong;
 
 import java.util.HashMap;
 
+import com.yapai.guanaitong.Login.myAdapter;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,16 +17,18 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 public class MainBoard extends TabActivity{
 	private RadioGroup group;
 	private TabHost tabHost;
-	private LinearLayout title;
+	private LinearLayout headerAndAcount;
 	private TextView account;
 	private ImageView header;
 	public static final String TAB_MAP="tabMap";
@@ -34,6 +38,8 @@ public class MainBoard extends TabActivity{
 	
 	Object[] accounts;
 	public HashMap<String,String> list;
+	public myAdapter adapter;
+	ListView listView;
 	public PopupWindow pop;
 	
 	@Override
@@ -41,18 +47,41 @@ public class MainBoard extends TabActivity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_board);
+		
+		list=new HashMap<String, String>();
+		/////TEST
+		list.put("123", "abc");
+		list.put("456", "def");
+		/////
+		
 		group = (RadioGroup)findViewById(R.id.main_radio);
-		title = (LinearLayout) findViewById(R.id.title);
+		headerAndAcount = (LinearLayout) findViewById(R.id.headerAndAcount);
 		header = (ImageView) findViewById(R.id.header);
 		account = (TextView) findViewById(R.id.account);
 		account.setText(MyApplication.account);
 		
-		title.setOnClickListener(new OnClickListener() {
-			
+		headerAndAcount.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
+				if(pop==null){
+					if(adapter==null){
+						adapter=new myAdapter();
+						listView=new ListView(MainBoard.this);
+						pop=new PopupWindow(listView, headerAndAcount.getWidth(), LayoutParams.WRAP_CONTENT);
+						listView.setAdapter(adapter);
+						pop.showAsDropDown(headerAndAcount);
+					}
+					else{
+						accounts=list.keySet().toArray();
+						adapter.notifyDataSetChanged();
+						pop=new PopupWindow(listView, headerAndAcount.getWidth(), LayoutParams.WRAP_CONTENT);
+						pop.showAsDropDown(headerAndAcount);
+					}
+				}
+				else{
+					pop.dismiss();
+					pop=null;
+				}
 			}
 		});
 		
@@ -127,7 +156,7 @@ public class MainBoard extends TabActivity{
     			convertView=mInflater.inflate(R.layout.main_board_popup, null);
     			holder=new Holder();
     			holder.view=(TextView)convertView.findViewById(R.id.account);
-    			holder.button=(ImageButton)convertView.findViewById(R.id.header);
+    			holder.button=(ImageView)convertView.findViewById(R.id.header);
     			convertView.setTag(holder);
     		}
     		else{
@@ -137,6 +166,7 @@ public class MainBoard extends TabActivity{
     			convertView.setId(position);
     			holder.setId(position);
     			holder.view.setText(accounts[position].toString());
+    			holder.button.setBackgroundResource(R.drawable.header);
     			holder.view.setOnTouchListener(new OnTouchListener() {
     				
     				@Override
@@ -157,7 +187,7 @@ public class MainBoard extends TabActivity{
     	
     	class Holder{
     		TextView view;
-    		ImageButton button;
+    		ImageView button;
     		
     		void setId(int position){
     			view.setId(position);

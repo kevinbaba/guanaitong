@@ -90,6 +90,10 @@ public class MainMessage extends ListActivity {
 		/* listview添加适配器 */
 		mListView.setAdapter(mAdapter);
 		
+		if(mData.size() == 0){
+			buttonMore.setClickable(false);
+			buttonMore.setText("没有消息");
+		}
 	}
 	
 	@Override

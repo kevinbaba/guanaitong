@@ -3,7 +3,7 @@
     android:id="@+id/popup_linear"
     android:layout_width="180dip"
     android:layout_height="wrap_content"
-    android:background="@android:drawable/screen_background_light"
+    android:background="@color/main_board_title_color"
     android:orientation="horizontal" >
 
     <ImageView

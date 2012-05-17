@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>  
     <color name="default_background_color">#ff060629</color>
-
+	<color name="main_board_title_color">#ff022249</color>
 </resources>
