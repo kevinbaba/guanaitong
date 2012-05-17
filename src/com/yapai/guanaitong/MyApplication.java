@@ -21,7 +21,7 @@ import android.app.Application;
 public class MyApplication extends Application {
     public static HttpClient httpClient; 
     public static DatabaseHelper mdbHelper;
-    public static String userName;
+    public static String account;
     public static int userID;
     
     @Override  

@@ -29,13 +29,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class Login extends Activity implements OnClickListener,OnFocusChangeListener,OnTouchListener {
 
@@ -96,10 +94,10 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     	String account = data.getString(ACCOUNT);
     	String pass = data.getString(PASSWORD);
 
-		MyApplication.userName = account;
+		MyApplication.account = account;
 		MyApplication.userID = Integer.parseInt(uerID);
 
-		Cursor cursor = db.getCursorArgs(new String[] { LoginDb.ACCOUNTS }, new String[] { account });
+		Cursor cursor = db.getCursor(new String[] { LoginDb.ACCOUNTS }, new String[] { account });
 		if (mRemPassCheck.isChecked()) {
 			// 保存密码
 			if (cursor.getCount() > 0) {
@@ -285,7 +283,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     // 准备已保存的用户列表
     private void prepareAccountsList(){
     	list=new HashMap<String, String>();
-    	Cursor cursor=db.getCursor(LoginDb.ACCOUNTS,LoginDb.PASSWORD);
+    	Cursor cursor=db.getCursor(null);
     	int accountsindex=cursor.getColumnIndexOrThrow(LoginDb.ACCOUNTS);
     	int passindex=cursor.getColumnIndexOrThrow(LoginDb.PASSWORD);
     	String account;

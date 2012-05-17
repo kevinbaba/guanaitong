@@ -15,7 +15,6 @@ public class MessageDb {
 	
 	public static final String ID="_id";
 	public static final String RANK="rank";
-	public static final String READED="readed";
 	public static final String MSG="msg";
 	public static final String TIME="time";
 		
@@ -25,8 +24,7 @@ public class MessageDb {
 			" create table if not exists "+TABLE_MESSAGE_NAME
 			+" ( "
 			+ID+" integer primary key, "
-			+RANK+" text not null, "
-			+READED+" text not null, "
+			+RANK+" integer not null, "
 			+MSG+" text not null, "
 			+TIME+" text not null "
 			+" ); ";
@@ -43,11 +41,10 @@ public class MessageDb {
 		return instanc;
 	}
 	
-	public long insert(String id,String rank, String readed, String msg, String time){
+	public long insert(int id,int rank, String msg, String time){
 		ContentValues values=new ContentValues();
 		values.put(ID, id);
 		values.put(RANK, rank);
-		values.put(READED, readed);
 		values.put(MSG, msg);
 		values.put(TIME, time);
 		return mdb.insert(TABLE_MESSAGE_NAME, null,values);
@@ -58,25 +55,11 @@ public class MessageDb {
 		return mdb.delete(TABLE_MESSAGE_NAME, ID+"="+id, null)>0;
 	}
 	
-	public Cursor getCursor(String... args){
-		Cursor mCursor=mdb.query(TABLE_MESSAGE_NAME, args, null, null, null, null, null);
+	public Cursor getCursor(String[] columns){
+		Cursor mCursor=mdb.query(TABLE_MESSAGE_NAME, columns, null, null, null, null, ID+" desc");
 		if(mCursor!=null&&!mCursor.isFirst())
 			mCursor.moveToFirst();
 		return mCursor;
-	}
-	
-	public Cursor getCursorArgs(String[] args,String[]selection){
-		Cursor mCursor=mdb.query(TABLE_MESSAGE_NAME, args, ID+"=?", selection, null, null, null);
-		if(mCursor!=null&&!mCursor.isFirst())
-			mCursor.moveToFirst();
-		return mCursor;
-	}
-
-	public boolean update(String id, String readed){
-		ContentValues values=new ContentValues();
-		values.put(ID, id);
-		values.put(READED, readed);
-		return mdb.update(TABLE_MESSAGE_NAME, values, ID+"="+id, null)>0;
 	}
 
 }

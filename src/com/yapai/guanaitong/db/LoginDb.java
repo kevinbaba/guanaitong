@@ -49,15 +49,15 @@ public class LoginDb {
 		return mdb.delete(TABLE_LOGIN_NAME, ACCOUNTS+"="+account, null)>0;
 	}
 	
-	public Cursor getCursor(String... args){
-		Cursor mCursor=mdb.query(TABLE_LOGIN_NAME, args, null, null, null, null, null);
+	public Cursor getCursor(String[] columns){
+		Cursor mCursor=mdb.query(TABLE_LOGIN_NAME, columns, null, null, null, null, null);
 		if(mCursor!=null&&!mCursor.isFirst())
 			mCursor.moveToFirst();
 		return mCursor;
 	}
 	
-	public Cursor getCursorArgs(String[] args,String[]selection){
-		Cursor mCursor=mdb.query(TABLE_LOGIN_NAME, args, ACCOUNTS+"=?", selection, null, null, null);
+	public Cursor getCursor(String[] columns,String[]selectionAccount){
+		Cursor mCursor=mdb.query(TABLE_LOGIN_NAME, columns, ACCOUNTS+"=?", selectionAccount, null, null, null);
 		if(mCursor!=null&&!mCursor.isFirst())
 			mCursor.moveToFirst();
 		return mCursor;
