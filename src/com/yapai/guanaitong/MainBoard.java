@@ -168,21 +168,31 @@ public class MainBoard extends TabActivity{
     			holder.view.setText(accounts[position].toString());
     			holder.button.setBackgroundResource(R.drawable.header);
     			holder.view.setOnTouchListener(new OnTouchListener() {
-    				
     				@Override
     				public boolean onTouch(View v, MotionEvent event) {
-    					// TODO Auto-generated method stub
-    					if(pop != null){
-	    					pop.dismiss();
-	    					pop = null;
-    					}
-    					//TODO
+    					menuClicked(position);
     					return true;
     				}
     			});
-
+    			holder.button.setOnTouchListener(new OnTouchListener() {
+    				@Override
+    				public boolean onTouch(View v, MotionEvent event) {
+    					menuClicked(position);
+    					return true;
+    				}
+    			});
     		}
     		return convertView;
+    	}
+    	
+    	void menuClicked(int position){
+			if(pop != null){
+				pop.dismiss();
+				pop = null;
+			}
+			account.setText(accounts[position].toString());
+			//TODO	…Ë÷√Õ∑œÒ		
+			header.setBackgroundResource(R.drawable.header);
     	}
     	
     	class Holder{
