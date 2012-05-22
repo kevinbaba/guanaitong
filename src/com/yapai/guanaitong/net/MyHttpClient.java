@@ -20,8 +20,15 @@ import com.yapai.guanaitong.MyApplication;
 public class MyHttpClient {
 	HttpClient mHttpClient;
 	final String TAG = "MyHttpClient";
-	final String HOST = "http://192.168.0.244/";
+//	final String HOST = "http://192.168.0.244/";
 //	final String HOST = "http://192.168.1.100/";
+	final String HOST = "http://192.168.2.115/";
+	
+	final String LOGIN_URL = "http://192.168.2.212/git/care/android/login";
+	final String GET_PASSWORD_TOKEN_URL = "http://192.168.2.212/git/care/ajax/get_token";
+	
+	
+	
 	
 	public MyHttpClient() {
 		mHttpClient = MyApplication.httpClient;    //»ñÈ¡HttpClientÊµÀý  
@@ -31,8 +38,14 @@ public class MyHttpClient {
 		String result = null;
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("name", name);
-		params.put("pwd", pwd);
-		result = connectGetString(params, null);
+		params.put("password", pwd);
+		result = connectGetString(params, LOGIN_URL);
+		return result;
+	}
+	
+	public String GetPasswordToken(){
+		String result = null;
+		result = connectGetString(null, GET_PASSWORD_TOKEN_URL);
 		return result;
 	}
 	

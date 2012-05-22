@@ -56,7 +56,7 @@
         </activity>
         <activity
             android:label="@string/app_name"
-            android:name=".MainMore"
+            android:name=".MainStatus"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
