@@ -105,9 +105,9 @@ public class MainMessage extends ListActivity {
 		mListView = getListView();
 		
 		//////////TEST
-//		for(int i=0;i<30;i++){
-//			addData(i, 0, "消息....."+i, "20120517");
-//		}
+		for(int i=0;i<30;i++){
+			addData(i, 0, "消息....."+i, "20120517");
+		}
 		//////////
 
 		initCursor();

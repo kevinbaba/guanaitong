@@ -34,7 +34,7 @@ public class MainBoard extends TabActivity{
 	public static final String TAB_MAP="tabMap";
 	public static final String TAB_MES="tabMes";
 	public static final String TAB_SET="tabSet";
-	public static final String TAB_MORE="tabMore";
+	public static final String TAB_STATUS="tabStatus";
 	
 	Object[] accounts;
 	public HashMap<String,String> list;
@@ -86,6 +86,9 @@ public class MainBoard extends TabActivity{
 		});
 		
 		tabHost = getTabHost();
+	    tabHost.addTab(tabHost.newTabSpec(TAB_STATUS)
+	    		.setIndicator(TAB_STATUS)
+	    		.setContent(new Intent(this,MainStatus.class)));
 		tabHost.addTab(tabHost.newTabSpec(TAB_MAP)
 	                .setIndicator(TAB_MAP)
 	                .setContent(new Intent(this,MainMap.class)));
@@ -95,23 +98,20 @@ public class MainBoard extends TabActivity{
 	    tabHost.addTab(tabHost.newTabSpec(TAB_SET)
 	    		.setIndicator(TAB_SET)
 	    		.setContent(new Intent(this,MainSetting.class)));
-	    tabHost.addTab(tabHost.newTabSpec(TAB_MORE)
-	    		.setIndicator(TAB_MORE)
-	    		.setContent(new Intent(this,MainMore.class)));
 	    group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				switch (checkedId) {
-				case R.id.radio_button0:
+				case R.id.radio_button_status:
+					tabHost.setCurrentTabByTag(TAB_STATUS);
+					break;
+				case R.id.radio_button_map:
 					tabHost.setCurrentTabByTag(TAB_MAP);
 					break;
-				case R.id.radio_button1:
+				case R.id.radio_button_message:
 					tabHost.setCurrentTabByTag(TAB_MES);
 					break;
-				case R.id.radio_button2:
+				case R.id.radio_button_setting:
 					tabHost.setCurrentTabByTag(TAB_SET);
-					break;
-				case R.id.radio_button3:
-					tabHost.setCurrentTabByTag(TAB_MORE);
 					break;
 
 				default:

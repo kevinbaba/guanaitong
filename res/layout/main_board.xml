@@ -61,37 +61,38 @@
             android:orientation="horizontal" >
 
             <RadioButton
-                android:id="@+id/radio_button0"
+                android:id="@+id/radio_button_status"
+                style="@style/main_tab_bottom"
+                android:layout_marginTop="2.0dip"
+                android:drawableTop="@drawable/icon_3_n"
+                android:tag="radio_button_status"
+                android:text="@string/main_status" />
+            
+            <RadioButton
+                android:id="@+id/radio_button_map"
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
                 android:checked="true"
                 android:drawableTop="@drawable/icon_1_n"
-                android:tag="radio_button0"
+                android:tag="radio_button_map"
                 android:text="@string/main_map" />
 
             <RadioButton
-                android:id="@+id/radio_button1"
+                android:id="@+id/radio_button_message"
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
                 android:drawableTop="@drawable/icon_2_n"
-                android:tag="radio_button1"
+                android:tag="radio_button_message"
                 android:text="@string/main_message" />
 
             <RadioButton
-                android:id="@+id/radio_button2"
-                style="@style/main_tab_bottom"
-                android:layout_marginTop="2.0dip"
-                android:drawableTop="@drawable/icon_3_n"
-                android:tag="radio_button2"
-                android:text="@string/main_setting" />
-
-            <RadioButton
-                android:id="@+id/radio_button3"
+                android:id="@+id/radio_button_setting"
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
                 android:drawableTop="@drawable/icon_4_n"
-                android:tag="radio_button3"
-                android:text="@string/main_more" />
+                android:tag="radio_button_setting"
+                android:text="@string/main_setting" />
+
         </RadioGroup>
     </LinearLayout>
 

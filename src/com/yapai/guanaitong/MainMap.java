@@ -141,7 +141,7 @@ public class MainMap extends Activity {
     	super.onDestroy();
     }
 	
-    //第隔多长时间清理一次cache
+    //每隔"WEBVIEW_CACHE_TIME"时间清理一次cache
 	private void clearCache() {
 		SharedPreferences settings=getPreferences(Activity.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();

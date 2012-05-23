@@ -52,6 +52,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	TextView mNotify;
 	ListView listView;
 	InputMethodManager imm;
+	String mPassToken;
 
 	final String TAG = "login";
 	final String FAILEDRETURN = "failed";
@@ -169,20 +170,30 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		}
 	};
 	
-	void checkAccount(final String account, final String pass) {
+	void checkAccount(final String account, final String password) {
 		new Thread() {
 			public void run() {
-
+				String pass = password;
 				MyHttpClient mhc = new MyHttpClient();
+				mPassToken = mhc.GetPasswordToken();
+				Log.d(TAG, "mPassToken:"+mPassToken);
+				if (mPassToken == null) {
+					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
+					return;
+				}
+				
+				//加密密码
+				if(pass.length() != 32){
+					//条件：用户密码最大长度必须小于３２位
+					pass = EncryptUtil.md5(pass);
+					pass = EncryptUtil.md5(mPassToken+pass);
+				}
+				
 				String result = mhc.CheckAccount(account, pass);
 				if (result == null) {
-					// Toast.makeText(this, "连接服务器失败",
-					// Toast.LENGTH_SHORT).show();
 					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
 					return;
 				} else if (FAILEDRETURN.equals(result)) {
-					// Toast.makeText(this, "用户名或密码错误",
-					// Toast.LENGTH_SHORT).show();
 					mHandler.sendEmptyMessage(ACCOUNTORPWDERROR);
 					return;
 				} else {
@@ -231,11 +242,6 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 				break;
 			}
 			
-			if(pass.length() != 32){
-				//条件：用户密码最大长度必须小于３２位
-				pass = EncryptUtil.md5(pass);
-			}
-
 			imm.hideSoftInputFromWindow(mAccountsEditText.getWindowToken(), 0);
 			imm.hideSoftInputFromWindow(mPassEditText.getWindowToken(), 0);
 			
