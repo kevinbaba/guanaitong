@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:title="CheckBoxPreference"
+        android:summary="CheckBoxPreference" />
+    <EditTextPreference
+        android:title="EditTextPreference" />
+    <ListPreference
+        android:title="ListPreference" />
+    
+    <Preference 
+        android:title="Preference" />
+    <PreferenceCategory
+        android:title="PreferenceCategory" >
+        <RingtonePreference
+            android:title="RingtonePreference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
