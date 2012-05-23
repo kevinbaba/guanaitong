@@ -1,6 +1,8 @@
-package com.yapai.guanaitong;
+package com.yapai.guanaitong.ui;
 
 import java.io.File;
+
+import com.yapai.guanaitong.R;
 
 import android.app.Activity;
 import android.content.Context;

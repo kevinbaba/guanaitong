@@ -1,4 +1,4 @@
-package com.yapai.guanaitong;
+package com.yapai.guanaitong.application;
 
 import org.apache.http.HttpVersion;  
 import org.apache.http.client.HttpClient;  

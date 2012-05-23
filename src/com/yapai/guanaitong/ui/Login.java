@@ -1,6 +1,9 @@
-package com.yapai.guanaitong;
+package com.yapai.guanaitong.ui;
 
 import java.util.HashMap;
+
+import com.yapai.guanaitong.R;
+import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.db.LoginDb;
 import com.yapai.guanaitong.net.MyHttpClient;
 import com.yapai.guanaitong.util.EncryptUtil;

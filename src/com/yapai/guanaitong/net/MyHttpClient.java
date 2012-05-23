@@ -15,7 +15,7 @@ import org.json.JSONException;
 
 import android.util.Log;
 
-import com.yapai.guanaitong.MyApplication;
+import com.yapai.guanaitong.application.MyApplication;
 
 public class MyHttpClient {
 	HttpClient mHttpClient;

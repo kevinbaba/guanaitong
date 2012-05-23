@@ -1,6 +1,6 @@
 package com.yapai.guanaitong.db;
 
-import com.yapai.guanaitong.MyApplication;
+import com.yapai.guanaitong.application.MyApplication;
 
 import android.content.ContentValues;
 import android.content.Context;

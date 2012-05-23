@@ -1,10 +1,11 @@
-package com.yapai.guanaitong;
+package com.yapai.guanaitong.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.db.MessageDb;
 
 import android.app.AlertDialog;

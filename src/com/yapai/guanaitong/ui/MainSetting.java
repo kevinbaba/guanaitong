@@ -1,4 +1,6 @@
-package com.yapai.guanaitong;
+package com.yapai.guanaitong.ui;
+
+import com.yapai.guanaitong.R;
 
 import android.graphics.Color;
 import android.os.Bundle;
