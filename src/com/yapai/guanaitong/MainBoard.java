@@ -7,6 +7,7 @@ import com.yapai.guanaitong.Login.myAdapter;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 public class MainBoard extends TabActivity{
+	private final String TAG = "MainBoard";
 	private RadioGroup group;
 	private TabHost tabHost;
 	private LinearLayout headerAndAcount;
@@ -100,6 +102,7 @@ public class MainBoard extends TabActivity{
 	    		.setContent(new Intent(this,MainSetting.class)));
 	    group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				closePopup();
 				switch (checkedId) {
 				case R.id.radio_button_status:
 					tabHost.setCurrentTabByTag(TAB_STATUS);
@@ -186,10 +189,7 @@ public class MainBoard extends TabActivity{
     	}
     	
     	void menuClicked(int position){
-			if(pop != null){
-				pop.dismiss();
-				pop = null;
-			}
+			closePopup();
 			account.setText(accounts[position].toString());
 			//TODO	…Ë÷√Õ∑œÒ		
 			header.setBackgroundResource(R.drawable.header);
@@ -205,5 +205,18 @@ public class MainBoard extends TabActivity{
     		}
     	}
 
+    }
+    
+    public void closePopup(){
+    	if (pop != null){
+			pop.dismiss();
+			pop = null;
+    	}
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+    	closePopup();
+    	return super.onTouchEvent(event);
     }
 }

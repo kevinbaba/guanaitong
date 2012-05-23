@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <CheckBoxPreference
-        android:title="CheckBoxPreference"
-        android:summary="CheckBoxPreference" />
+        android:title="实时接收消息"
+        android:summary="打开后需要消耗网络流量" />
     <EditTextPreference
-        android:title="EditTextPreference" />
-    <ListPreference
-        android:title="ListPreference" />
-    
-    <Preference 
-        android:title="Preference" />
+        android:title="设置亲情号码" />
+
     <PreferenceCategory
-        android:title="PreferenceCategory" >
-        <RingtonePreference
-            android:title="RingtonePreference" />
+        android:title="其它" >
+        <CheckBoxPreference
+            android:title="其它" />
     </PreferenceCategory>
 
 </PreferenceScreen>

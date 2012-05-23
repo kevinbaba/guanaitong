@@ -1,5 +1,6 @@
 package com.yapai.guanaitong;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -13,7 +14,8 @@ public class MainSetting extends PreferenceActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.main_setting);
-		getWindow().setBackgroundDrawableResource(R.drawable.default_bg);
+		this.getListView().setCacheColorHint(Color.TRANSPARENT);
+		this.getListView().setBackgroundColor(getResources().getColor(R.color.default_background_color));
 	}
 	
 	@Override

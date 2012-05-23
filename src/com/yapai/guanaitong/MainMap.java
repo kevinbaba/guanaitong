@@ -100,8 +100,10 @@ public class MainMap extends Activity {
 	void initWebView(){
 		wv=(WebView)findViewById(R.id.wv);
 		wv.requestFocus();
+		
 		wv.setBackgroundColor(0);
-		wv.setBackgroundResource(R.drawable.default_bg);
+//		wv.setBackgroundResource(R.drawable.default_bg);
+		
         wv.getSettings().setJavaScriptEnabled(true);//可用JS
         wv.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //打开cache
         wv.addJavascriptInterface(new Contact(this), "contact");

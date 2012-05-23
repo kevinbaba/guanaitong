@@ -1,10 +1,10 @@
-package com.yapai.guanaitong;
+package com.yapai.guanaitong.service;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class service extends Service {
+public class messageServer extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
