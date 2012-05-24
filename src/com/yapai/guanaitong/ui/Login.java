@@ -6,6 +6,7 @@ import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.db.LoginDb;
 import com.yapai.guanaitong.net.MyHttpClient;
+import com.yapai.guanaitong.service.MessageServer;
 import com.yapai.guanaitong.util.EncryptUtil;
 
 import android.app.Activity;
@@ -125,13 +126,15 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		editor.putString(LASTLOGIN, account);
 		editor.commit();
 
-		// 进入主界面
+		// 进入主界面,启动服务
 		Intent intent = new Intent(this, MainBoard.class);
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			Log.e(TAG, "" + e);
 		}
+		intent.setClass(this, MessageServer.class);
+		this.startService(intent);
 
 		finish();
 	}
