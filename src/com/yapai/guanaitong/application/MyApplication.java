@@ -1,5 +1,7 @@
 package com.yapai.guanaitong.application;
 
+import java.util.List;
+
 import org.apache.http.HttpVersion;  
 import org.apache.http.client.HttpClient;  
 import org.apache.http.conn.ClientConnectionManager;  
@@ -7,6 +9,8 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;  
 import org.apache.http.conn.scheme.SchemeRegistry;  
 import org.apache.http.conn.ssl.SSLSocketFactory;  
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;  
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;  
 import org.apache.http.params.BasicHttpParams;  
@@ -17,17 +21,22 @@ import org.apache.http.protocol.HTTP;
 import com.yapai.guanaitong.db.DatabaseHelper;
   
 import android.app.Application;
+import android.content.Context;
+import android.util.Log;
 
 public class MyApplication extends Application {
-    public static HttpClient httpClient; 
+	private final String TAG = "MyApplication";
+    public static DefaultHttpClient httpClient; 
+    BasicCookieStore cookieStore = new BasicCookieStore();
     public static DatabaseHelper mdbHelper;
     public static String account;
     public static int userID;
+	public static Cookie cookie = null; 
     
     @Override  
     public void onCreate() {  
         super.onCreate();  
-        httpClient = this.createHttpClient();  
+        httpClient = new DefaultHttpClient();  
         mdbHelper=new DatabaseHelper(this);
     }  
       
@@ -72,4 +81,17 @@ public class MyApplication extends Application {
     public HttpClient getHttpClient() {  
         return httpClient;  
     }
+    
+    public void setCookies(){
+		List<Cookie> cookies = httpClient.getCookieStore().getCookies();  
+		Log.d(TAG, "cookies:"+cookies);
+		if (!cookies.isEmpty()) {  
+		    for (int i = 0; i < cookies.size(); i++) {  
+		        cookie = cookies.get(i);
+		        cookieStore.addCookie(cookie);
+		    }  
+		}
+		httpClient.setCookieStore(cookieStore);
+    }
+
 }

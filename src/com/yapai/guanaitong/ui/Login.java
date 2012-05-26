@@ -59,13 +59,14 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	String mPassToken;
 
 	final String TAG = "login";
-	final String FAILEDRETURN = "failed";
+	final String SUCCESSRETURN = "SUCCESS";
 	final String LASTLOGIN = "lastLogin";
+	final String RESULT = "result";
 	final String USERID = "userid";
 	final String ACCOUNT = "account";
 	final String PASSWORD = "password";
 	final int CONNECTTIMEOUT = 0;
-	final int ACCOUNTORPWDERROR = 1;
+	final int FAILED = 1;
 	final int SUCCESS = 2;
 	
 	@Override
@@ -100,7 +101,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     	String pass = data.getString(PASSWORD);
 
 		MyApplication.account = account;
-		MyApplication.userID = Integer.parseInt(uerID);
+		//TODO 分析result
 
 		Cursor cursor = db.getCursor(new String[] { LoginDb.ACCOUNTS }, new String[] { account });
 		if (mRemPassCheck.isChecked()) {
@@ -163,8 +164,10 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
             case CONNECTTIMEOUT:
             	mNotify.setText("连接服务器失败");
             	break;
-            case ACCOUNTORPWDERROR:
-            	mNotify.setText("用户名或密码错误");
+            case FAILED:
+            	Bundle data = msg.getData();
+            	String result = data.getString(RESULT);
+            	mNotify.setText(result);
             	break;
             case SUCCESS:
             	LoadSuccess(msg);
@@ -180,7 +183,8 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		new Thread() {
 			public void run() {
 				String pass = password;
-				MyHttpClient mhc = new MyHttpClient();
+				MyHttpClient mhc = new MyHttpClient(Login.this);
+				
 				mPassToken = mhc.GetPasswordToken();
 				Log.d(TAG, "mPassToken:"+mPassToken);
 				if (mPassToken == null) {
@@ -188,29 +192,36 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 					return;
 				}
 				
+				//set Cookie
+				((MyApplication)Login.this.getApplication()).setCookies(); 
+				
 				//加密密码
 				if(pass.length() != 32){
 					//条件：用户密码最大长度必须小于３２位
 					pass = EncryptUtil.md5(pass);
-					pass = EncryptUtil.md5(mPassToken+pass);
 				}
-				
+				pass = EncryptUtil.md5(mPassToken+pass);
 				String result = mhc.CheckAccount(account, pass);
 				if (result == null) {
 					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
 					return;
-				} else if (FAILEDRETURN.equals(result)) {
-					mHandler.sendEmptyMessage(ACCOUNTORPWDERROR);
-					return;
-				} else {
+				} else if (SUCCESSRETURN.equals(result)) {
 					Bundle data = new Bundle();
-					data.putString(USERID, result);
+					data.putString(RESULT, result);
 					data.putString(ACCOUNT, account);
 					data.putString(PASSWORD, pass);
 					Message msg = new Message();
 					msg.setData(data);
 					msg.what = SUCCESS;
 					mHandler.sendMessage(msg);
+				} else {
+					Bundle data = new Bundle();
+					data.putString(RESULT, result);
+					Message msg = new Message();
+					msg.setData(data);
+					msg.what = FAILED;
+					mHandler.sendMessage(msg);
+					return;
 				}
 			}
 		}.start();

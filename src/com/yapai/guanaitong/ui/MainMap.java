@@ -1,8 +1,13 @@
 package com.yapai.guanaitong.ui;
 
 import java.io.File;
+import java.util.List;
+
+import org.apache.http.cookie.Cookie;
 
 import com.yapai.guanaitong.R;
+import com.yapai.guanaitong.application.MyApplication;
+import com.yapai.guanaitong.net.MyHttpClient;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +22,8 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CacheManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -36,7 +43,7 @@ public class MainMap extends Activity {
 	final String LAST_CLEAR_TIME = "lastClearTime";
 	
 //	String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
-	String URL_INDEX = "file:///android_asset/index.html";
+	String URL_INDEX = "http://m.uhome.co/api/position";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,10 +106,26 @@ public class MainMap extends Activity {
 		}
 	}
 	
+	void addCookie(){
+		List<Cookie> cookies = MyHttpClient.mHttpClient.getCookieStore().getCookies();  
+		if (! cookies.isEmpty()){  
+		    CookieSyncManager.createInstance(this);  
+		    CookieManager cookieManager = CookieManager.getInstance();  
+		        //sync all the cookies in the httpclient with the webview by generating cookie string  
+		    for (Cookie cookie : cookies){  
+		        String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();  
+		        cookieManager.setCookie(cookie.getDomain(), cookieString);  
+		        CookieSyncManager.getInstance().sync();  
+		    }  
+		}  
+	}
+	
 	void initWebView(){
+		addCookie();
+		
 		wv=(WebView)findViewById(R.id.wv);
 		wv.requestFocus();
-		
+
 		wv.setBackgroundColor(0);
 //		wv.setBackgroundResource(R.drawable.default_bg);
 		
@@ -125,7 +148,6 @@ public class MainMap extends Activity {
                 super.onProgressChanged(view, progress);   
             }   
         });
-
 	}
 	
     public void loadURL(final WebView view,final String url){
