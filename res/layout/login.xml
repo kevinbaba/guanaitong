@@ -17,9 +17,9 @@
             android:id="@+id/RelativeLayout02"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_marginLeft="15.0px"
             android:layout_marginRight="15.0px"
-            android:layout_centerInParent="true"
             android:background="@drawable/login_back" >
 
             <ImageView
@@ -98,24 +98,47 @@
                 android:textColor="#ff3f3f3f"
                 android:textSize="16.0dip" />
 
-            <CheckBox
-                android:id="@+id/login_cb_savepwd"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/checkboxes"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/login_btn_login"
-                android:button="@drawable/qq_btn_check"
-                android:checked="true"
-                android:text="@string/opt_remember"
-                android:textColor="#ff222222"
-                android:textSize="16.0sp" />
+                android:layout_below="@+id/login_edit_pwd"
+                android:orientation="horizontal" >
+
+                <CheckBox
+                    android:id="@+id/login_cb_savepwd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="5.0dip"
+                    android:button="@drawable/qq_btn_check"
+                    android:checked="true"
+                    android:text="@string/opt_remember"
+                    android:textColor="#ff222222"
+                    android:textSize="16.0sp" />
+
+                <CheckBox
+                    android:id="@+id/login_cb_autoload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/login_cb_savepwd"
+                    android:layout_toRightOf="@+id/login_cb_savepwd"
+                    android:layout_weight="1"
+                    android:button="@drawable/qq_btn_check"
+                    android:checked="true"
+                    android:text="@string/opt_autoload"
+                    android:textColor="#ff222222"
+                    android:textSize="16.0sp" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/login_btn_login"
-                android:layout_width="120.0px"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/TextView02"
-                android:layout_marginRight="12.0dip"
+                android:layout_below="@+id/checkboxes"
+                android:layout_marginLeft="5.0dip"
+                android:layout_marginRight="5.0dip"
                 android:layout_marginTop="12.0dip"
                 android:text="@string/login" />
         </RelativeLayout>
@@ -124,11 +147,10 @@
             android:id="@+id/Notify"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/RelativeLayout02"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="2dip"
+            android:layout_below="@+id/RelativeLayout02"
+            android:layout_marginTop="24dip"
             android:gravity="center"
-            android:textColor="#ffffffff"
             android:textSize="16.0sp" />
     </RelativeLayout>
 

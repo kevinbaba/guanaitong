@@ -20,20 +20,17 @@ import android.content.Context;
 import android.util.Log;
 
 import com.yapai.guanaitong.application.MyApplication;
+import com.yapai.guanaitong.util.Config;
 
-public class MyHttpClient {
+public class MyHttpClient { 
 	public static DefaultHttpClient mHttpClient;
 	final String TAG = "MyHttpClient";
-//	final String HOST = "http://192.168.0.244/";
-//	final String HOST = "http://192.168.1.100/";
-//	final String HOST = "http://192.168.2.115/";
-	public final static String HOST = "http://m.uhome.co/";
 	
-	final String LOGIN_URL = "http://m.uhome.co/api/login";
-	final String GET_PASSWORD_TOKEN_URL = "http://m.uhome.co/api/get_token";
-	final String STATUS_URL = "http://m.uhome.co/api/status";
-//	final String LOGIN_URL = HOST;
-//	final String GET_PASSWORD_TOKEN_URL = HOST;
+	final String HOST = Config.HOST;
+	final String LOGIN_URL = Config.CLIENT_LOGIN_URL;
+	final String GET_PASSWORD_TOKEN_URL = Config.CLIENT_GET_PASSWORD_TOKEN_URL;
+	final String STATUS_URL = Config.CLIENT_STATUS_URL;
+	public String WARD_CHANGE_LOGIN = Config.WARD_CHANGE_LOGIN;
 	
 	public static Cookie cookie = null; 
 	Context mContext;
@@ -45,26 +42,31 @@ public class MyHttpClient {
 	
 	//Login----------------------------------------------------
 	public String CheckAccount(String name, String pwd){
-		String result = null;
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("account", name);
 		params.put("password", pwd);
-		result = connectGetString(params, LOGIN_URL);
-		return result;
+		return connectGetString(params, LOGIN_URL);
 	}
 	
 	public String GetPasswordToken(){
-		String result = null;
-		result = connectGetString(null, GET_PASSWORD_TOKEN_URL);
-		return result;
+		return connectGetString(null, GET_PASSWORD_TOKEN_URL);
 	}
 	//Login end----------------------------------------------------
 	
 	//Status ----------------------------------------------------
 	public String getUserStatus(){
-		return null;
+		return connectGetString(null, STATUS_URL);
 	}
 	//Status end----------------------------------------------------
+	
+	//MainBoard ----------------------------------------------------
+	public String switchward(int id){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", String.valueOf(id));
+		return connectGetString(params, WARD_CHANGE_LOGIN);
+	}
+	//MainBoard end----------------------------------------------------
+	
 	
 	public HttpEntity connectGetEntity(Map<String, String> params, String uhost){
 		try{

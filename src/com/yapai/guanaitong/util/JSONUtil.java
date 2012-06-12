@@ -10,9 +10,37 @@ import org.json.JSONObject;
 import com.yapai.guanaitong.struct.*;
 
 public class JSONUtil {
+	//Login
+	public final static String STATUS = "status";
+	public final static String INFO = "info";
+	public final static String IDENTITY = "identity";
+	public final static String GROUP_IDENTITY = "group_identity";
+	public final static String LOGINBY = "login_by";
+	public final static String WARD_PROFILE = "ward_profile";
+	public final static String GUARDIAN = "guardian";
+	public final static String WARDS = "wards";
+	public final static String PHONE = "phone";
+	public final static String NAME = "name";
+	public final static String HEAD_48 = "head_48";
+	public final static String LOGIN_ID = "id";
+	public final static String NICKNAME = "nickname";
+	public final static String DEFAULT = "default";
+	public final static String GENDER = "gender";
+	
+
 	//Status
-	private final static String USERID = "";
-	private final static String HEADER = "";
+	private final static String SYSTYPE = "sys_type";
+	private final static String SYSPLATFORM = "sys_platform";
+	private final static String SYSPOWERON = "sys_poweron";
+	private final static String SYSPOWVERVOLUMN = "sys_powervolumn";
+	private final static String SYSSTATUS = "sys_status";
+	private final static String SYSFMDURATION = "sys_fmduration";
+	private final static String SYSFMFAVORITE = "sys_fmfavorite";
+	private final static String SYSCALLOUT = "sys_callout";
+	private final static String SYSCALLIN = "sys_callin";
+	private final static String SYSPOWEROFF = "sys_poweroff";
+	private final static String SAFEREGIONOUT = "safe_region_out";
+	private final static String SAFEREGIONIN = "safe_region_in";
 
 	//Message
 	private final static String MSGID = "";
@@ -20,20 +48,83 @@ public class JSONUtil {
 	private final static String MSG = "";
 	private final static String TIME = "";
 	
+	public static Login json2Login(String json) throws JSONException{
+		Login login = new Login();
+		JSONObject jsonObject=new JSONObject(json);
+		login.setInfo(jsonObject.getString(INFO));
+		if(! "SUCCESS".equals(login.getInfo())){		//如果登陆不成功
+			return login;
+		}
+		login.setIdentity(jsonObject.getInt(IDENTITY));
+		login.setGroup_identity(jsonObject.getInt(GROUP_IDENTITY));
+		login.setLogin_by(jsonObject.getString(LOGINBY));
+		if(jsonObject.getString(WARD_PROFILE).length() != 0)
+			login.setWard_profile(jsonObject.getJSONObject(WARD_PROFILE));
+		if(jsonObject.getString(GUARDIAN).length() != 0)
+			login.setGuardian(jsonObject.getJSONObject(GUARDIAN));
+		if(jsonObject.getString(WARDS).length() != 0)
+			login.setWards(jsonObject.getJSONArray(WARDS));
+		return login;
+	}
+	
+	public static LoginWardProfile json2LoginWardProfile(JSONObject obj) throws JSONException{
+		if(obj == null) return null;
+		LoginWardProfile lwp = new LoginWardProfile();
+		lwp.setPhone(obj.getString(PHONE));
+		lwp.setName(obj.getString(NAME));
+		lwp.setHead_48(obj.getString(HEAD_48));
+		return lwp;
+	}
+	
+	public static LoginGuardian json2LoginGuardian(JSONObject obj) throws JSONException{
+		if(obj == null) return null;
+		LoginGuardian lg = new LoginGuardian();
+		lg.setPhone(obj.getString(PHONE));
+		lg.setName(obj.getString(NAME));
+		return lg;
+	}
+	
+	public static List <LoginWards> json2LoginWardsList(JSONArray jsonArray) throws JSONException{
+		if(jsonArray == null) return null;
+		List <LoginWards> list = new ArrayList <LoginWards>();
+		for(int i=0; i< jsonArray.length(); i++){
+			JSONObject obj=jsonArray.getJSONObject(i);
+			LoginWards lw = new LoginWards();
+			lw.setPhone(obj.getString(PHONE));
+			lw.setId(obj.getInt(LOGIN_ID));
+			lw.setNickName(obj.getString(NICKNAME));
+			lw.setHead_48(obj.getString(HEAD_48));
+			lw.setGender(obj.getString(GENDER));
+			list.add(lw);
+		}
+		return list;
+	}
+	
 	public static Status json2Status(String json) throws JSONException{
 		Status st = new Status();
 		JSONObject jsonObject=new JSONObject(json);
-		st.setUserID(jsonObject.getInt(USERID));
-		st.setHeader(jsonObject.getString(HEADER));
+		st.setSysType(jsonObject.getString(SYSTYPE));
+		st.setSysPlatform(jsonObject.getString(SYSPLATFORM));
+		st.setSysPoweron(jsonObject.getString(SYSPOWERON));
+		st.setSysPowerVolumn(jsonObject.getString(SYSPOWVERVOLUMN));
+		st.setSysStatus(jsonObject.getString(SYSSTATUS));
+		st.setSysFmDuration(jsonObject.getString(SYSFMDURATION));
+		st.setSysFmFavorite(jsonObject.getString(SYSFMFAVORITE));
+		st.setSysCallOut(jsonObject.getString(SYSCALLOUT));
+		st.setSysCallIn(jsonObject.getString(SYSCALLIN));
+		st.setSysPoweroff(jsonObject.getString(SYSPOWEROFF));
+		st.setSafeRegionOut(jsonObject.getString(SAFEREGIONOUT));
+		st.setSafeRegionIn(jsonObject.getString(SAFEREGIONIN));
+
 		return st;
 	}
 	
 	public static List<Message> json2MessageList(String json) throws JSONException{
 		List<Message> msgList = new ArrayList<Message>();
-		Message msg = new Message();
 		JSONArray jsonArray = new JSONArray(json);
 		for(int i=0; i< jsonArray.length(); i++){
 			JSONObject jsonObject=jsonArray.getJSONObject(i);
+			Message msg = new Message();
 			msg.setMsgID(jsonObject.getInt(MSGID));
 			msg.setRank(jsonObject.getInt(RANK));
 			msg.setMsg(jsonObject.getString(MSG));

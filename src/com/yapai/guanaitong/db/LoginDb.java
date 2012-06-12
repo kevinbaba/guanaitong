@@ -15,6 +15,7 @@ public class LoginDb {
 	
 	public final static String ACCOUNTS="accounts";
 	public final static String PASSWORD="pass";
+	public final static String HEADER = "header";
 		
 	public final static String TABLE_LOGIN_NAME="login";
 //	注意创建表的SQL语句应该是：create table tableName ();所以要注意加空格，还有表名不能为table

@@ -7,4 +7,5 @@
     <dimen name="main_status_margin">12dip</dimen>
     <dimen name="main_board_popup_padding">8dip</dimen>
     <dimen name="main_board_popup_font_size">16sp</dimen>
+    <dimen name="main_status_item_width">160dip</dimen>
 </resources>

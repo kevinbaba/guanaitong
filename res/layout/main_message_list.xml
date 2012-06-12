@@ -8,21 +8,21 @@
         android:id="@+id/rank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5px" />
+        android:layout_margin="5dip" />
 
     <TextView
         android:id="@+id/msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingLeft="20dp"
-        android:textSize="22px"
+        android:paddingLeft="20dip"
+        android:textSize="18sp"
         android:maxLines="1" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18px" />
+        android:textSize="14sp" />
 
 </LinearLayout>

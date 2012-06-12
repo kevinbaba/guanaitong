@@ -3,7 +3,7 @@
     android:id="@+id/popup_linear"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/main_board_title_color"
+    android:background="@color/main_board_title_popup_color"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 

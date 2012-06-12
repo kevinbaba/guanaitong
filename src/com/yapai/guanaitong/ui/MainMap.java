@@ -8,6 +8,7 @@ import org.apache.http.cookie.Cookie;
 import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.net.MyHttpClient;
+import com.yapai.guanaitong.util.Config;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,13 +38,15 @@ public class MainMap extends Activity {
 	Handler handler;
 	LinearLayout mProgress;
 	final int MARGIN_HORI = 15;
-	final int MARGIN_BOTTOM = 320;
+	final int MARGIN_BOTTOM = 200;
 	
 	final long WEBVIEW_CACHE_TIME = (1000*60*60*24)*30L; //?天
 	final String LAST_CLEAR_TIME = "lastClearTime";
 	
 //	String URL = "http://ditu.aliyun.com/jsdoc/map/example/phone/mark.html";
-	String URL_INDEX = "http://m.uhome.co/api/position";
+	String URL_INDEX = Config.MAP_URL_INDEX;
+	
+	int width, height;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +77,30 @@ public class MainMap extends Activity {
     	    }
         };
         
-        loadURL(wv, URL_INDEX);
+        getDisplaySize();
         
+        String url = URL_INDEX+"?"+"width="+width+"&height="+height;
+        loadURL(wv, url);
+        
+	}
+	
+	void getDisplaySize(){
+        //获得地图显示大小
+        WindowManager wm = (WindowManager) this.getSystemService(WINDOW_SERVICE);
+        Display dip = wm.getDefaultDisplay();
+        DisplayMetrics metric = new DisplayMetrics();
+        dip.getMetrics(metric);
+        width =metric.widthPixels;
+        height = metric.heightPixels;
+        float density = metric.density;
+        Log.d(TAG, "width:"+width+",height:"+height +",density:"+density);
+        width = (int) (width / density - MARGIN_HORI);
+        height = (int) ((height - MARGIN_BOTTOM) / density);
 	}
 	
 	//js访问类
 	//注：如需要调用js方法，使用类似：webView.loadUrl("javascript:fun()"); 
-	private class Contact{
+/*	private class Contact{
 		int width;
 		int height;
 		public Contact(Context context){
@@ -104,7 +124,7 @@ public class MainMap extends Activity {
 			Log.d(TAG, "height:"+height);
 			return height;
 		}
-	}
+	}*/
 	
 	void addCookie(){
 		List<Cookie> cookies = MyHttpClient.mHttpClient.getCookieStore().getCookies();  
@@ -131,7 +151,7 @@ public class MainMap extends Activity {
 		
         wv.getSettings().setJavaScriptEnabled(true);//可用JS
         wv.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //打开cache
-        wv.addJavascriptInterface(new Contact(this), "contact");
+//        wv.addJavascriptInterface(new Contact(this), "contact");
         wv.setScrollBarStyle(/*View.SCROLLBARS_OUTSIDE_OVERLAY*/0);//滚动条风格，为0就是不给滚动条留空间，滚动条覆盖在网页上
         wv.setWebViewClient(new WebViewClient(){   
             public boolean shouldOverrideUrlLoading(final WebView view, final String url) {

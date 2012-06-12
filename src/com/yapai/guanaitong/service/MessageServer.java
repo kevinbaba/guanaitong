@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class MessageServer extends Service {
 	final String TAG = "MessageServer";
-	final int CHECK_CYCLE_TIME = 3 * 1000;
+	final int CHECK_CYCLE_TIME = 60 * 1000;
 	int msgIDSaved;	//数据库中最新的信息
 
 	@Override

@@ -21,7 +21,7 @@ import org.apache.http.protocol.HTTP;
 import com.yapai.guanaitong.db.DatabaseHelper;
   
 import android.app.Application;
-import android.content.Context;
+import com.yapai.guanaitong.struct.Login;
 import android.util.Log;
 
 public class MyApplication extends Application {
@@ -29,8 +29,8 @@ public class MyApplication extends Application {
     public static DefaultHttpClient httpClient; 
     BasicCookieStore cookieStore = new BasicCookieStore();
     public static DatabaseHelper mdbHelper;
+    public static Login login = null;
     public static String account;
-    public static int userID;
 	public static Cookie cookie = null; 
     
     @Override  

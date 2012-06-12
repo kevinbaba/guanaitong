@@ -1,6 +1,9 @@
 package com.yapai.guanaitong.ui;
 
 import java.util.HashMap;
+import java.util.List;
+
+import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
@@ -8,6 +11,8 @@ import com.yapai.guanaitong.db.LoginDb;
 import com.yapai.guanaitong.net.MyHttpClient;
 import com.yapai.guanaitong.service.MessageServer;
 import com.yapai.guanaitong.util.EncryptUtil;
+import com.yapai.guanaitong.util.JSONUtil;
+import com.yapai.guanaitong.util.Util;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -48,6 +53,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	public EditText mAccountsEditText;
 	EditText mPassEditText;
 	CheckBox mRemPassCheck;
+	CheckBox mAutoLoadCheck;
 	Button mLoginButton;
 	public myAdapter adapter;
 	public HashMap<String,String> list;
@@ -61,13 +67,17 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	final String TAG = "login";
 	final String SUCCESSRETURN = "SUCCESS";
 	final String LASTLOGIN = "lastLogin";
-	final String RESULT = "result";
+	final static String AUTOLOAD = "autoLoad";
+	final String LOADINFO = "result";
 	final String USERID = "userid";
 	final String ACCOUNT = "account";
 	final String PASSWORD = "password";
 	final int CONNECTTIMEOUT = 0;
 	final int FAILED = 1;
 	final int SUCCESS = 2;
+	
+	final static String ISLOGINOUT = "isLoginOut";
+	boolean isLoginOut;
 	
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
@@ -80,6 +90,8 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 				}
 				if(list.containsKey(account)){
 					mPassEditText.setText(list.get(account));
+				}else{
+					mPassEditText.setText("");
 				}
 				mPassEditText.selectAll();
 			}
@@ -96,12 +108,8 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 
 	void LoadSuccess(Message msg) {
     	Bundle data = msg.getData();
-    	String uerID = data.getString(USERID);
     	String account = data.getString(ACCOUNT);
     	String pass = data.getString(PASSWORD);
-
-		MyApplication.account = account;
-		//TODO 分析result
 
 		Cursor cursor = db.getCursor(new String[] { LoginDb.ACCOUNTS }, new String[] { account });
 		if (mRemPassCheck.isChecked()) {
@@ -125,6 +133,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(LASTLOGIN, account);
+		editor.putBoolean(AUTOLOAD, mAutoLoadCheck.isChecked());
 		editor.commit();
 
 		// 进入主界面,启动服务
@@ -143,15 +152,21 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 	void setUIenable(boolean enable){
 		if(enable){
 			mAccountsEditText.setEnabled(true);
+			mAccountsEditText.setFocusable(true);
 			mPassEditText.setEnabled(true);	
+			mPassEditText.setFocusable(true);
 			mLoginButton.setEnabled(true);
 			mRemPassCheck.setClickable(true);
+			mAutoLoadCheck.setClickable(true);
 			mPopupImageButton.setClickable(true);
 		}else{
 			mAccountsEditText.setEnabled(false);
-			mPassEditText.setEnabled(false);	
+			mAccountsEditText.setFocusable(false);
+			mPassEditText.setEnabled(false);
+			mPassEditText.setFocusable(false);
 			mLoginButton.setEnabled(false);
 			mRemPassCheck.setClickable(false);
+			mAutoLoadCheck.setClickable(false);
 			mPopupImageButton.setClickable(false);
 		}
 	}
@@ -166,7 +181,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
             	break;
             case FAILED:
             	Bundle data = msg.getData();
-            	String result = data.getString(RESULT);
+            	String result = data.getString(LOADINFO);
             	mNotify.setText(result);
             	break;
             case SUCCESS:
@@ -187,7 +202,7 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 				
 				mPassToken = mhc.GetPasswordToken();
 				Log.d(TAG, "mPassToken:"+mPassToken);
-				if (mPassToken == null) {
+				if (! Util.IsStringValuble(mPassToken)) {
 					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
 					return;
 				}
@@ -200,28 +215,39 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
 					//条件：用户密码最大长度必须小于３２位
 					pass = EncryptUtil.md5(pass);
 				}
-				pass = EncryptUtil.md5(mPassToken+pass);
-				String result = mhc.CheckAccount(account, pass);
-				if (result == null) {
+				String tokenPass = EncryptUtil.md5(mPassToken+pass);
+				String result = mhc.CheckAccount(account, tokenPass);
+				if (! Util.IsStringValuble(result)) {
 					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
 					return;
-				} else if (SUCCESSRETURN.equals(result)) {
+				} else {
+					com.yapai.guanaitong.struct.Login login = null;
+					try {
+						login = JSONUtil.json2Login(result);
+						MyApplication.login = login;
+					} catch (JSONException e) {
+						Log.e(TAG, ""+e);
+						return;
+					}
+					String info = login.getInfo();
+					if (SUCCESSRETURN.equals(info)) {
 					Bundle data = new Bundle();
-					data.putString(RESULT, result);
+					data.putString(LOADINFO, info);
 					data.putString(ACCOUNT, account);
 					data.putString(PASSWORD, pass);
 					Message msg = new Message();
 					msg.setData(data);
 					msg.what = SUCCESS;
 					mHandler.sendMessage(msg);
-				} else {
-					Bundle data = new Bundle();
-					data.putString(RESULT, result);
-					Message msg = new Message();
-					msg.setData(data);
-					msg.what = FAILED;
-					mHandler.sendMessage(msg);
-					return;
+					} else {
+						Bundle data = new Bundle();
+						data.putString(LOADINFO, info);
+						Message msg = new Message();
+						msg.setData(data);
+						msg.what = FAILED;
+						mHandler.sendMessage(msg);
+						return;
+					}
 				}
 			}
 		}.start();
@@ -274,12 +300,16 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        isLoginOut = intent.getBooleanExtra(ISLOGINOUT, false);
+        Log.d(TAG, "isLoginOut:"+isLoginOut);
         setContentView(R.layout.login);
 		db = LoginDb.getDBInstanc(this);
         prepareAccountsList();
         mRelative = (RelativeLayout)findViewById(R.id.mRelativeLayout);
         mPopupImageButton=(ImageButton)findViewById(R.id.popupwindow);
         mRemPassCheck=(CheckBox)findViewById(R.id.login_cb_savepwd);
+        mAutoLoadCheck = (CheckBox)findViewById(R.id.login_cb_autoload);
         mLoginButton=(Button)findViewById(R.id.login_btn_login);
         mAccountsEditText=(EditText)findViewById(R.id.login_edit_account);
         mPassEditText=(EditText)findViewById(R.id.login_edit_pwd);
@@ -292,15 +322,20 @@ public class Login extends Activity implements OnClickListener,OnFocusChangeList
         
         SharedPreferences settings=getPreferences(Activity.MODE_PRIVATE);
         String lastLogin = settings.getString(LASTLOGIN, null);
+        Boolean autoLoad = settings.getBoolean(AUTOLOAD, false);
         String lastLoginpwd = list.get(lastLogin);
-        if(lastLogin != null && lastLoginpwd != null){
-        	mAccountsEditText.setText(lastLogin);
-        	mPassEditText.setText(lastLoginpwd);
-        }
         
         imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         //默认不显示软键盘
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        
+        if(lastLogin != null && lastLoginpwd != null){
+        	mAccountsEditText.setText(lastLogin);
+        	mPassEditText.setText(lastLoginpwd);
+            if(autoLoad && !isLoginOut){
+            	onClick(mLoginButton);
+            }
+        }
     }
     
     // 准备已保存的用户列表

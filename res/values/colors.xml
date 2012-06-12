@@ -2,5 +2,6 @@
 <resources>  
     <color name="default_background_color">#ffbbbbff</color>
 	<color name="main_board_title_color">#ff8888ff</color>
+	<color name="main_board_title_popup_color">#ff444488</color>
 	<color name="transparent">#00000000</color>
 </resources>
