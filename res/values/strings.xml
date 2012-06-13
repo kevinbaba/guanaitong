@@ -21,5 +21,12 @@
     <string name="login_out">注销登陆</string>
     <string name="exit">退出</string>
     <string name="switch_ward_error">切换被监护人失败</string>
+    <string name="get_msg_error">获取信息出错</string>
+    <string name="newest_pos">最新位置</string>
+    <string name="getting_newest_pos">正在获取最新位置...</string>
+    <string name="getting_newest_pos_sucess">获取最新位置成功</string>
+    <string name="getting_newest_pos_failed">获取最新位置失败</string>
+    <string name="path">轨迹</string>
+    <string name="range">安全范围</string>
 
 </resources>

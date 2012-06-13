@@ -53,7 +53,6 @@
                 android:layout_alignBottom="@+id/login_edit_account"
                 android:layout_alignLeft="@+id/login_edit_account"
                 android:layout_alignTop="@+id/login_edit_account"
-                android:layout_marginRight="15.0sp"
                 android:gravity="center_vertical"
                 android:paddingLeft="7.0sp"
                 android:text="@string/strAccInputLabel"
@@ -67,7 +66,7 @@
                 android:layout_alignBottom="@+id/login_edit_account"
                 android:layout_alignRight="@+id/login_edit_account"
                 android:layout_alignTop="@+id/login_edit_account"
-                android:layout_marginRight="1.0dip"
+                android:layout_marginLeft="2.0dip"
                 android:background="@drawable/more_select" />
 
             <EditText

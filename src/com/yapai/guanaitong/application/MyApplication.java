@@ -27,16 +27,15 @@ import android.util.Log;
 public class MyApplication extends Application {
 	private final String TAG = "MyApplication";
     public static DefaultHttpClient httpClient; 
-    BasicCookieStore cookieStore = new BasicCookieStore();
+    public static BasicCookieStore cookieStore = new BasicCookieStore();
     public static DatabaseHelper mdbHelper;
     public static Login login = null;
     public static String account;
-	public static Cookie cookie = null; 
     
     @Override  
     public void onCreate() {  
         super.onCreate();  
-        httpClient = new DefaultHttpClient();  
+        httpClient = createHttpClient();
         mdbHelper=new DatabaseHelper(this);
     }  
       
@@ -55,7 +54,7 @@ public class MyApplication extends Application {
     }  
       
     //创建HttpClient实例  
-    private HttpClient createHttpClient() {  
+    private DefaultHttpClient createHttpClient() {  
         HttpParams params = new BasicHttpParams();  
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);  
         HttpProtocolParams.setContentCharset(params, HTTP.DEFAULT_CONTENT_CHARSET);  
@@ -78,12 +77,13 @@ public class MyApplication extends Application {
     }  
       
     //对外提供HttpClient实例  
-    public HttpClient getHttpClient() {  
+    public HttpClient getHttpClient() {
         return httpClient;  
     }
     
     public void setCookies(){
 		List<Cookie> cookies = httpClient.getCookieStore().getCookies();  
+		Cookie cookie;
 		Log.d(TAG, "cookies:"+cookies);
 		if (!cookies.isEmpty()) {  
 		    for (int i = 0; i < cookies.size(); i++) {  

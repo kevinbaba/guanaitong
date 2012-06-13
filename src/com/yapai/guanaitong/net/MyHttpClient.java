@@ -1,6 +1,7 @@
 package com.yapai.guanaitong.net;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.util.Config;
 
 public class MyHttpClient { 
-	public static DefaultHttpClient mHttpClient;
+	public DefaultHttpClient mHttpClient;
 	final String TAG = "MyHttpClient";
 	
 	final String HOST = Config.HOST;
@@ -39,7 +40,7 @@ public class MyHttpClient {
 		mContext = context;
 		mHttpClient = MyApplication.httpClient;    //»ñÈ¡HttpClientÊµÀý  
 	}
-	
+
 	//Login----------------------------------------------------
 	public String CheckAccount(String name, String pwd){
 		Map<String, String> params = new HashMap<String, String>();
@@ -67,7 +68,29 @@ public class MyHttpClient {
 	}
 	//MainBoard end----------------------------------------------------
 	
-	
+	//common ---------------------------------------------------------
+	public boolean downLoadFile(String url, String name){
+		try {
+			HttpEntity entiry = connectGetEntity(null, url);
+			if (entiry == null)
+				return false;
+			InputStream is = entiry.getContent();
+			FileOutputStream fos=mContext.openFileOutput(name, Context.MODE_PRIVATE);
+			byte[] buf = new byte[1024];  
+			int len = -1;  
+			while ((len = is.read(buf)) != -1) {  
+			    fos.write(buf, 0, len);  
+			}  
+			is.close();
+			fos.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	//common end ---------------------------------------------------------
+
 	public HttpEntity connectGetEntity(Map<String, String> params, String uhost){
 		try{
 			String host = (uhost != null)?uhost:HOST;
@@ -97,6 +120,7 @@ public class MyHttpClient {
 				return null;
 			InputStream is = entiry.getContent();
 			String result = inStream2String(is);
+			is.close();
 			Log.d(TAG, "result:" + result);
 			return result;
 		} catch (Exception e) {
@@ -121,7 +145,8 @@ public class MyHttpClient {
 		int len = -1;  
 		while ((len = is.read(buf)) != -1) {  
 		    baos.write(buf, 0, len);  
-		}  
+		} 
+		baos.close();
 		return new String(baos.toByteArray());  
 	}  
 }

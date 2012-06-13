@@ -3,9 +3,11 @@ package com.yapai.guanaitong.ui;
 import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
+import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.net.MyHttpClient;
 import com.yapai.guanaitong.struct.Status;
 import com.yapai.guanaitong.util.JSONUtil;
+import com.yapai.guanaitong.util.Util;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -17,10 +19,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainStatus extends Activity {
 	final String TAG = "MainStatus";
 	final int LOAD_COMPLETE = 0;
+	final int LOAD_ERROR = 1;
 	
 	Status st;
 	TextView poweron;
@@ -35,6 +39,7 @@ public class MainStatus extends Activity {
 	TextView safe_region_in;
 	
 	BroadcastReceiver mBr;
+	public String account;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +56,13 @@ public class MainStatus extends Activity {
 		callin = (TextView)findViewById(R.id.callin);
 		safe_region_out = (TextView)findViewById(R.id.safe_region_out);
 		safe_region_in = (TextView)findViewById(R.id.safe_region_in);
-		getUserStatus();
 	}
 	
 	protected void onResume() {
+		if(!MyApplication.account.equals(account)){
+			account = MyApplication.account;
+			getUserStatus();
+		}
 		mBr = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
@@ -89,6 +97,11 @@ public class MainStatus extends Activity {
 				safe_region_out.setText(st.getSafeRegionOut());
 				safe_region_in.setText(st.getSafeRegionIn());
 				break;
+			case LOAD_ERROR:
+				Toast.makeText(MainStatus.this,
+						MainStatus.this.getResources().getString(R.string.get_msg_error), 
+						Toast.LENGTH_SHORT).show();
+				break;
 			}
 			super.handleMessage(msg);
 		}
@@ -100,11 +113,16 @@ public class MainStatus extends Activity {
 			public void run() {
 				MyHttpClient mhc = new MyHttpClient(MainStatus.this);
 				String result = mhc.getUserStatus();
+				if(! Util.IsStringValuble(result)){
+					mHandler.sendEmptyMessage(LOAD_ERROR);
+					return;
+				}
 				try {
 					st = JSONUtil.json2Status(result);
 					mHandler.sendEmptyMessage(LOAD_COMPLETE);
 				} catch (JSONException e) {
 					Log.e(TAG, "" + e);
+					mHandler.sendEmptyMessage(LOAD_ERROR);
 				}
 				super.run();
 			}

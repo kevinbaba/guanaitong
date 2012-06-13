@@ -8,4 +8,7 @@
     <dimen name="main_board_popup_padding">8dip</dimen>
     <dimen name="main_board_popup_font_size">16sp</dimen>
     <dimen name="main_status_item_width">160dip</dimen>
+    <dimen name="main_map_button_width">100.0dip</dimen>
+    <dimen name="main_map_button_height">40.0dip</dimen>
+    <dimen name="button_corners">5.0dip</dimen>
 </resources>

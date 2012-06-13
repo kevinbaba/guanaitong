@@ -9,7 +9,7 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -21,13 +21,16 @@
                 android:id="@+id/headerAndAcount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="5dip"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
+
                 <ImageView
                     android:id="@+id/header"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/header" >
+                    android:layout_width="40dip"
+                    android:layout_height="40dip"
+                    android:background="@drawable/header" >
                 </ImageView>
 
                 <TextView
@@ -36,13 +39,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_board_popup_padding"
                     android:textSize="@dimen/main_board_popup_font_size" />
+
                 <ImageView
-	                android:id="@+id/popuparrow"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:src="@drawable/more_select" />
+                    android:id="@+id/popuparrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/more_select"
+                    android:visibility="gone" />
             </LinearLayout>
-        </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dip"
+                android:background="@drawable/refresh_normal" />
+        </RelativeLayout>
 
         <FrameLayout
             android:id="@android:id/tabcontent"
@@ -71,11 +84,11 @@
                 android:id="@+id/radio_button_status"
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
+                android:checked="true"
                 android:drawableTop="@drawable/icon_3_n"
                 android:tag="radio_button_status"
-                android:text="@string/main_status"
-                android:checked="true" />
-            
+                android:text="@string/main_status" />
+
             <RadioButton
                 android:id="@+id/radio_button_map"
                 style="@style/main_tab_bottom"
@@ -99,7 +112,6 @@
                 android:drawableTop="@drawable/icon_4_n"
                 android:tag="radio_button_setting"
                 android:text="@string/main_setting" />
-
         </RadioGroup>
     </LinearLayout>
 
