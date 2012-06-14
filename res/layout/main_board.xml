@@ -28,17 +28,16 @@
 
                 <ImageView
                     android:id="@+id/header"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    android:background="@drawable/header" >
-                </ImageView>
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
+                    android:layout_margin="@dimen/main_board_icon_padding"
+                    android:background="@drawable/header" />
 
                 <TextView
                     android:id="@+id/account"
                     android:layout_width="100dip"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_board_popup_padding"
-                    android:textSize="@dimen/main_board_popup_font_size" />
+                    android:textSize="@dimen/main_board_font_size" />
 
                 <ImageView
                     android:id="@+id/popuparrow"
@@ -48,13 +47,16 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <ImageButton
+            <TextView
                 android:id="@+id/refresh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="88dip"
+                android:layout_height="36dip"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="5dip"
-                android:background="@drawable/refresh_normal" />
+                android:layout_centerVertical="true"
+                android:text="@string/get_new_status"
+                android:gravity="center"
+                android:background="@drawable/button_normal" />
         </RelativeLayout>
 
         <FrameLayout
@@ -85,7 +87,6 @@
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
                 android:checked="true"
-                android:drawableTop="@drawable/icon_3_n"
                 android:tag="radio_button_status"
                 android:text="@string/main_status" />
 
@@ -93,7 +94,6 @@
                 android:id="@+id/radio_button_map"
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
-                android:drawableTop="@drawable/icon_1_n"
                 android:tag="radio_button_map"
                 android:text="@string/main_map" />
 
@@ -101,7 +101,6 @@
                 android:id="@+id/radio_button_message"
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
-                android:drawableTop="@drawable/icon_2_n"
                 android:tag="radio_button_message"
                 android:text="@string/main_message" />
 
@@ -109,7 +108,6 @@
                 android:id="@+id/radio_button_setting"
                 style="@style/main_tab_bottom"
                 android:layout_marginTop="2.0dip"
-                android:drawableTop="@drawable/icon_4_n"
                 android:tag="radio_button_setting"
                 android:text="@string/main_setting" />
         </RadioGroup>

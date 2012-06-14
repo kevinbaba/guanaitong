@@ -2,7 +2,7 @@ package com.yapai.guanaitong.struct;
 
 import java.io.Serializable;
 
-public class Message implements Serializable{
+public class MessageContext implements Serializable{
 	private static final long serialVersionUID = -5372920398604536268L;
 	
 	private int msgID;

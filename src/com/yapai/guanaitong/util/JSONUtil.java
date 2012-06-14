@@ -43,10 +43,10 @@ public class JSONUtil {
 	private final static String SAFEREGIONIN = "safe_region_in";
 
 	//Message
-	private final static String MSGID = "";
-	private final static String RANK = "";
-	private final static String MSG = "";
-	private final static String TIME = "";
+	private final static String MSGID = "id";
+	private final static String RANK = "level";
+	private final static String MSG = "detail";
+	private final static String TIME = "report_time";
 	
 	public static Login json2Login(String json) throws JSONException{
 		Login login = new Login();
@@ -119,12 +119,13 @@ public class JSONUtil {
 		return st;
 	}
 	
-	public static List<Message> json2MessageList(String json) throws JSONException{
-		List<Message> msgList = new ArrayList<Message>();
+	public static List<MessageContext> json2MessageContextList(String json) throws JSONException{
+		if(json == null) return null;
+		List<MessageContext> msgList = new ArrayList<MessageContext>();
 		JSONArray jsonArray = new JSONArray(json);
 		for(int i=0; i< jsonArray.length(); i++){
 			JSONObject jsonObject=jsonArray.getJSONObject(i);
-			Message msg = new Message();
+			MessageContext msg = new MessageContext();
 			msg.setMsgID(jsonObject.getInt(MSGID));
 			msg.setRank(jsonObject.getInt(RANK));
 			msg.setMsg(jsonObject.getString(MSG));

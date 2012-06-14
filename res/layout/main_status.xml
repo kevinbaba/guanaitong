@@ -1,236 +1,320 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="开机时间"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/poweron"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                  android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="关机时间"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/poweroff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                   android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="当前电量"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/powervolumn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                  android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="静止/活动状态"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                 android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="FM收音机收听时长"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/fmduration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="喜欢的FM频道"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/fmfavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="当天电话呼出次数"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/callout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                 android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="当天电话呼入次数"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/callin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="离开安全区域次数"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/safe_region_out"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                 android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="进入安全区域次数"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/safe_region_in"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
     <LinearLayout
+        android:id="@+id/progress"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical" >
+        android:background="@color/half_transparent_black"
+        android:visibility="invisible" >
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
+            android:layout_height="fill_parent" >
 
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="开机时间" />
-
-            <TextView
-                android:id="@+id/poweron"
+            <ProgressBar
+                android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
+                android:layout_centerInParent="true" />
 
             <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="关机时间" />
-
-            <TextView
-                android:id="@+id/poweroff"
+                android:id="@+id/loadinghint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="当前电量" />
-
-            <TextView
-                android:id="@+id/powervolumn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="静止/活动状态" />
-
-            <TextView
-                android:id="@+id/status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="FM收音机收听时长" />
-
-            <TextView
-                android:id="@+id/fmduration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="喜欢的FM频道" />
-
-            <TextView
-                android:id="@+id/fmfavorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="当天电话呼出次数" />
-
-            <TextView
-                android:id="@+id/callout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="当天电话呼入次数" />
-
-            <TextView
-                android:id="@+id/callin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="离开安全区域次数" />
-
-            <TextView
-                android:id="@+id/safe_region_out"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2px"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_status_margin"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="@dimen/main_status_item_width"
-                android:layout_height="wrap_content"
-                android:text="进入安全区域次数" />
-
-            <TextView
-                android:id="@+id/safe_region_in"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..." />
-        </LinearLayout>
+                android:layout_below="@+id/progressBar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dip"
+                android:text="@string/loading_status"
+                android:textColor="#ffffffff" />
+        </RelativeLayout>
     </LinearLayout>
 
-</ScrollView>
+</FrameLayout>

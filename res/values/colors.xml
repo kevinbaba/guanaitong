@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>  
     <color name="default_background_color">#ffbbbbff</color>
-	<color name="main_board_title_color">#ff8888ff</color>
+	<color name="main_board_title_color1">#ff8888ff</color>
+	<color name="main_board_title_color2">#ff444488</color>
 	<color name="main_board_title_popup_color">#ff444488</color>
 	<color name="transparent">#00000000</color>
 	<color name="half_transparent_black">#88000000</color>
 	<color name="half_transparent_white">#88ffffff</color>
-	<color name="button_normal">#ff8888ff</color>
-	<color name="button_pressed">#ff444488</color>
+	<color name="button_normal">#ff00a8ff</color>
+	<color name="button_pressed">#fffb8e07</color>
+	<color name="main_status_entry_color">#ff000000</color>
+	<color name="main_status_status_color">#ff000000</color>
 </resources>

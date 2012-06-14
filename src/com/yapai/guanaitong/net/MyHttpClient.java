@@ -22,6 +22,7 @@ import android.util.Log;
 
 import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.util.Config;
+import com.yapai.guanaitong.util.Util;
 
 public class MyHttpClient { 
 	public DefaultHttpClient mHttpClient;
@@ -32,6 +33,9 @@ public class MyHttpClient {
 	final String GET_PASSWORD_TOKEN_URL = Config.CLIENT_GET_PASSWORD_TOKEN_URL;
 	final String STATUS_URL = Config.CLIENT_STATUS_URL;
 	public String WARD_CHANGE_LOGIN = Config.WARD_CHANGE_LOGIN;
+	public String GET_NEW_STATUS = Config.GET_NEW_STATUS;
+	private final String GET_MESSAGE = Config.GET_MESSAGE;
+	private final String GET_MESSAGE_COUNT = Config.GET_MESSAGE_COUNT;
 	
 	public static Cookie cookie = null; 
 	Context mContext;
@@ -58,6 +62,15 @@ public class MyHttpClient {
 	public String getUserStatus(){
 		return connectGetString(null, STATUS_URL);
 	}
+	
+	public String getUserNewStatus(String endTime){
+		Map<String, String> params = null;
+		if(Util.IsStringValuble(endTime)){
+			params = new HashMap<String, String>();
+			params.put("end_time", endTime);
+		}
+		return connectGetString(params, GET_NEW_STATUS);
+	}
 	//Status end----------------------------------------------------
 	
 	//MainBoard ----------------------------------------------------
@@ -67,6 +80,19 @@ public class MyHttpClient {
 		return connectGetString(params, WARD_CHANGE_LOGIN);
 	}
 	//MainBoard end----------------------------------------------------
+	
+	//MainMessage ----------------------------------------------------
+	public String getMessage(int page, int count){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("p", String.valueOf(page));
+		params.put("count", String.valueOf(count));
+		return connectGetString(params, GET_MESSAGE);
+	}
+	
+	public String getMessageCount(){
+		return connectGetString(null, GET_MESSAGE_COUNT);
+	}
+	//MainMessage end----------------------------------------------------
 	
 	//common ---------------------------------------------------------
 	public boolean downLoadFile(String url, String name){

@@ -58,6 +58,7 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 	
 //	String URL_INDEX = "file:///android_asset/index.html";
 	String URL_INDEX = Config.MAP_URL_INDEX;
+	String MAP_URL_TRACK = Config.MAP_URL_TRACK;
 	
 	int width, height;
 	private String mCurUrl;
@@ -198,12 +199,19 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 		mBr = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "-------------onReceive");
-				loadURL(wv, mCurUrl);
+				Log.d(TAG, "-------------onReceive:"+intent.getAction());
+				String action = intent.getAction();
+				if(action.equals(MainBoard.ACTION_WARD_CHANGE))
+					loadURL(wv, mCurUrl);
+				else if(action.equals(MainBoard.ACTION_REFRESH)
+						&& mProgress.getVisibility() != View.VISIBLE)
+					loadURL(wv, mCurUrl);
 			}
 		};
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE)); 
+		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
+		
+		MainBoard.setRefreshStatus(View.VISIBLE, getResources().getString(R.string.refresh_map));
 		
 		super.onResume();
 	}
@@ -268,7 +276,8 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 			mLoadingHint = (String) getResources().getText(R.string.getting_newest_pos);
 			handler.sendEmptyMessage(DISPLAY_PROGRESSBAR);
 		}else if(v == path){
-			getNewPositionTest();
+	        String url = MAP_URL_TRACK+"?"+"width="+width+"&height="+height;
+			loadURL(wv, url);
 		}else if(v == range){
 			Log.d(TAG, "333");
 		}
@@ -276,10 +285,6 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 
 	public void getNewPosition(){
 		wv.loadUrl("javascript:api_ajax.getNewPosition()");
-	}
-	
-	public void getNewPositionTest(){
-		wv.loadUrl("javascript:api_ajax.getNewPositionTest()");
 	}
  
 	private class Contact {
@@ -301,6 +306,14 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 //			newestPos.setText(mContext.getResources().getText(R.string.newest_pos));
 			handler.sendEmptyMessage(HIDE_PROGRESSBAR);
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		Log.d(TAG, "-------onBackPressed-----");
+		moveTaskToBack(true);
+		this.getParent().moveTaskToBack(true);
+		// super.onBackPressed();
 	}
 
 }

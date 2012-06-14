@@ -1,15 +1,49 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
-        
+
         <ListView
             android:id="@+id/android:list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:cacheColorHint="@color/transparent" >
         </ListView>
-		
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/half_transparent_black"
+        android:visibility="invisible" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:id="@+id/loadinghint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progressBar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dip"
+                android:text="@string/loading_message"
+                android:textColor="#ffffffff" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</FrameLayout>

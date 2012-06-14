@@ -21,6 +21,7 @@ import com.yapai.guanaitong.util.Util;
 import android.app.TabActivity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
@@ -57,7 +58,7 @@ public class MainBoard extends TabActivity {
 	private TextView account;
 	private ImageView header;
 	private ImageView popuparrow;
-	private static ImageButton refresh;
+	private static TextView refresh;
 	public static final String TAB_MAP = "tabMap";
 	public static final String TAB_MES = "tabMes";
 	public static final String TAB_SET = "tabSet";
@@ -83,7 +84,11 @@ public class MainBoard extends TabActivity {
 	public static final String ACTION_REFRESH = "action.refresh";
 	public final String SWITCH_WARD_SUCCESS = "SUCCESS";
 	public final String SWITCH_WARD_ERROR = "ERROR";
-
+	public final String POSITION = "position";
+	
+	public final int MSG_SWITCH_WARD = 0;
+	public final int MSG_GOT_CUR_HEAD = 1;
+	
 	private void safeReleaseCursor(Cursor cursor) {
 		cursor.close();
 		cursor = null;
@@ -111,7 +116,9 @@ public class MainBoard extends TabActivity {
 		return null;
 	}
 	
-	public void saveHead2Db(final String account, final String headPath) {
+	public void prepareData(final String account, final String headPath, final String name) {
+		accout2Name.put(account, name);
+		accout2HeadImg.put(account, getAccountHead(account));
 		if (!Util.IsStringValuble(headPath))
 			return;
 		Cursor cursor = mLoginDb
@@ -137,7 +144,9 @@ public class MainBoard extends TabActivity {
 						mLoginDb.insert(account, "", headPath, saveName);
 					}
 					accout2HeadImg.put(account, getAccountHead(account));
-					//TODO 实时头像更新
+					if(account.equals(mCurAccount)){
+						mHandler.sendEmptyMessage(MSG_GOT_CUR_HEAD);
+					}
 				}
 			}
 		}.start();
@@ -153,7 +162,7 @@ public class MainBoard extends TabActivity {
 		headerAndAcount = (LinearLayout) findViewById(R.id.headerAndAcount);
 		header = (ImageView) findViewById(R.id.header);
 		popuparrow = (ImageView) findViewById(R.id.popuparrow);
-		refresh = (ImageButton) findViewById(R.id.refresh);
+		refresh = (TextView) findViewById(R.id.refresh);
 		account = (TextView) findViewById(R.id.account);
 
 		login = MyApplication.login;
@@ -185,9 +194,7 @@ public class MainBoard extends TabActivity {
 					String gender = lw.getGender();
 					if (!mCurAccount.equals(phone)) {
 						accout2Id.put(phone, id);
-						accout2Name.put(phone, nickName);
-						saveHead2Db(phone, head);
-						accout2HeadImg.put(phone, getAccountHead(phone));
+						prepareData(phone, head, nickName);
 					} else {
 						if (Util.IsStringValuble(nickName)) { // 如果是家庭组登陆，使用nickName
 							mCurName = nickName;
@@ -200,8 +207,8 @@ public class MainBoard extends TabActivity {
 				if (LWList.size() > 1)
 					popuparrow.setVisibility(View.VISIBLE);
 			}
-			saveHead2Db(mCurAccount, headLwp);
-			accout2HeadImg.put(mCurAccount, getAccountHead(mCurAccount));
+			prepareData(mCurAccount, headLwp, mCurName);
+			header.setBackgroundDrawable(accout2HeadImg.get(mCurAccount));
 			account.setText(unionString(mCurName, mCurAccount));
 
 		} catch (JSONException e) {
@@ -219,11 +226,9 @@ public class MainBoard extends TabActivity {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					((ImageButton) v).setImageDrawable(getResources()
-							.getDrawable(R.drawable.refresh_pressed));
+					((TextView) v).setBackgroundResource(R.drawable.button_pressed);
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton) v).setImageDrawable(getResources()
-							.getDrawable(R.drawable.refresh_normal));
+					((TextView) v).setBackgroundResource(R.drawable.button_normal);
 				}
 				return false;
 			}
@@ -232,7 +237,8 @@ public class MainBoard extends TabActivity {
 		headerAndAcount.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (popuparrow.getVisibility() != View.VISIBLE)
+				if (popuparrow.getVisibility() != View.VISIBLE
+						|| popuparrow.isEnabled() == false)
 					return;
 				if (pop == null) {
 					if (adapter == null) {
@@ -287,13 +293,6 @@ public class MainBoard extends TabActivity {
 				}
 			}
 		});
-	}
-
-	public static void setRefreshVisible(boolean visible) {
-		if (visible)
-			refresh.setVisibility(View.VISIBLE);
-		else
-			refresh.setVisibility(View.GONE);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -392,6 +391,7 @@ public class MainBoard extends TabActivity {
 
 		void menuClicked(final int position) {
 			closePopup();
+			popuparrow.setEnabled(false);
 			// 新建线程切换用户
 			new Thread() {
 				public void run() {
@@ -400,9 +400,14 @@ public class MainBoard extends TabActivity {
 					MyHttpClient mhc = new MyHttpClient(MainBoard.this);
 					String result = mhc.switchward(id);
 					if (SWITCH_WARD_SUCCESS.equals(result)) {
-						mHandler.sendEmptyMessage(position);
+						Message msg = new Message();
+						msg.what = MSG_SWITCH_WARD;
+						Bundle data = new Bundle();
+						data.putInt(POSITION, position);
+						msg.setData(data);
+						mHandler.sendMessage(msg);
 					} else if (SWITCH_WARD_ERROR.equals(result)) {
-						mHandler.sendEmptyMessage(-1);
+						mHandler.sendEmptyMessage(MSG_SWITCH_WARD);
 					}
 				}
 			}.start();
@@ -424,27 +429,35 @@ public class MainBoard extends TabActivity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case -1:// 失败
-				Toast.makeText(
-						MainBoard.this,
-						MainBoard.this.getResources().getString(
-								R.string.switch_ward_error), Toast.LENGTH_SHORT)
-						.show();
-				break;
-			default: // 服务端切换用户成功，设置界面
-				String act = accounts[msg.what].toString();
-				String name = accout2Name.get(act);
-				account.setText(unionString(name, act));
-				header.setBackgroundDrawable(accout2HeadImg.get(act));
-				// 更新
-				accout2Id.put(mCurAccount, mCurID);
-				mCurAccount = act;
-				mCurID = accout2Id.get(act);
-				accout2Id.remove(act);
+			case MSG_SWITCH_WARD:
+				Bundle data = msg.getData();
+				if(data == null){ //失败
+					Toast.makeText(
+							MainBoard.this,
+							MainBoard.this.getResources().getString(
+									R.string.switch_ward_error), Toast.LENGTH_SHORT)
+							.show();
+				}else{// 服务端切换用户成功，设置界面
+					int position = data.getInt(POSITION);
+					String act = accounts[position].toString();
+					String name = accout2Name.get(act);
+					account.setText(unionString(name, act));
+					header.setBackgroundDrawable(accout2HeadImg.get(act));
+					// 更新
+					accout2Id.put(mCurAccount, mCurID);
+					mCurAccount = act;
+					mCurID = accout2Id.get(act);
+					accout2Id.remove(act);
 
-				sendBroadcastWardChange();
-				// 这里用于跳到其它Activity时判断是否用户已经发生变化
-				MyApplication.account = mCurAccount;
+					sendBroadcastWardChange();
+					// 这里用于跳到其它Activity时判断是否用户已经发生变化
+					MyApplication.account = mCurAccount;
+					
+					popuparrow.setEnabled(true);
+				}
+				break;
+			case MSG_GOT_CUR_HEAD: 
+				header.setBackgroundDrawable(accout2HeadImg.get(mCurAccount));
 				break;
 			}
 		}
@@ -456,6 +469,11 @@ public class MainBoard extends TabActivity {
 		intent.setAction(ACTION_WARD_CHANGE);
 		intent.putExtra("ward", mCurAccount);
 		MainBoard.this.sendBroadcast(intent);
+	}
+	
+	public static void setRefreshStatus(int visibility, String hint){
+		refresh.setVisibility(visibility);
+		refresh.setText(hint);
 	}
 
 	public void sendBroadcastRefresh() {
@@ -471,7 +489,7 @@ public class MainBoard extends TabActivity {
 			pop = null;
 		}
 	}
-
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		closePopup();
@@ -486,4 +504,5 @@ public class MainBoard extends TabActivity {
 		union += str2;
 		return union;
 	}
+	
 }

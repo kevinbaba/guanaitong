@@ -13,6 +13,7 @@ public class MessageDb {
 	static MessageDb instanc;
 	private SQLiteDatabase mdb;
 	
+	public static final String ACCOUNT = "account";
 	public static final String ID="_id";
 	public static final String RANK="rank";
 	public static final String MSG="msg";
@@ -23,7 +24,8 @@ public class MessageDb {
 	public final static String TABLE_MESSAGE_CREATE_SQL=
 			" create table if not exists "+TABLE_MESSAGE_NAME
 			+" ( "
-			+ID+" integer primary key, "
+			+ACCOUNT+" text primary key, "
+			+ID+" integer , "
 			+RANK+" integer not null, "
 			+MSG+" text not null, "
 			+TIME+" text not null "
@@ -41,8 +43,9 @@ public class MessageDb {
 		return instanc;
 	}
 	
-	public long insert(int id,int rank, String msg, String time){
+	public long insert(String account, int id,int rank, String msg, String time){
 		ContentValues values=new ContentValues();
+		values.put(ACCOUNT, account);
 		values.put(ID, id);
 		values.put(RANK, rank);
 		values.put(MSG, msg);
@@ -51,12 +54,13 @@ public class MessageDb {
 	}
 		
 //	删除对应id的所有记录
-	public boolean delete(int id){
+	public boolean delete(String account, int id){
+		//TODO 
 		return mdb.delete(TABLE_MESSAGE_NAME, ID+"="+id, null)>0;
 	}
 	
-	public Cursor getCursor(String[] columns){
-		Cursor mCursor=mdb.query(TABLE_MESSAGE_NAME, columns, null, null, null, null, ID+" desc");
+	public Cursor getCursor(String[] columns, String account){
+		Cursor mCursor=mdb.query(TABLE_MESSAGE_NAME, columns, ACCOUNT+"="+account, null, null, null, ID+" desc");
 		if(mCursor!=null&&!mCursor.isFirst())
 			mCursor.moveToFirst();
 		return mCursor;

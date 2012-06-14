@@ -165,18 +165,14 @@ public class Login extends Activity implements OnClickListener,
 	void setUIenable(boolean enable) {
 		if (enable) {
 			mAccountsEditText.setEnabled(true);
-			mAccountsEditText.setFocusable(true);
 			mPassEditText.setEnabled(true);
-			mPassEditText.setFocusable(true);
 			mLoginButton.setEnabled(true);
 			mRemPassCheck.setClickable(true);
 			mAutoLoadCheck.setClickable(true);
 			mPopupImageButton.setClickable(true);
 		} else {
 			mAccountsEditText.setEnabled(false);
-			mAccountsEditText.setFocusable(false);
 			mPassEditText.setEnabled(false);
-			mPassEditText.setFocusable(false);
 			mLoginButton.setEnabled(false);
 			mRemPassCheck.setClickable(false);
 			mAutoLoadCheck.setClickable(false);
@@ -318,8 +314,6 @@ public class Login extends Activity implements OnClickListener,
 		isLoginOut = intent.getBooleanExtra(ISLOGINOUT, false);
 		Log.d(TAG, "isLoginOut:" + isLoginOut);
 		setContentView(R.layout.login);
-		db = LoginDb.getDBInstanc(this);
-		prepareAccountsList();
 		mRelative = (RelativeLayout) findViewById(R.id.mRelativeLayout);
 		mPopupImageButton = (ImageButton) findViewById(R.id.popupwindow);
 		mRemPassCheck = (CheckBox) findViewById(R.id.login_cb_savepwd);
@@ -334,6 +328,8 @@ public class Login extends Activity implements OnClickListener,
 		mPopupImageButton.setOnClickListener(this);
 		mLoginButton.setOnClickListener(this);
 
+		db = LoginDb.getDBInstanc(this);
+		prepareAccountsList();
 		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 		String lastLogin = settings.getString(LASTLOGIN, null);
 		Boolean remember_pwd = settings.getBoolean(REMEMBER_PWD, true);
@@ -373,7 +369,8 @@ public class Login extends Activity implements OnClickListener,
 				account = cursor.getString(accountsindex);
 				pass = cursor.getString(passindex);
 				head = cursor.getString(headindex);
-				mAccount2Pwd.put(account, pass);
+				if(Util.IsStringValuble(pass))
+					mAccount2Pwd.put(account, pass);
 				if (Util.IsStringValuble(head)) {
 					try {
 						FileInputStream fis = openFileInput(head);
@@ -385,6 +382,9 @@ public class Login extends Activity implements OnClickListener,
 					}
 				}
 			} while (cursor.moveToNext());
+		}
+		if(mAccount2Pwd.size() == 0){
+			mPopupImageButton.setEnabled(false);
 		}
 		safeReleaseCursor(cursor);
 	}

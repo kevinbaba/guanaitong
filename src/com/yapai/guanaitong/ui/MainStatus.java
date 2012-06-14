@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,8 @@ public class MainStatus extends Activity {
 	final String TAG = "MainStatus";
 	final int LOAD_COMPLETE = 0;
 	final int LOAD_ERROR = 1;
+	
+	final String STATUS_NOTREADY = "NOT_READY";
 	
 	Status st;
 	TextView poweron;
@@ -37,13 +41,14 @@ public class MainStatus extends Activity {
 	TextView callin;
 	TextView safe_region_out;
 	TextView safe_region_in;
+	LinearLayout progress;
+	TextView loadinghint;
 	
 	BroadcastReceiver mBr;
 	public String account;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_status);
 		poweron = (TextView)findViewById(R.id.poweron);
@@ -56,6 +61,8 @@ public class MainStatus extends Activity {
 		callin = (TextView)findViewById(R.id.callin);
 		safe_region_out = (TextView)findViewById(R.id.safe_region_out);
 		safe_region_in = (TextView)findViewById(R.id.safe_region_in);
+		progress = (LinearLayout)findViewById(R.id.progress);
+		loadinghint = (TextView)findViewById(R.id.loadinghint);
 	}
 	
 	protected void onResume() {
@@ -66,12 +73,18 @@ public class MainStatus extends Activity {
 		mBr = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "-------------onReceive");
-				getUserStatus();
+				Log.d(TAG, "-------------onReceive:"+intent.getAction());
+				String action = intent.getAction();
+				if(action.equals(MainBoard.ACTION_WARD_CHANGE))
+					getUserStatus();
+				else if(action.equals(MainBoard.ACTION_REFRESH))
+					getUserNewStatus();
 			}
 		};
-		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE)); 
+		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
+		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
+		
+		MainBoard.setRefreshStatus(View.VISIBLE, getResources().getString(R.string.get_new_status));
 		
 		super.onResume();
 	}
@@ -103,11 +116,54 @@ public class MainStatus extends Activity {
 						Toast.LENGTH_SHORT).show();
 				break;
 			}
+			progress.setVisibility(View.INVISIBLE);
 			super.handleMessage(msg);
 		}
 	};
-
+	
+	void getUserNewStatus() {
+		if(progress.getVisibility() == View.VISIBLE)
+			return;
+		loadinghint.setText(getResources().getString(R.string.getting_newest_status));
+		progress.setVisibility(View.VISIBLE);
+		new Thread() {
+			@Override
+			public void run() {
+				MyHttpClient mhc = new MyHttpClient(MainStatus.this);
+				String endTime = mhc.getUserNewStatus(null);
+				if(!Util.IsStringValuble(endTime)){
+					mHandler.sendEmptyMessage(LOAD_ERROR);
+					return;
+				}
+				while(true){
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						Log.d(TAG, ""+e);
+					}
+					String result = mhc.getUserNewStatus(endTime);
+					if(!Util.IsStringValuble(result)){
+						mHandler.sendEmptyMessage(LOAD_ERROR);
+						break;
+					}
+					if(STATUS_NOTREADY.equals(result)){
+						continue;
+					}
+					try {
+						st = JSONUtil.json2Status(result);
+						mHandler.sendEmptyMessage(LOAD_COMPLETE);
+					} catch (JSONException e) {
+						Log.e(TAG, "" + e);
+						mHandler.sendEmptyMessage(LOAD_ERROR);
+					}
+					break;
+				}
+			}
+		}.start();
+	}
+	
 	void getUserStatus() {
+		progress.setVisibility(View.VISIBLE);
 		new Thread() {
 			@Override
 			public void run() {
@@ -127,5 +183,13 @@ public class MainStatus extends Activity {
 				super.run();
 			}
 		}.start();
+	}
+
+	@Override
+	public void onBackPressed() {
+		Log.d(TAG, "-------onBackPressed-----");
+		moveTaskToBack(true);
+		this.getParent().moveTaskToBack(true);
+		// super.onBackPressed();
 	}
 }
