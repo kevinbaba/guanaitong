@@ -55,9 +55,9 @@ public class MainBoard extends TabActivity {
 	private RadioGroup group;
 	private TabHost tabHost;
 	private LinearLayout headerAndAcount;
-	private TextView account;
-	private ImageView header;
-	private ImageView popuparrow;
+	private TextView accountView;
+	private ImageView headerView;
+	private ImageView popuparrowView;
 	private static TextView refresh;
 	public static final String TAB_MAP = "tabMap";
 	public static final String TAB_MES = "tabMes";
@@ -65,19 +65,18 @@ public class MainBoard extends TabActivity {
 	public static final String TAB_STATUS = "tabStatus";
 
 	LoginDb mLoginDb;
-	Object[] accounts;
 	String mCurAccount;
 	String mCurName;
 	int mCurID;
-	BitmapDrawable mCurHeadImg;
-	public HashMap<String, Integer> accout2Id;
-	public HashMap<String, String> accout2Name;
 	public HashMap<String, BitmapDrawable> accout2HeadImg;
 	public myAdapter adapter;
 	ListView listView;
 	public PopupWindow pop;
+	
+	LoginWardProfile mLwp;
+	public static List<LoginWards> mLwList;
 
-	com.yapai.guanaitong.struct.Login login = null;
+	com.yapai.guanaitong.struct.LoginStruct login = null;
 	final String WARD = "ward";
 	final String GUARDIAN = "guardian";
 	public static final String ACTION_WARD_CHANGE = "action.ward.change";
@@ -95,6 +94,8 @@ public class MainBoard extends TabActivity {
 	}
 	
 	BitmapDrawable getAccountHead(String account){
+		BitmapDrawable exist = accout2HeadImg.get(account);
+		if(exist != null)	return exist; 
 		Cursor cursor = mLoginDb
 				.getCursor(null, new String[] { account });
 		final boolean accoutExists = cursor.getCount() > 0;
@@ -107,6 +108,7 @@ public class MainBoard extends TabActivity {
 					FileInputStream fis = openFileInput(head);
 					InputStream is = new BufferedInputStream(fis, 8192);
 					BitmapDrawable bmpD = new BitmapDrawable(is);
+					accout2HeadImg.put(account, bmpD);
 					return bmpD;
 				} catch (IOException e) {
 					Log.e(TAG, "" + e);
@@ -117,8 +119,6 @@ public class MainBoard extends TabActivity {
 	}
 	
 	public void prepareData(final String account, final String headPath, final String name) {
-		accout2Name.put(account, name);
-		accout2HeadImg.put(account, getAccountHead(account));
 		if (!Util.IsStringValuble(headPath))
 			return;
 		Cursor cursor = mLoginDb
@@ -143,7 +143,6 @@ public class MainBoard extends TabActivity {
 					} else {
 						mLoginDb.insert(account, "", headPath, saveName);
 					}
-					accout2HeadImg.put(account, getAccountHead(account));
 					if(account.equals(mCurAccount)){
 						mHandler.sendEmptyMessage(MSG_GOT_CUR_HEAD);
 					}
@@ -160,56 +159,48 @@ public class MainBoard extends TabActivity {
 
 		group = (RadioGroup) findViewById(R.id.main_radio);
 		headerAndAcount = (LinearLayout) findViewById(R.id.headerAndAcount);
-		header = (ImageView) findViewById(R.id.header);
-		popuparrow = (ImageView) findViewById(R.id.popuparrow);
+		headerView = (ImageView) findViewById(R.id.header);
+		popuparrowView = (ImageView) findViewById(R.id.popuparrow);
 		refresh = (TextView) findViewById(R.id.refresh);
-		account = (TextView) findViewById(R.id.account);
+		accountView = (TextView) findViewById(R.id.account);
 
 		login = MyApplication.login;
-		accout2Id = new HashMap<String, Integer>();
-		accout2Name = new HashMap<String, String>();
 		accout2HeadImg = new HashMap<String, BitmapDrawable>();
 		try {
-			LoginWardProfile lwp = JSONUtil.json2LoginWardProfile(login
+			mLwp = JSONUtil.json2LoginWardProfile(login
 					.getWard_profile());
 
 			mCurID = login.getIdentity();
-			mCurName = lwp.getName();
-			mCurAccount = lwp.getPhone();
+			mCurName = mLwp.getName();
+			mCurAccount = mLwp.getPhone();
 			MyApplication.account = mCurAccount;
-			String headLwp = lwp.getHead_48();
+			String headLwp = mLwp.getHead_48();
 
 			if (GUARDIAN.equals(login.getLogin_by())) { // 如果是家庭组帐户登陆
 			// LoginGuardian lg =
 			// JSONUtil.json2LoginGuardian(login.getGuardian());
-				List<LoginWards> LWList = JSONUtil.json2LoginWardsList(login
+				mLwList = JSONUtil.json2LoginWardsList(login
 						.getWards());
-				for (int i = 0; i < LWList.size(); i++) {
-					LoginWards lw = LWList.get(i);
+				for (int i = 0; i < mLwList.size(); i++) {
+					LoginWards lw = mLwList.get(i);
 					String phone = lw.getPhone();
 					int id = lw.getId();
 					int status = lw.getStatus();
 					String nickName = lw.getNickName();
 					String head = lw.getHead_48();
 					String gender = lw.getGender();
-					if (!mCurAccount.equals(phone)) {
-						accout2Id.put(phone, id);
-						prepareData(phone, head, nickName);
-					} else {
+					if (mCurAccount.equals(phone)) {
 						if (Util.IsStringValuble(nickName)) { // 如果是家庭组登陆，使用nickName
 							mCurName = nickName;
 						}
-						if (Util.IsStringValuble(head)) { // 同上
-							headLwp = head;
-						}
 					}
+					prepareData(phone, head, nickName);
 				}
-				if (LWList.size() > 1)
-					popuparrow.setVisibility(View.VISIBLE);
+				if (mLwList.size() > 1)
+					popuparrowView.setVisibility(View.VISIBLE);
 			}
-			prepareData(mCurAccount, headLwp, mCurName);
-			header.setBackgroundDrawable(accout2HeadImg.get(mCurAccount));
-			account.setText(unionString(mCurName, mCurAccount));
+			headerView.setBackgroundDrawable(getAccountHead(mCurAccount));
+			accountView.setText(unionString(mCurName, mCurAccount));
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -237,8 +228,8 @@ public class MainBoard extends TabActivity {
 		headerAndAcount.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (popuparrow.getVisibility() != View.VISIBLE
-						|| popuparrow.isEnabled() == false)
+				if (popuparrowView.getVisibility() != View.VISIBLE
+						|| popuparrowView.isEnabled() == false)
 					return;
 				if (pop == null) {
 					if (adapter == null) {
@@ -249,7 +240,6 @@ public class MainBoard extends TabActivity {
 						listView.setAdapter(adapter);
 						pop.showAsDropDown(headerAndAcount, 0, 1);
 					} else {
-						accounts = accout2Id.keySet().toArray();
 						adapter.notifyDataSetChanged();
 						pop = new PopupWindow(listView, headerAndAcount
 								.getWidth(), LayoutParams.WRAP_CONTENT);
@@ -325,15 +315,15 @@ public class MainBoard extends TabActivity {
 	// 下拉框Adapter
 	class myAdapter extends BaseAdapter {
 		LayoutInflater mInflater;
+		int mAfterCurAccount;
 
 		public myAdapter() {
 			mInflater = LayoutInflater.from(MainBoard.this);
-			accounts = accout2Id.keySet().toArray();
 		}
 
 		@Override
 		public int getCount() {
-			return accounts.length;
+			return mLwList.size() -1; //除掉当前ward
 		}
 
 		@Override
@@ -347,7 +337,7 @@ public class MainBoard extends TabActivity {
 		}
 
 		@Override
-		public View getView(final int position, View convertView,
+		public View getView(int position, View convertView,
 				ViewGroup parent) {
 			Holder holder = null;
 			if (convertView == null) {
@@ -362,16 +352,24 @@ public class MainBoard extends TabActivity {
 				holder = (Holder) convertView.getTag();
 			}
 			if (holder != null) {
+				if(position == 0)
+					mAfterCurAccount = 0;
+				String phone = mLwList.get(position).getPhone();
+				if(phone.equals(mCurAccount)){
+					mAfterCurAccount = 1;
+				}
+				position += mAfterCurAccount;
 				convertView.setId(position);
 				holder.setId(position);
-				String phone = accounts[position].toString();
-				holder.view.setText(unionString(accout2Name.get(phone), phone));
-				holder.button.setBackgroundDrawable(accout2HeadImg.get(phone));
+				
+				phone = mLwList.get(position).getPhone();
+				holder.view.setText(unionString(mLwList.get(position).getNickName(), phone));
+				holder.button.setBackgroundDrawable(getAccountHead(phone));
 				holder.view.setOnTouchListener(new OnTouchListener() {
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						if (event.getAction() == MotionEvent.ACTION_UP) {
-							menuClicked(position);
+							menuClicked(v.getId());
 						}
 						return true;
 					}
@@ -380,7 +378,7 @@ public class MainBoard extends TabActivity {
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						if (event.getAction() == MotionEvent.ACTION_UP) {
-							menuClicked(position);
+							menuClicked(v.getId());
 						}
 						return true;
 					}
@@ -391,12 +389,11 @@ public class MainBoard extends TabActivity {
 
 		void menuClicked(final int position) {
 			closePopup();
-			popuparrow.setEnabled(false);
+			popuparrowView.setEnabled(false);
 			// 新建线程切换用户
 			new Thread() {
 				public void run() {
-					String act = accounts[position].toString();
-					int id = accout2Id.get(act);
+					int id = mLwList.get(position).getId();
 					MyHttpClient mhc = new MyHttpClient(MainBoard.this);
 					String result = mhc.switchward(id);
 					if (SWITCH_WARD_SUCCESS.equals(result)) {
@@ -439,25 +436,24 @@ public class MainBoard extends TabActivity {
 							.show();
 				}else{// 服务端切换用户成功，设置界面
 					int position = data.getInt(POSITION);
-					String act = accounts[position].toString();
-					String name = accout2Name.get(act);
-					account.setText(unionString(name, act));
-					header.setBackgroundDrawable(accout2HeadImg.get(act));
+					String act = mLwList.get(position).getPhone();
+					String name = mLwList.get(position).getNickName();
+					accountView.setText(unionString(name, act));
+					headerView.setBackgroundDrawable(getAccountHead(mCurAccount));
 					// 更新
-					accout2Id.put(mCurAccount, mCurID);
 					mCurAccount = act;
-					mCurID = accout2Id.get(act);
-					accout2Id.remove(act);
+					mCurID = mLwList.get(position).getId();
+					mCurName = mLwList.get(position).getNickName();
 
 					sendBroadcastWardChange();
 					// 这里用于跳到其它Activity时判断是否用户已经发生变化
 					MyApplication.account = mCurAccount;
 					
-					popuparrow.setEnabled(true);
+					popuparrowView.setEnabled(true);
 				}
 				break;
 			case MSG_GOT_CUR_HEAD: 
-				header.setBackgroundDrawable(accout2HeadImg.get(mCurAccount));
+				headerView.setBackgroundDrawable(getAccountHead(mCurAccount));
 				break;
 			}
 		}

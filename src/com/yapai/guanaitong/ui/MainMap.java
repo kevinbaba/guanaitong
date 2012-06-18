@@ -160,7 +160,7 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 //		wv.setBackgroundResource(R.drawable.default_bg);
 		
         wv.getSettings().setJavaScriptEnabled(true);//可用JS
-//        wv.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //打开cache
+        wv.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //打开cache
         wv.addJavascriptInterface(new Contact(this), "contact");
         wv.setScrollBarStyle(/*View.SCROLLBARS_OUTSIDE_OVERLAY*/0);//滚动条风格，为0就是不给滚动条留空间，滚动条覆盖在网页上
         wv.setWebViewClient(new WebViewClient(){   
@@ -178,6 +178,7 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
                 super.onProgressChanged(view, progress);   
             }
         });
+		clearCache();
 	}
 	
     public void loadURL(final WebView view,final String url){
@@ -220,31 +221,28 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 		unregisterReceiver(mBr);
 		super.onPause();
 	}
-	
-    @Override
-    protected void onDestroy() {
-    	clearCache();
-    	super.onDestroy();
-    }
-	
-    //每隔"WEBVIEW_CACHE_TIME"时间清理一次cache
+
 	private void clearCache() {
-		SharedPreferences settings=getPreferences(Activity.MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-        long lastClearTime = settings.getLong(LAST_CLEAR_TIME, 0);
-        long now = System.currentTimeMillis();
-        if (lastClearTime == 0) {
-        	lastClearTime = now;
-        	editor.putLong(LAST_CLEAR_TIME, now);
-        	editor.commit();
-        }
-        Log.d(TAG, "now:"+now+",lastClearTime:"+lastClearTime+" WEBVIEW_CACHE_TIME:"+WEBVIEW_CACHE_TIME);
-        if (now - lastClearTime > WEBVIEW_CACHE_TIME){
-        	Log.d(TAG, "clearCache...");
-        	wv.clearCache(true);
-        	editor.putLong(LAST_CLEAR_TIME, now);
-        	editor.commit();
-        }
+		if(MyApplication.needClearCache) {
+			wv.clearCache(true);
+		}
+//	    //每隔"WEBVIEW_CACHE_TIME"时间清理一次cache
+//		SharedPreferences settings=getPreferences(Activity.MODE_PRIVATE);
+//		SharedPreferences.Editor editor = settings.edit();
+//        long lastClearTime = settings.getLong(LAST_CLEAR_TIME, 0);
+//        long now = System.currentTimeMillis();
+//        if (lastClearTime == 0) {
+//        	lastClearTime = now;
+//        	editor.putLong(LAST_CLEAR_TIME, now);
+//        	editor.commit();
+//        }
+//        Log.d(TAG, "now:"+now+",lastClearTime:"+lastClearTime+" WEBVIEW_CACHE_TIME:"+WEBVIEW_CACHE_TIME);
+//        if (now - lastClearTime > WEBVIEW_CACHE_TIME){
+//        	Log.d(TAG, "clearCache...");
+//        	wv.clearCache(true);
+//        	editor.putLong(LAST_CLEAR_TIME, now);
+//        	editor.commit();
+//        }
 	}
 	
 	@Override

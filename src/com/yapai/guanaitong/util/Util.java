@@ -2,7 +2,9 @@ package com.yapai.guanaitong.util;
 
 public class Util {
 	public static boolean IsStringValuble(String str){
-		return str != null && str.length() != 0 && ! "null".equals(str) && ! "NULL".equals(str);
+		return str != null && str.length() != 0 
+				&& ! "null".equals(str) && ! "NULL".equals(str)
+				&& ! "NEED_LOGIN".equals(str) ;
 	}
 	
 	public static String getSuffix(String path) {

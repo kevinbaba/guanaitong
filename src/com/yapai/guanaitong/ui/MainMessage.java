@@ -11,7 +11,7 @@ import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.db.MessageDb;
 import com.yapai.guanaitong.net.MyHttpClient;
-import com.yapai.guanaitong.struct.MessageContext;
+import com.yapai.guanaitong.struct.MessageStruct;
 import com.yapai.guanaitong.util.Config;
 import com.yapai.guanaitong.util.JSONUtil;
 import com.yapai.guanaitong.util.Util;
@@ -63,7 +63,7 @@ public class MainMessage extends ListActivity {
 
 	private final int GET_MSG_ONCETIME = 20;
 	public int mGotpageNum = 0;
-	List<MessageContext> mMsgList;
+	List<MessageStruct> mMsgList;
 	int mNewMessageCount;
 	public final int GET_MSG_SUCCESS = 0;
 	public final int GET_MSG_ERROR = 1;
@@ -119,7 +119,7 @@ public class MainMessage extends ListActivity {
 		db = MessageDb.getDBInstanc(this);
 		mListView = getListView();
 		progress = (LinearLayout) findViewById(R.id.progress);
-		mMsgList = new ArrayList<MessageContext>();
+		mMsgList = new ArrayList<MessageStruct>();
 
 		initView();
 
@@ -277,7 +277,7 @@ public class MainMessage extends ListActivity {
 		}
 	};
 
-	private static int getMessageCount(Context context) {
+	public static int getMessageCount(Context context) {
 		MyHttpClient mhc = new MyHttpClient(context);
 		String result = mhc.getMessageCount();
 		if (!Util.IsStringValuble(result)) {
@@ -296,7 +296,7 @@ public class MainMessage extends ListActivity {
 		MyHttpClient mhc = new MyHttpClient(MainMessage.this);
 		String result = mhc.getMessage(page, GET_MSG_ONCETIME);
 		try {
-			List<MessageContext> msgList = JSONUtil
+			List<MessageStruct> msgList = JSONUtil
 					.json2MessageContextList(result);
 			if (msgList != null) {
 				mMsgList.addAll(msgList);

@@ -14,6 +14,7 @@ import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.db.LoginDb;
 import com.yapai.guanaitong.net.MyHttpClient;
 import com.yapai.guanaitong.service.MessageServer;
+import com.yapai.guanaitong.struct.LoginStruct;
 import com.yapai.guanaitong.util.EncryptUtil;
 import com.yapai.guanaitong.util.JSONUtil;
 import com.yapai.guanaitong.util.Util;
@@ -77,6 +78,7 @@ public class Login extends Activity implements OnClickListener,
 	final String SUCCESSRETURN = "SUCCESS";
 	final String LASTLOGIN = "lastLogin";
 	final String REMEMBER_PWD = "remember_pwd";
+	final String SERVER_VERSION = "server_version";
 	final static String AUTOLOAD = "autoLoad";
 	final String LOADINFO = "result";
 	final String USERID = "userid";
@@ -89,6 +91,7 @@ public class Login extends Activity implements OnClickListener,
 
 	final static String ISLOGINOUT = "isLoginOut";
 	boolean isLoginOut;
+	LoginStruct mLoginStruct = null;
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
@@ -143,7 +146,11 @@ public class Login extends Activity implements OnClickListener,
 
 		// 保存最后登陆的用户
 		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+		if(settings.getInt(SERVER_VERSION, 0) != mLoginStruct.getVersion()){ //删除缓存
+			MyApplication.needClearCache = true;
+		}
 		SharedPreferences.Editor editor = settings.edit();
+		editor.putInt(SERVER_VERSION, mLoginStruct.getVersion());
 		editor.putString(LASTLOGIN, account);
 		editor.putBoolean(REMEMBER_PWD, mRemPassCheck.isChecked());
 		editor.putBoolean(AUTOLOAD, mAutoLoadCheck.isChecked());
@@ -229,15 +236,14 @@ public class Login extends Activity implements OnClickListener,
 					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
 					return;
 				} else {
-					com.yapai.guanaitong.struct.Login login = null;
 					try {
-						login = JSONUtil.json2Login(result);
-						MyApplication.login = login;
+						mLoginStruct = JSONUtil.json2Login(result);
+						MyApplication.login = mLoginStruct;
 					} catch (JSONException e) {
 						Log.e(TAG, "" + e);
 						return;
 					}
-					String info = login.getInfo();
+					String info = mLoginStruct.getInfo();
 					if (SUCCESSRETURN.equals(info)) {
 						Bundle data = new Bundle();
 						data.putString(LOADINFO, info);

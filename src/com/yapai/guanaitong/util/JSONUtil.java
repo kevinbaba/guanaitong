@@ -13,6 +13,7 @@ public class JSONUtil {
 	//Login
 	public final static String STATUS = "status";
 	public final static String INFO = "info";
+	public final static String VERSION = "version";
 	public final static String IDENTITY = "identity";
 	public final static String GROUP_IDENTITY = "group_identity";
 	public final static String LOGINBY = "login_by";
@@ -47,14 +48,17 @@ public class JSONUtil {
 	private final static String RANK = "level";
 	private final static String MSG = "detail";
 	private final static String TIME = "report_time";
+	private final static String MSGWARDID = "id";
+	private final static String MSGCOUNT = "count";
 	
-	public static Login json2Login(String json) throws JSONException{
-		Login login = new Login();
+	public static LoginStruct json2Login(String json) throws JSONException{
+		LoginStruct login = new LoginStruct();
 		JSONObject jsonObject=new JSONObject(json);
 		login.setInfo(jsonObject.getString(INFO));
 		if(! "SUCCESS".equals(login.getInfo())){		//如果登陆不成功
 			return login;
 		}
+		login.setVersion(jsonObject.getInt(VERSION));
 		login.setIdentity(jsonObject.getInt(IDENTITY));
 		login.setGroup_identity(jsonObject.getInt(GROUP_IDENTITY));
 		login.setLogin_by(jsonObject.getString(LOGINBY));
@@ -119,13 +123,13 @@ public class JSONUtil {
 		return st;
 	}
 	
-	public static List<MessageContext> json2MessageContextList(String json) throws JSONException{
+	public static List<MessageStruct> json2MessageContextList(String json) throws JSONException{
 		if(json == null) return null;
-		List<MessageContext> msgList = new ArrayList<MessageContext>();
+		List<MessageStruct> msgList = new ArrayList<MessageStruct>();
 		JSONArray jsonArray = new JSONArray(json);
 		for(int i=0; i< jsonArray.length(); i++){
 			JSONObject jsonObject=jsonArray.getJSONObject(i);
-			MessageContext msg = new MessageContext();
+			MessageStruct msg = new MessageStruct();
 			msg.setMsgID(jsonObject.getInt(MSGID));
 			msg.setRank(jsonObject.getInt(RANK));
 			msg.setMsg(jsonObject.getString(MSG));
@@ -133,6 +137,19 @@ public class JSONUtil {
 			msgList.add(msg);
 		}
 		return msgList;
+	}
+	
+	public static List<MessageCount> json2MessageCount(String json) throws JSONException{
+		if(json == null) return null;
+		List<MessageCount> msgCountList = new ArrayList<MessageCount>();
+		JSONArray jsonArray = new JSONArray(json);
+		for(int i=0; i< jsonArray.length(); i++){
+			JSONObject jsonObject=jsonArray.getJSONObject(i);
+			MessageCount msgCount = new MessageCount();
+			msgCount.setWardId(jsonObject.getInt(MSGWARDID));
+			msgCount.setCount(jsonObject.getInt(MSGCOUNT));
+		}
+		return msgCountList;
 	}
 	
 }

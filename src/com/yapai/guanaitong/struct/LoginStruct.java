@@ -5,10 +5,11 @@ import java.io.Serializable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Login implements Serializable {
+public class LoginStruct implements Serializable {
 	private static final long serialVersionUID = 7499872199515631966L;
 	
 	private String info;
+	private int version;
 	private int identity;
 	private int group_identity;
 	private String login_by;
@@ -57,6 +58,12 @@ public class Login implements Serializable {
 	}
 	public void setIdentity(int identity) {
 		this.identity = identity;
+	}
+	public int getVersion() {
+		return version;
+	}
+	public void setVersion(int version) {
+		this.version = version;
 	}
 	
 }

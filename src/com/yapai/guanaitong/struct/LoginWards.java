@@ -12,6 +12,7 @@ public class LoginWards implements Serializable {
 	private int isDefault;
 	private String head_48;
 	private String gender;
+	private int newMessage;
 	public String getPhone() {
 		return phone;
 	}
@@ -53,6 +54,12 @@ public class LoginWards implements Serializable {
 	}
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+	public int getNewMessage() {
+		return newMessage;
+	}
+	public void setNewMessage(int newMessage) {
+		this.newMessage = newMessage;
 	}
 
 }
