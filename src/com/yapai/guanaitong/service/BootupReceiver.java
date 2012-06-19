@@ -8,9 +8,9 @@ public class BootupReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-//		Intent i = new Intent();
-//		i.setClass(context, MessageServer.class);
-//		context.startService(i);
+		Intent i = new Intent();
+		i.setClass(context, MessageServer.class);
+		context.startService(i);
 
 	}
 

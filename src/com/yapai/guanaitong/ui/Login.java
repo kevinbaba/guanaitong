@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
@@ -30,6 +32,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -72,26 +75,26 @@ public class Login extends Activity implements OnClickListener,
 	TextView mNotify;
 	ListView mListView;
 	InputMethodManager imm;
-	String mPassToken;
 
-	final String TAG = "login";
-	final String SUCCESSRETURN = "SUCCESS";
-	final String LASTLOGIN = "lastLogin";
+	final static String TAG = "login";
+	final static String SUCCESSRETURN = "SUCCESS";
 	final String REMEMBER_PWD = "remember_pwd";
-	final String SERVER_VERSION = "server_version";
+	final String SERVER_VERSION = "server_version"; //为了清楚webview的cache
 	final static String AUTOLOAD = "autoLoad";
-	final String LOADINFO = "result";
+	final static String LOADINFO = "result";
 	final String USERID = "userid";
-	final String ACCOUNT = "account";
-	final String PASSWORD = "password";
+	final static String ACCOUNT = "account";
+	final static String PASSWORD = "password";
 	final String HEAD = "head";
-	final int CONNECTTIMEOUT = 0;
-	final int FAILED = 1;
-	final int SUCCESS = 2;
+	final static int CONNECTTIMEOUT = 0;
+	final static int FAILED = 1;
+	public final static int SUCCESS = 2;
 
-	final static String ISLOGINOUT = "isLoginOut";
+	public final static String ISLOGINOUT = "isLoginOut";
 	boolean isLoginOut;
-	LoginStruct mLoginStruct = null;
+	static LoginStruct mLoginStruct = null;
+    public static BasicCookieStore cookieStore = new BasicCookieStore();
+    public static boolean mlogined = false;
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
@@ -145,18 +148,19 @@ public class Login extends Activity implements OnClickListener,
 		safeReleaseCursor(cursor);
 
 		// 保存最后登陆的用户
+		db.updateLoginTime(account, System.currentTimeMillis());
 		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 		if(settings.getInt(SERVER_VERSION, 0) != mLoginStruct.getVersion()){ //删除缓存
 			MyApplication.needClearCache = true;
 		}
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putInt(SERVER_VERSION, mLoginStruct.getVersion());
-		editor.putString(LASTLOGIN, account);
 		editor.putBoolean(REMEMBER_PWD, mRemPassCheck.isChecked());
 		editor.putBoolean(AUTOLOAD, mAutoLoadCheck.isChecked());
 		editor.commit();
 
 		// 进入主界面,启动服务
+		mlogined = true;
 		Intent intent = new Intent(this, MainBoard.class);
 		try {
 			startActivity(intent);
@@ -209,31 +213,41 @@ public class Login extends Activity implements OnClickListener,
 		}
 	};
 
-	void checkAccount(final String account, final String password) {
+	public static void checkAccount(final Context context, final Handler handler,
+			final String account, final String password) {
 		new Thread() {
 			public void run() {
 				String pass = password;
-				MyHttpClient mhc = new MyHttpClient(Login.this);
+				MyHttpClient mhc = new MyHttpClient(context);
 
-				mPassToken = mhc.GetPasswordToken();
-				Log.d(TAG, "mPassToken:" + mPassToken);
-				if (!Util.IsStringValuble(mPassToken)) {
-					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
+				String passToken = mhc.GetPasswordToken();
+				Log.d(TAG, "passToken:" + passToken);
+				if (!Util.IsStringValuble(passToken)) {
+					handler.sendEmptyMessage(CONNECTTIMEOUT);
 					return;
 				}
 
 				// set Cookie
-				((MyApplication) Login.this.getApplication()).setCookies();
+				List<Cookie> cookies = mhc.mHttpClient.getCookieStore().getCookies();  
+				Cookie cookie;
+				Log.d(TAG, "cookies:"+cookies);
+				if (!cookies.isEmpty()) {  
+				    for (int i = 0; i < cookies.size(); i++) {  
+				        cookie = cookies.get(i);
+				        cookieStore.addCookie(cookie);
+				    }  
+				}
+				mhc.mHttpClient.setCookieStore(cookieStore);
 
 				// 加密密码
 				if (pass.length() != 32) {
 					// 条件：用户密码最大长度必须小于３２位
 					pass = EncryptUtil.md5(pass);
 				}
-				String tokenPass = EncryptUtil.md5(mPassToken + pass);
+				String tokenPass = EncryptUtil.md5(passToken + pass);
 				String result = mhc.CheckAccount(account, tokenPass);
 				if (!Util.IsStringValuble(result)) {
-					mHandler.sendEmptyMessage(CONNECTTIMEOUT);
+					handler.sendEmptyMessage(CONNECTTIMEOUT);
 					return;
 				} else {
 					try {
@@ -252,14 +266,14 @@ public class Login extends Activity implements OnClickListener,
 						Message msg = new Message();
 						msg.setData(data);
 						msg.what = SUCCESS;
-						mHandler.sendMessage(msg);
+						handler.sendMessage(msg);
 					} else {
 						Bundle data = new Bundle();
 						data.putString(LOADINFO, info);
 						Message msg = new Message();
 						msg.setData(data);
 						msg.what = FAILED;
-						mHandler.sendMessage(msg);
+						handler.sendMessage(msg);
 						return;
 					}
 				}
@@ -307,18 +321,40 @@ public class Login extends Activity implements OnClickListener,
 			// 验证用户
 			mNotify.setText("正在验证用户...");
 			setUIenable(false);
-			checkAccount(account, pass);
+			checkAccount(this, mHandler, account, pass);
 			break;
 		}
 	}
 
+	public static String getLastLogin(Context context){
+		String lastLogin="";
+		Cursor cursor =LoginDb.getDBInstanc(context).getCursor4LastTime(null);
+		if (cursor.getCount() > 0) {
+			int accountsindex = cursor.getColumnIndexOrThrow(LoginDb.ACCOUNTS);
+			lastLogin = cursor.getString(accountsindex);
+		}
+		return lastLogin;
+	}
+	
+	public static String getAccountPwd(Context context, String account){
+		String pwd="";
+		Cursor cursor = LoginDb.getDBInstanc(context).getCursor(null, new String[] { account });
+		if (cursor.getCount() > 0) {
+			int pwdindex = cursor.getColumnIndexOrThrow(LoginDb.PASSWORD);
+			pwd = cursor.getString(pwdindex);
+		}
+		return pwd;
+	}
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		Intent intent = getIntent();
 		isLoginOut = intent.getBooleanExtra(ISLOGINOUT, false);
 		Log.d(TAG, "isLoginOut:" + isLoginOut);
+
 		setContentView(R.layout.login);
 		mRelative = (RelativeLayout) findViewById(R.id.mRelativeLayout);
 		mPopupImageButton = (ImageButton) findViewById(R.id.popupwindow);
@@ -337,11 +373,11 @@ public class Login extends Activity implements OnClickListener,
 		db = LoginDb.getDBInstanc(this);
 		prepareAccountsList();
 		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
-		String lastLogin = settings.getString(LASTLOGIN, null);
+		String lastLogin = getLastLogin(this);
 		Boolean remember_pwd = settings.getBoolean(REMEMBER_PWD, true);
 		Boolean autoLoad = settings.getBoolean(AUTOLOAD, true);
 		String lastLoginpwd = mAccount2Pwd.get(lastLogin);
-
+		
 		mRemPassCheck.setChecked(remember_pwd);
 		mAutoLoadCheck.setChecked(autoLoad);
 

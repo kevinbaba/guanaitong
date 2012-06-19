@@ -17,6 +17,7 @@ public class LoginDb {
 	public final static String PASSWORD="pass";
 	public final static String HEAD_PATH = "head_path";
 	public final static String HEADER = "header";
+	public final static String LOGIN_TIME = "login_time";
 		
 	public final static String TABLE_LOGIN_NAME="login";
 //	注意创建表的SQL语句应该是：create table tableName ();所以要注意加空格，还有表名不能为table
@@ -26,7 +27,8 @@ public class LoginDb {
 			+ACCOUNTS+" text primary key , "
 			+PASSWORD+" text , "
 			+HEAD_PATH+" text , "
-			+HEADER+" text "
+			+HEADER+" text , "
+			+LOGIN_TIME+" long "
 			+" ); ";
 	
 	public LoginDb(Context mContext) {
@@ -69,6 +71,13 @@ public class LoginDb {
 		return mCursor;
 	}
 	
+	public Cursor getCursor4LastTime(String[] columns){
+		Cursor mCursor=mdb.query(TABLE_LOGIN_NAME, columns, null, null, null, null, LOGIN_TIME+ " desc");
+		if(mCursor!=null&&!mCursor.isFirst())
+			mCursor.moveToFirst();
+		return mCursor;
+	}
+	
 	public boolean updatePwd(String account,String password){
 		ContentValues values=new ContentValues();
 		values.put(PASSWORD,password);
@@ -81,5 +90,10 @@ public class LoginDb {
 		values.put(HEADER, head);
 		return mdb.update(TABLE_LOGIN_NAME, values, ACCOUNTS+"="+account, null)>0;
 	}
-
+	
+	public boolean updateLoginTime(String account,long LoginTime){
+		ContentValues values=new ContentValues();
+		values.put(LOGIN_TIME,LoginTime);
+		return mdb.update(TABLE_LOGIN_NAME, values, ACCOUNTS+"="+account, null)>0;
+	}
 }

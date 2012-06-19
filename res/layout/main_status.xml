@@ -10,8 +10,36 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical" >
-
+            
             <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_status_margin"
+                  android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/main_status_item_width"
+                    android:layout_height="wrap_content"
+                    android:text="当前信息收集时间"
+                    android:textColor="@color/main_status_entry_color"
+                    android:textSize="@dimen/main_status_entry_size" />
+
+                <TextView
+                    android:id="@+id/report_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textColor="@color/main_status_status_color"
+                    android:textSize="@dimen/main_status_status_size" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="?android:attr/listDivider" />
+
+                <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/main_status_margin"
@@ -27,34 +55,6 @@
 
                 <TextView
                     android:id="@+id/poweron"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="..."
-                    android:textColor="@color/main_status_status_color"
-                    android:textSize="@dimen/main_status_status_size" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2px"
-                android:background="?android:attr/listDivider" />
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/main_status_margin"
-                  android:gravity="center_vertical"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="@dimen/main_status_item_width"
-                    android:layout_height="wrap_content"
-                    android:text="关机时间"
-                    android:textColor="@color/main_status_entry_color"
-                    android:textSize="@dimen/main_status_entry_size" />
-
-                <TextView
-                    android:id="@+id/poweroff"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="..."

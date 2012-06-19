@@ -39,7 +39,7 @@ public class JSONUtil {
 	private final static String SYSFMFAVORITE = "sys_fmfavorite";
 	private final static String SYSCALLOUT = "sys_callout";
 	private final static String SYSCALLIN = "sys_callin";
-	private final static String SYSPOWEROFF = "sys_poweroff";
+	private final static String REPOTTIME = "report_time";
 	private final static String SAFEREGIONOUT = "safe_region_out";
 	private final static String SAFEREGIONIN = "safe_region_in";
 
@@ -116,7 +116,7 @@ public class JSONUtil {
 		st.setSysFmFavorite(jsonObject.getString(SYSFMFAVORITE));
 		st.setSysCallOut(jsonObject.getString(SYSCALLOUT));
 		st.setSysCallIn(jsonObject.getString(SYSCALLIN));
-		st.setSysPoweroff(jsonObject.getString(SYSPOWEROFF));
+		st.setReportTime(jsonObject.getString(REPOTTIME));
 		st.setSafeRegionOut(jsonObject.getString(SAFEREGIONOUT));
 		st.setSafeRegionIn(jsonObject.getString(SAFEREGIONIN));
 

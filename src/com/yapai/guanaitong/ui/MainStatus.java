@@ -32,7 +32,7 @@ public class MainStatus extends Activity {
 	
 	Status st;
 	TextView poweron;
-	TextView poweroff;
+	TextView report_time;
 	TextView powervolumn;
 	TextView status;
 	TextView fmduration;
@@ -52,7 +52,7 @@ public class MainStatus extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_status);
 		poweron = (TextView)findViewById(R.id.poweron);
-		poweroff = (TextView)findViewById(R.id.poweroff);
+		report_time = (TextView)findViewById(R.id.report_time);
 		powervolumn = (TextView)findViewById(R.id.powervolumn);
 		status = (TextView)findViewById(R.id.status);
 		fmduration = (TextView)findViewById(R.id.fmduration);
@@ -100,7 +100,7 @@ public class MainStatus extends Activity {
 			switch (msg.what) {
 			case LOAD_COMPLETE:
 				poweron.setText(st.getSysPoweron());
-				poweroff.setText(st.getSysPoweroff());
+				report_time.setText(st.getReportTime());
 				powervolumn.setText(st.getSysPowerVolumn());
 				status.setText(st.getSysStatus());
 				fmduration.setText(st.getSysFmDuration());

@@ -27,14 +27,13 @@ import android.util.Log;
 public class MyApplication extends Application {
 	private final String TAG = "MyApplication";
     public static DefaultHttpClient httpClient; 
-    public static BasicCookieStore cookieStore = new BasicCookieStore();
     public static DatabaseHelper mdbHelper;
     public static LoginStruct login = null;
     public static String account;
     public static boolean needClearCache = false;
     
     @Override  
-    public void onCreate() {  
+    public void onCreate() {
         super.onCreate();  
         httpClient = createHttpClient();
         mdbHelper=new DatabaseHelper(this);
@@ -82,17 +81,4 @@ public class MyApplication extends Application {
         return httpClient;  
     }
     
-    public void setCookies(){
-		List<Cookie> cookies = httpClient.getCookieStore().getCookies();  
-		Cookie cookie;
-		Log.d(TAG, "cookies:"+cookies);
-		if (!cookies.isEmpty()) {  
-		    for (int i = 0; i < cookies.size(); i++) {  
-		        cookie = cookies.get(i);
-		        cookieStore.addCookie(cookie);
-		    }  
-		}
-		httpClient.setCookieStore(cookieStore);
-    }
-
 }

@@ -46,8 +46,8 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 	static Handler handler;
 	LinearLayout mProgress;
 	TextView loadinghint;
-	final int MARGIN_HORI = 15;
-	final int MARGIN_VER = 280;
+	final float PERCENT_HORI = 0.95f;
+	final float PERCENT_VER = 0.64f;
 	
 	final static int DISPLAY_PROGRESSBAR = 0;
 	final static int HIDE_PROGRESSBAR = 1;
@@ -132,12 +132,12 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
         height = metric.heightPixels;
         float density = metric.density;
         Log.d(TAG, "width:"+width+",height:"+height +",density:"+density);
-        width = (int) (width / density - MARGIN_HORI);
-        height = (int) ((height - MARGIN_VER) / density);
+        width = (int) (width / density * PERCENT_HORI);
+        height = (int) (height / density * PERCENT_VER);
 	}
 	
 	void addCookie(){
-		List<Cookie> cookies = MyApplication.cookieStore.getCookies();  
+		List<Cookie> cookies = Login.cookieStore.getCookies();  
 		if (! cookies.isEmpty()){  
 		    CookieSyncManager.createInstance(this);  
 		    CookieManager cookieManager = CookieManager.getInstance();  

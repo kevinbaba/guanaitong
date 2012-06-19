@@ -14,7 +14,7 @@ public class Status implements Serializable {
 	private String sysFmFavorite;
 	private String sysCallOut;
 	private String sysCallIn;
-	private String sysPoweroff;
+	private String reportTime;
 	private String safeRegionOut;
 	private String safeRegionIn;
 
@@ -44,10 +44,6 @@ public class Status implements Serializable {
 
 	public String getSysPlatform() {
 		return sysPlatform;
-	}
-
-	public String getSysPoweroff() {
-		return sysPoweroff;
 	}
 
 	public String getSysPoweron() {
@@ -94,10 +90,6 @@ public class Status implements Serializable {
 		this.sysPlatform = sysPlatform;
 	}
 
-	public void setSysPoweroff(String sysPoweroff) {
-		this.sysPoweroff = sysPoweroff;
-	}
-
 	public void setSysPoweron(String sysPoweron) {
 		this.sysPoweron = sysPoweron;
 	}
@@ -116,6 +108,14 @@ public class Status implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getReportTime() {
+		return reportTime;
+	}
+
+	public void setReportTime(String reportTime) {
+		this.reportTime = reportTime;
 	}
 
 }
