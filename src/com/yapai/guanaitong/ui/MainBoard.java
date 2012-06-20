@@ -52,24 +52,28 @@ import android.widget.Toast;
 
 public class MainBoard extends TabActivity {
 	private final String TAG = "MainBoard";
-	private RadioGroup group;
+	private RadioGroup mRadioGroup;
 	private TabHost tabHost;
-	private LinearLayout headerAndAcount;
-	private TextView accountView;
-	private ImageView headerView;
-	private ImageView popuparrowView;
+	private static LinearLayout headerAndAcount;
+	private static TextView accountView;
+	private static ImageView headerView;
+	private static ImageView popuparrowView;
 	private LinearLayout progress;
 	private static TextView refresh;
 	public static final String TAB_MAP = "tabMap";
 	public static final String TAB_MES = "tabMes";
 	public static final String TAB_SET = "tabSet";
 	public static final String TAB_STATUS = "tabStatus";
+	public static final String GOTOMESSAGE= "goto_message";
+	
+	boolean mGotoMessage;
 
 	LoginDb mLoginDb;
-	String mCurAccount;
-	String mCurName;
+	static String mCurAccount;
+	static String mCurName;
 	int mCurID;
-	public HashMap<String, BitmapDrawable> accout2HeadImg;
+	public static HashMap<Integer, BitmapDrawable> accoutID2HeadImg;
+	public static HashMap<Integer, String> accoutID2Name;
 	public myAdapter adapter;
 	ListView listView;
 	public PopupWindow pop;
@@ -94,11 +98,11 @@ public class MainBoard extends TabActivity {
 		cursor = null;
 	}
 	
-	BitmapDrawable getAccountHead(String account){
-		BitmapDrawable exist = accout2HeadImg.get(account);
+	BitmapDrawable getAccountHeadByID(int id){
+		BitmapDrawable exist = accoutID2HeadImg.get(id);
 		if(exist != null)	return exist; 
 		Cursor cursor = mLoginDb
-				.getCursor(null, new String[] { account });
+				.getCursorByID(null, new String[] { String.valueOf(id) });
 		final boolean accoutExists = cursor.getCount() > 0;
 		if (accoutExists) {
 			int headindex = cursor.getColumnIndexOrThrow(LoginDb.HEADER);
@@ -109,7 +113,7 @@ public class MainBoard extends TabActivity {
 					FileInputStream fis = openFileInput(head);
 					InputStream is = new BufferedInputStream(fis, 8192);
 					BitmapDrawable bmpD = new BitmapDrawable(is);
-					accout2HeadImg.put(account, bmpD);
+					accoutID2HeadImg.put(id, bmpD);
 					return bmpD;
 				} catch (IOException e) {
 					Log.e(TAG, "" + e);
@@ -119,19 +123,20 @@ public class MainBoard extends TabActivity {
 		return null;
 	}
 	
-	public void prepareData(final String account, final String headPath, final String name) {
+	public void prepareHead(final int id, final String account, final String headPath, final String name) {
 		if (!Util.IsStringValuble(headPath))
 			return;
 		Cursor cursor = mLoginDb
-				.getCursor(null, new String[] { account });
+				.getCursorByID(null, new String[] { String.valueOf(id) });
 		String headPathDb = "";
-		final boolean accoutExists = cursor.getCount() > 0;
-		if (accoutExists) {
+		final boolean idExists = cursor.getCount() > 0;
+		if (idExists) {
 			int headPathindex = cursor.getColumnIndexOrThrow(LoginDb.HEAD_PATH);
 			headPathDb = cursor.getString(headPathindex);
 		}
 		safeReleaseCursor(cursor);
 		if (headPath.equals(headPathDb)){
+			getAccountHeadByID(id);
 			return;
 		}
 		new Thread() {
@@ -139,14 +144,15 @@ public class MainBoard extends TabActivity {
 				String saveName = account + "." + Util.getSuffix(headPath);
 				MyHttpClient mhc = new MyHttpClient(MainBoard.this);
 				if (mhc.downLoadFile(Config.HOST + headPath, saveName)) {
-					if (accoutExists) {
-						mLoginDb.updateHead(account, headPath, saveName);
+					if (idExists) {
+						mLoginDb.updateHead(id, headPath, saveName);
 					} else {
-						mLoginDb.insert(account, "", headPath, saveName);
+						mLoginDb.insert(id, account, "", headPath, saveName);
 					}
-					if(account.equals(mCurAccount)){
+					if(id == mCurID){
 						mHandler.sendEmptyMessage(MSG_GOT_CUR_HEAD);
 					}
+					getAccountHeadByID(id);
 				}
 			}
 		}.start();
@@ -155,10 +161,14 @@ public class MainBoard extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Intent intent = getIntent();
+		mGotoMessage = intent.getBooleanExtra(GOTOMESSAGE, false);
+		
 		setContentView(R.layout.main_board);
 		mLoginDb = LoginDb.getDBInstanc(this);
 
-		group = (RadioGroup) findViewById(R.id.main_radio);
+		mRadioGroup = (RadioGroup) findViewById(R.id.main_radio);
 		headerAndAcount = (LinearLayout) findViewById(R.id.headerAndAcount);
 		headerView = (ImageView) findViewById(R.id.header);
 		popuparrowView = (ImageView) findViewById(R.id.popuparrow);
@@ -167,13 +177,14 @@ public class MainBoard extends TabActivity {
 		progress = (LinearLayout)findViewById(R.id.progress);
 
 		login = MyApplication.login;
-		accout2HeadImg = new HashMap<String, BitmapDrawable>();
+		accoutID2HeadImg = new HashMap<Integer, BitmapDrawable>();
+		accoutID2Name = new HashMap<Integer, String>();
 		try {
 			mLwp = JSONUtil.json2LoginWardProfile(login
 					.getWard_profile());
 
 			mCurID = login.getIdentity();
-			mCurName = mLwp.getName();
+//			mCurName = mLwp.getName();
 			mCurAccount = mLwp.getPhone();
 			MyApplication.account = mCurAccount;
 			String headLwp = mLwp.getHead_48();
@@ -188,20 +199,18 @@ public class MainBoard extends TabActivity {
 					String phone = lw.getPhone();
 					int id = lw.getId();
 					int status = lw.getStatus();
+					String name = lw.getName();
 					String nickName = lw.getNickName();
 					String head = lw.getHead_48();
 					String gender = lw.getGender();
-					if (mCurAccount.equals(phone)) {
-						if (Util.IsStringValuble(nickName)) { // 如果是家庭组登陆，使用nickName
-							mCurName = nickName;
-						}
-					}
-					prepareData(phone, head, nickName);
+					accoutID2Name.put(id, getFinalName(nickName, name, phone));
+					prepareHead(id, phone, head, nickName);
 				}
 				if (mLwList.size() > 1)
 					popuparrowView.setVisibility(View.VISIBLE);
 			}
-			headerView.setBackgroundDrawable(getAccountHead(mCurAccount));
+			mCurName = accoutID2Name.get(mCurID);
+			headerView.setBackgroundDrawable(getAccountHeadByID(mCurID));
 			accountView.setText(unionString(mCurName, mCurAccount));
 
 		} catch (JSONException e) {
@@ -263,7 +272,7 @@ public class MainBoard extends TabActivity {
 				.setContent(new Intent(this, MainMessage.class)));
 		tabHost.addTab(tabHost.newTabSpec(TAB_SET).setIndicator(TAB_SET)
 				.setContent(new Intent(this, MainSetting.class)));
-		group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		mRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				closePopup();
 				switch (checkedId) {
@@ -285,6 +294,18 @@ public class MainBoard extends TabActivity {
 				}
 			}
 		});
+		
+		if(mGotoMessage){
+			mRadioGroup.check(R.id.radio_button_message);
+		}
+	}
+
+	public static String getFinalName(String nickName, String name, String phone){
+		if(Util.IsStringValuble(nickName))
+			return nickName;
+		if(Util.IsStringValuble(name))
+			return name;
+		return phone;
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -366,7 +387,7 @@ public class MainBoard extends TabActivity {
 				
 				phone = mLwList.get(position).getPhone();
 				holder.view.setText(unionString(mLwList.get(position).getNickName(), phone));
-				holder.button.setBackgroundDrawable(getAccountHead(phone));
+				holder.button.setBackgroundDrawable(getAccountHeadByID(mLwList.get(position).getId()));
 				holder.view.setOnTouchListener(new OnTouchListener() {
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
@@ -442,11 +463,11 @@ public class MainBoard extends TabActivity {
 					String act = mLwList.get(position).getPhone();
 					String name = mLwList.get(position).getNickName();
 					accountView.setText(unionString(name, act));
-					headerView.setBackgroundDrawable(getAccountHead(act));
+					headerView.setBackgroundDrawable(getAccountHeadByID(mLwList.get(position).getId()));
 					// 更新
 					mCurAccount = act;
 					mCurID = mLwList.get(position).getId();
-					mCurName = mLwList.get(position).getNickName();
+					mCurName = accoutID2Name.get(mCurID);
 
 					sendBroadcastWardChange();
 					// 这里用于跳到其它Activity时判断是否用户已经发生变化
@@ -457,7 +478,7 @@ public class MainBoard extends TabActivity {
 				}
 				break;
 			case MSG_GOT_CUR_HEAD: 
-				headerView.setBackgroundDrawable(getAccountHead(mCurAccount));
+				headerView.setBackgroundDrawable(getAccountHeadByID(mCurID));
 				break;
 			}
 		}
@@ -474,6 +495,18 @@ public class MainBoard extends TabActivity {
 	public static void setRefreshStatus(int visibility, String hint){
 		refresh.setVisibility(visibility);
 		refresh.setText(hint);
+	}
+	
+	public static void setSwitchStatus(int visibility, String hint){
+		headerView.setVisibility(visibility);
+		popuparrowView.setVisibility(visibility);
+		if(hint == null){
+			accountView.setVisibility(visibility);
+			accountView.setText(unionString(mCurName, mCurAccount));
+		}else{
+			accountView.setVisibility(View.VISIBLE);
+			accountView.setText(hint);
+		}
 	}
 
 	public void sendBroadcastRefresh() {
@@ -496,7 +529,7 @@ public class MainBoard extends TabActivity {
 		return super.onTouchEvent(event);
 	}
 
-	public String unionString(String str1, String str2) {
+	public static String unionString(String str1, String str2) {
 		String union = "";
 		if (Util.IsStringValuble(str1)) {
 			union += str1 + "\n";

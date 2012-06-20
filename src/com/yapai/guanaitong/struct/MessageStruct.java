@@ -6,6 +6,8 @@ public class MessageStruct implements Serializable{
 	private static final long serialVersionUID = -5372920398604536268L;
 	
 	private int msgID;
+	private int wardID;
+	private String wardPhone;
 	private int rank;
 	private String msg;
 	private String time;
@@ -40,6 +42,22 @@ public class MessageStruct implements Serializable{
 	
 	public void setTime(String time){
 		this.time = time;
+	}
+
+	public int getWardID() {
+		return wardID;
+	}
+
+	public void setWardID(int wardID) {
+		this.wardID = wardID;
+	}
+
+	public String getWardPhone() {
+		return wardPhone;
+	}
+
+	public void setWardPhone(String wardPhone) {
+		this.wardPhone = wardPhone;
 	}
 
 }

@@ -11,4 +11,8 @@
 	<color name="button_pressed">#fffb8e07</color>
 	<color name="main_status_entry_color">#ff000000</color>
 	<color name="main_status_status_color">#ff000000</color>
+	<color name="main_message_rank_normal">#ff61bc61</color>
+	<color name="main_message_rank_high">#ffbbbc61</color>
+	<color name="main_message_rank_urgent">#ffbc61bb</color>
+	<color name="main_message_rank_unset">#ff6163bc</color>
 </resources>

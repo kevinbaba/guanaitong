@@ -68,6 +68,7 @@ public class MainSetting extends PreferenceActivity {
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
 		
 		MainBoard.setRefreshStatus(View.INVISIBLE, "");
+		MainBoard.setSwitchStatus(View.VISIBLE, null);
 		
 		super.onResume();
 	}

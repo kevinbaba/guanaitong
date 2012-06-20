@@ -1,14 +1,11 @@
 package com.yapai.guanaitong.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
-import com.yapai.guanaitong.application.MyApplication;
 import com.yapai.guanaitong.db.MessageDb;
 import com.yapai.guanaitong.net.MyHttpClient;
 import com.yapai.guanaitong.struct.MessageStruct;
@@ -24,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -136,29 +134,31 @@ public class MainMessage extends ListActivity {
 	// ListView 中某项被选中后的逻辑
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		showInfo(0, (Integer) mMsgList.get(position).getRank(),
-				(String) mMsgList.get(position).getTime(), (String) mMsgList
-						.get(position).getMsg());
+		showInfo(mMsgList.get(position).getWardID(), 
+				mMsgList.get(position).getRank(), 
+				mMsgList.get(position).getTime(),  
+				mMsgList.get(position).getMsg());
 	}
 
 	/**
 	 * listview中点击按键弹出对话框
 	 */
-	public void showInfo(int status, int rank, String time, String msg) {
+	public void showInfo(int wardId, int rank, String time, String msg) {
 		AlertDialog.Builder dlg = new AlertDialog.Builder(this);
+		//TODO
 		switch (rank) {
 		case RANK_NORAML:
-			dlg.setIcon(R.drawable.header);
 			break;
 		case RANK_HIGH:
-			dlg.setIcon(R.drawable.header);
 			break;
 		case RANK_URGENT:
-			dlg.setIcon(R.drawable.header);
+			break;
+		case RANK_UNSET:
 			break;
 		}
-		dlg.setTitle(time);
-		dlg.setMessage(msg);
+		dlg.setIcon(MainBoard.accoutID2HeadImg.get(wardId));
+		dlg.setTitle(MainBoard.accoutID2Name.get(wardId));
+		dlg.setMessage(msg+"\n"+time);
 		dlg.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -169,7 +169,8 @@ public class MainMessage extends ListActivity {
 	}
 
 	public final class ViewHolder {
-		public ImageView rank;
+		public ImageView head;
+		public TextView name;
 		public TextView msg;
 		public TextView time;
 	}
@@ -205,7 +206,8 @@ public class MainMessage extends ListActivity {
 				holder = new ViewHolder();
 				convertView = mInflater.inflate(R.layout.main_message_list,
 						null);
-				holder.rank = (ImageView) convertView.findViewById(R.id.rank);
+				holder.head = (ImageView) convertView.findViewById(R.id.head);
+				holder.name = (TextView) convertView.findViewById(R.id.name);
 				holder.msg = (TextView) convertView.findViewById(R.id.msg);
 				holder.time = (TextView) convertView.findViewById(R.id.time);
 				convertView.setTag(holder);
@@ -214,22 +216,31 @@ public class MainMessage extends ListActivity {
 			}
 			int rank = (Integer) mMsgList.get(position).getRank();
 			switch (rank) {
-			// TODO
 			case RANK_NORAML:
-				holder.rank.setBackgroundResource(R.drawable.header);
+				convertView.setBackgroundColor(getResources().getColor(
+						R.color.main_message_rank_normal));
 				break;
 			case RANK_HIGH:
-				holder.rank.setBackgroundResource(R.drawable.header);
+				convertView.setBackgroundColor(getResources().getColor(
+						R.color.main_message_rank_high));
 				break;
 			case RANK_URGENT:
-				holder.rank.setBackgroundResource(R.drawable.header);
+				convertView.setBackgroundColor(getResources().getColor(
+						R.color.main_message_rank_urgent));
 				break;
 			case RANK_UNSET:
-				holder.rank.setBackgroundResource(R.drawable.header);
+				convertView.setBackgroundColor(getResources().getColor(
+						R.color.main_message_rank_unset));
 				break;
 			}
-			holder.msg.setText((String) mMsgList.get(position).getMsg());
-			holder.time.setText((String) mMsgList.get(position).getTime());
+			BitmapDrawable bmpD = null;
+			if ((bmpD = MainBoard.accoutID2HeadImg.get((mMsgList.get(position)
+					.getWardID()))) != null)
+				holder.head.setBackgroundDrawable(bmpD);
+			holder.name.setText(MainBoard.accoutID2Name.get((mMsgList
+					.get(position).getWardID())));
+			holder.msg.setText(mMsgList.get(position).getMsg());
+			holder.time.setText(mMsgList.get(position).getTime());
 
 			return convertView;
 		}
@@ -294,34 +305,37 @@ public class MainMessage extends ListActivity {
 		return Integer.parseInt(result);
 	}
 
-	private void getMessage(int page) {
+	private void getMessage(final int page) {
 		if (progress.getVisibility() == View.VISIBLE)
 			return;
 		progress.setVisibility(View.VISIBLE);
 		if (page == 1) {
 			mMsgList.clear();
 		}
-		MyHttpClient mhc = new MyHttpClient(MainMessage.this);
-		String result = mhc.getMessage(page, GET_MSG_ONCETIME);
-		try {
-			List<MessageStruct> msgList = JSONUtil
-					.json2MessageContextList(result);
-			if (msgList != null) {
-				mMsgList.addAll(msgList);
-				mGotpageNum = page;
-				Message msg = new Message();
-				msg.what = GET_MSG_SUCCESS;
-				Bundle data = new Bundle();
-				data.putInt(MSG_GET_NUM, msgList.size());
-				msg.setData(data);
-				mHandler.sendMessage(msg);
-				return;
+		new Thread() {
+			public void run() {
+				MyHttpClient mhc = new MyHttpClient(MainMessage.this);
+				String result = mhc.getMessage(page, GET_MSG_ONCETIME);
+				try {
+					List<MessageStruct> msgList = JSONUtil
+							.json2MessageContextList(result);
+					if (msgList != null) {
+						mMsgList.addAll(msgList);
+						mGotpageNum = page;
+						Message msg = new Message();
+						msg.what = GET_MSG_SUCCESS;
+						Bundle data = new Bundle();
+						data.putInt(MSG_GET_NUM, msgList.size());
+						msg.setData(data);
+						mHandler.sendMessage(msg);
+						return;
+					}
+				} catch (JSONException e) {
+					Log.e(TAG, "" + e);
+				}
+				mHandler.sendEmptyMessage(GET_MSG_ERROR);
 			}
-		} catch (JSONException e) {
-			Log.e(TAG, "" + e);
-		}
-		mHandler.sendEmptyMessage(GET_MSG_ERROR);
-
+		}.start();
 	}
 
 	@Override
@@ -332,18 +346,18 @@ public class MainMessage extends ListActivity {
 	}
 
 	protected void onResume() {
-		if (!MyApplication.account.equals(account)) {
-			account = MyApplication.account;
-			getMessage(1);
-		}
+//		if (!MyApplication.account.equals(account)) {
+//			account = MyApplication.account;
+//			getMessage(1);
+//		}
 		mBr = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				Log.d(TAG, "-------------onReceive:" + intent.getAction());
 				String action = intent.getAction();
-				if (action.equals(MainBoard.ACTION_WARD_CHANGE)) {
+				/*if (action.equals(MainBoard.ACTION_WARD_CHANGE)) {
 					getMessage(1);
-				} else if (action.equals(MainBoard.ACTION_REFRESH)) {
+				} else */if (action.equals(MainBoard.ACTION_REFRESH)) {
 					if (progress.getVisibility() == View.VISIBLE)
 						return;
 					progress.setVisibility(View.VISIBLE);
@@ -363,11 +377,12 @@ public class MainMessage extends ListActivity {
 				}
 			}
 		};
-		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
+//		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH));
 
 		MainBoard.setRefreshStatus(View.VISIBLE,
 				getResources().getString(R.string.get_new_message));
+		MainBoard.setSwitchStatus(View.INVISIBLE, "所有成员信息");
 
 		super.onResume();
 	}

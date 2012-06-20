@@ -212,6 +212,7 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
 		
 		MainBoard.setRefreshStatus(View.VISIBLE, getResources().getString(R.string.refresh_map));
+		MainBoard.setSwitchStatus(View.VISIBLE, null);
 		
 		super.onResume();
 	}

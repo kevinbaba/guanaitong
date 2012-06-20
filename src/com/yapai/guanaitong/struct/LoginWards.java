@@ -8,6 +8,7 @@ public class LoginWards implements Serializable {
 	private String phone;
 	private int id;
 	private int status;
+	private String name;
 	private String nickName;
 	private int isDefault;
 	private String head_48;
@@ -60,6 +61,12 @@ public class LoginWards implements Serializable {
 	}
 	public void setNewMessage(int newMessage) {
 		this.newMessage = newMessage;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

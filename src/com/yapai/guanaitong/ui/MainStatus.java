@@ -93,6 +93,7 @@ public class MainStatus extends Activity {
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
 		
 		MainBoard.setRefreshStatus(View.VISIBLE, getResources().getString(R.string.get_new_status));
+		MainBoard.setSwitchStatus(View.VISIBLE, null);
 		
 		super.onResume();
 	}

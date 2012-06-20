@@ -82,7 +82,7 @@ public class Login extends Activity implements OnClickListener,
 	final String SERVER_VERSION = "server_version"; //为了清楚webview的cache
 	final static String AUTOLOAD = "autoLoad";
 	final static String LOADINFO = "result";
-	final String USERID = "userid";
+	final static String ID = "id";
 	final static String ACCOUNT = "account";
 	final static String PASSWORD = "password";
 	final String HEAD = "head";
@@ -125,17 +125,18 @@ public class Login extends Activity implements OnClickListener,
 
 	void LoadSuccess(Message msg) {
 		Bundle data = msg.getData();
+		int id = data.getInt(ID);
 		String account = data.getString(ACCOUNT);
 		String pass = data.getString(PASSWORD);
 
-		Cursor cursor = db.getCursor(new String[] { LoginDb.ACCOUNTS },
-				new String[] { account });
+		Cursor cursor = db.getCursorByID(new String[] { LoginDb.ID },
+				new String[] { String.valueOf(id) });
 		if (mRemPassCheck.isChecked()) {
 			// 保存密码
 			if (cursor.getCount() > 0) {
 				db.updatePwd(account, pass);
 			} else {
-				db.insert(account, pass, "", "");
+				db.insert(id, account, pass, "", "");
 			}
 			mAccount2Pwd.put(account, pass);// 重新替换或者添加记录
 		} else {
@@ -261,6 +262,7 @@ public class Login extends Activity implements OnClickListener,
 					if (SUCCESSRETURN.equals(info)) {
 						Bundle data = new Bundle();
 						data.putString(LOADINFO, info);
+						data.putInt(ID, mLoginStruct.getIdentity());
 						data.putString(ACCOUNT, account);
 						data.putString(PASSWORD, pass);
 						Message msg = new Message();
@@ -333,16 +335,18 @@ public class Login extends Activity implements OnClickListener,
 			int accountsindex = cursor.getColumnIndexOrThrow(LoginDb.ACCOUNTS);
 			lastLogin = cursor.getString(accountsindex);
 		}
+		safeReleaseCursor(cursor);
 		return lastLogin;
 	}
 	
 	public static String getAccountPwd(Context context, String account){
 		String pwd="";
-		Cursor cursor = LoginDb.getDBInstanc(context).getCursor(null, new String[] { account });
+		Cursor cursor = LoginDb.getDBInstanc(context).getCursorByAccount(null, new String[] { account });
 		if (cursor.getCount() > 0) {
 			int pwdindex = cursor.getColumnIndexOrThrow(LoginDb.PASSWORD);
 			pwd = cursor.getString(pwdindex);
 		}
+		safeReleaseCursor(cursor);
 		return pwd;
 	}
 	
@@ -431,7 +435,7 @@ public class Login extends Activity implements OnClickListener,
 		safeReleaseCursor(cursor);
 	}
 
-	private void safeReleaseCursor(Cursor cursor) {
+	public static void safeReleaseCursor(Cursor cursor) {
 		cursor.close();
 		cursor = null;
 	}

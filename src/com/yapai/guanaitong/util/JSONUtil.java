@@ -45,6 +45,10 @@ public class JSONUtil {
 
 	//Message
 	private final static String MSGID = "id";
+	private final static String WARDID = "ward_id";
+	private final static String WARDPHONE = "phone";
+	private final static String WARDNAME = "name";
+	private final static String WARDNICKNAME = "nickname";
 	private final static String RANK = "level";
 	private final static String MSG = "detail";
 	private final static String TIME = "report_time";
@@ -96,6 +100,7 @@ public class JSONUtil {
 			LoginWards lw = new LoginWards();
 			lw.setPhone(obj.getString(PHONE));
 			lw.setId(obj.getInt(LOGIN_ID));
+			lw.setName(obj.getString(NAME));
 			lw.setNickName(obj.getString(NICKNAME));
 			lw.setHead_48(obj.getString(HEAD_48));
 			lw.setGender(obj.getString(GENDER));
@@ -131,6 +136,8 @@ public class JSONUtil {
 			JSONObject jsonObject=jsonArray.getJSONObject(i);
 			MessageStruct msg = new MessageStruct();
 			msg.setMsgID(jsonObject.getInt(MSGID));
+			msg.setWardID(jsonObject.getInt(WARDID));
+			msg.setWardPhone(jsonObject.getString(WARDPHONE));
 			msg.setRank(jsonObject.getInt(RANK));
 			msg.setMsg(jsonObject.getString(MSG));
 			msg.setTime(jsonObject.getString(TIME));
