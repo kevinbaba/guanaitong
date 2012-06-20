@@ -18,7 +18,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,8 +63,14 @@ public class MainStatus extends Activity {
 		callin = (TextView)findViewById(R.id.callin);
 		safe_region_out = (TextView)findViewById(R.id.safe_region_out);
 		safe_region_in = (TextView)findViewById(R.id.safe_region_in);
-		progress = (LinearLayout)findViewById(R.id.progress);
 		loadinghint = (TextView)findViewById(R.id.loadinghint);
+		progress = (LinearLayout)findViewById(R.id.progress);
+		progress.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
 	}
 	
 	protected void onResume() {

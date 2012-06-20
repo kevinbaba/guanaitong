@@ -29,8 +29,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -119,6 +121,12 @@ public class MainMessage extends ListActivity {
 		db = MessageDb.getDBInstanc(this);
 		mListView = getListView();
 		progress = (LinearLayout) findViewById(R.id.progress);
+		progress.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
 		mMsgList = new ArrayList<MessageStruct>();
 
 		initView();

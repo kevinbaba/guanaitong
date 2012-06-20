@@ -58,6 +58,7 @@ public class MainBoard extends TabActivity {
 	private TextView accountView;
 	private ImageView headerView;
 	private ImageView popuparrowView;
+	private LinearLayout progress;
 	private static TextView refresh;
 	public static final String TAB_MAP = "tabMap";
 	public static final String TAB_MES = "tabMes";
@@ -163,6 +164,7 @@ public class MainBoard extends TabActivity {
 		popuparrowView = (ImageView) findViewById(R.id.popuparrow);
 		refresh = (TextView) findViewById(R.id.refresh);
 		accountView = (TextView) findViewById(R.id.account);
+		progress = (LinearLayout)findViewById(R.id.progress);
 
 		login = MyApplication.login;
 		accout2HeadImg = new HashMap<String, BitmapDrawable>();
@@ -390,6 +392,7 @@ public class MainBoard extends TabActivity {
 		void menuClicked(final int position) {
 			closePopup();
 			popuparrowView.setEnabled(false);
+			progress.setVisibility(View.VISIBLE);
 			// 新建线程切换用户
 			new Thread() {
 				public void run() {
@@ -439,7 +442,7 @@ public class MainBoard extends TabActivity {
 					String act = mLwList.get(position).getPhone();
 					String name = mLwList.get(position).getNickName();
 					accountView.setText(unionString(name, act));
-					headerView.setBackgroundDrawable(getAccountHead(mCurAccount));
+					headerView.setBackgroundDrawable(getAccountHead(act));
 					// 更新
 					mCurAccount = act;
 					mCurID = mLwList.get(position).getId();
@@ -450,6 +453,7 @@ public class MainBoard extends TabActivity {
 					MyApplication.account = mCurAccount;
 					
 					popuparrowView.setEnabled(true);
+					progress.setVisibility(View.INVISIBLE);
 				}
 				break;
 			case MSG_GOT_CUR_HEAD: 

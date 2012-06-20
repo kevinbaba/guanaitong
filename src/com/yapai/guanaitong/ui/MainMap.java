@@ -83,6 +83,13 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 		path.setOnTouchListener(this);
 		range.setOnTouchListener(this);
 		
+		mProgress.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
+		
 		initWebView();
 
 		handler=new Handler(){
@@ -96,17 +103,9 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
     	        	if(mLoadingHint != null)
     	        		loadinghint.setText(mLoadingHint);
     	        	mProgress.setVisibility(View.VISIBLE);//显示进度条
-    	        	newestPos.setEnabled(false);
-    	        	path.setEnabled(false);
-    	        	range.setEnabled(false);
-    	        	wv.setClickable(false);
     	        	break;
     	        case HIDE_PROGRESSBAR:
     	        	mProgress.setVisibility(View.INVISIBLE);
-    	        	newestPos.setEnabled(true);
-    	        	path.setEnabled(true);
-    	        	range.setEnabled(true);
-    	        	wv.setClickable(true);
     	        	break;
     	        }
     	      }
