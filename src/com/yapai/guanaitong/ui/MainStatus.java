@@ -29,6 +29,7 @@ public class MainStatus extends Activity {
 	final String TAG = "MainStatus";
 	final int LOAD_COMPLETE = 0;
 	final int LOAD_ERROR = 1;
+	final int PROGRESS_DELAY_INVISIBLE = 2;
 	
 	final String STATUS_NOTREADY = "NOT_READY";
 	
@@ -135,6 +136,7 @@ public class MainStatus extends Activity {
 			return;
 		loadinghint.setText(getResources().getString(R.string.getting_newest_status));
 		progress.setVisibility(View.VISIBLE);
+		MainBoard.setProgressVisible(View.INVISIBLE);
 		new Thread() {
 			@Override
 			public void run() {
@@ -173,6 +175,7 @@ public class MainStatus extends Activity {
 	
 	void getUserStatus() {
 		progress.setVisibility(View.VISIBLE);
+		MainBoard.setProgressVisible(View.INVISIBLE);
 		new Thread() {
 			@Override
 			public void run() {

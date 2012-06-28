@@ -75,6 +75,8 @@ public class MessageServer extends Service {
 		return countIcon;
 	}
 	
+	//TODO 重复的消息就不要再发notify出来了, 需要服务器返回一下标识，例如时间
+	//TODO 图标带上数字显示
 	public void sendNotifycation(int num){
 		String msg = num+"条新消息";
 		NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);               
@@ -152,15 +154,21 @@ public class MessageServer extends Service {
 		}.start();
 
 	}
+	
+	//TODO 网络连接时，doTask
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
+	void doTask(){
 		if (Login.mlogined) {
 			checkNewMessage();
 		} else {
 			checkAccount();
 		}
+	}
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		doTask();
 	}
 
 }

@@ -103,6 +103,7 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
     	        	if(mLoadingHint != null)
     	        		loadinghint.setText(mLoadingHint);
     	        	mProgress.setVisibility(View.VISIBLE);//显示进度条
+					MainBoard.setProgressVisible(View.INVISIBLE);
     	        	break;
     	        case HIDE_PROGRESSBAR:
     	        	mProgress.setVisibility(View.INVISIBLE);

@@ -58,7 +58,7 @@ public class MainBoard extends TabActivity {
 	private static TextView accountView;
 	private static ImageView headerView;
 	private static ImageView popuparrowView;
-	private LinearLayout progress;
+	private static LinearLayout progress;
 	private static TextView refresh;
 	public static final String TAB_MAP = "tabMap";
 	public static final String TAB_MES = "tabMes";
@@ -175,6 +175,12 @@ public class MainBoard extends TabActivity {
 		refresh = (TextView) findViewById(R.id.refresh);
 		accountView = (TextView) findViewById(R.id.account);
 		progress = (LinearLayout)findViewById(R.id.progress);
+		
+		progress.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				return true;
+			}
+		});
 
 		login = MyApplication.login;
 		accoutID2HeadImg = new HashMap<Integer, BitmapDrawable>();
@@ -412,8 +418,8 @@ public class MainBoard extends TabActivity {
 
 		void menuClicked(final int position) {
 			closePopup();
-			popuparrowView.setEnabled(false);
-			progress.setVisibility(View.VISIBLE);
+//			popuparrowView.setEnabled(false);
+			setProgressVisible(View.VISIBLE);
 			// 新建线程切换用户
 			new Thread() {
 				public void run() {
@@ -446,6 +452,10 @@ public class MainBoard extends TabActivity {
 
 	}
 
+	static void setProgressVisible(int visible){
+		progress.setVisibility(visible);
+	}
+	
 	Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -473,8 +483,9 @@ public class MainBoard extends TabActivity {
 					// 这里用于跳到其它Activity时判断是否用户已经发生变化
 					MyApplication.account = mCurAccount;
 					
-					popuparrowView.setEnabled(true);
-					progress.setVisibility(View.INVISIBLE);
+//					popuparrowView.setEnabled(true);
+//					在二级activity关闭该progress
+//					progress.setVisibility(View.INVISIBLE);
 				}
 				break;
 			case MSG_GOT_CUR_HEAD: 

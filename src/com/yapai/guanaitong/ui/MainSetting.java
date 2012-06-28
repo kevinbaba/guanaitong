@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
@@ -21,20 +23,28 @@ public class MainSetting extends PreferenceActivity {
 	BroadcastReceiver mBr;
 	public String account;
 	
+	PreferenceManager mPm;
+	CheckBoxPreference mGetMessageRealtime;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.main_setting);
 		this.getListView().setCacheColorHint(Color.TRANSPARENT);
 		this.getListView().setBackgroundColor(getResources().getColor(R.color.default_background_color));
+		mPm = this.getPreferenceManager();
+		mGetMessageRealtime = (CheckBoxPreference) mPm.findPreference("get_message_realtime");
 	}
 	
 	@Override
 	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
 			Preference preference) {
-		// TODO Auto-generated method stub
 		Log.d(TAG, "onPreferenceTreeClick:"+preference);
+		// 分别处理
+		if(mGetMessageRealtime == preference){
+			Boolean checked = mGetMessageRealtime.isChecked();
+			//存
+		}
 		return super.onPreferenceTreeClick(preferenceScreen, preference);
 	}
 	
@@ -46,6 +56,7 @@ public class MainSetting extends PreferenceActivity {
 		// super.onBackPressed();
 	}
 	
+	//TODO 从服务器获取设置，保存到哪？
 	protected void onResume() {
 		if(!MyApplication.account.equals(account)){
 			account = MyApplication.account;

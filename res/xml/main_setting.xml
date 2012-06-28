@@ -11,6 +11,7 @@
     <PreferenceCategory android:title="全局设置" >
 
         <CheckBoxPreference
+            android:key="get_message_realtime"
             android:summary="打开后需要消耗网络流量"
             android:title="实时接收消息" />
     </PreferenceCategory>
