@@ -8,50 +8,61 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginTop="8dip"
-            android:gravity="center"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/newest_pos"
-                android:layout_width="@dimen/main_map_button_width"
-                android:layout_height="@dimen/main_map_button_height"
-                android:background="@drawable/button_normal"
-                android:gravity="center"
-                android:layout_margin="2dip"
-                android:layout_weight="1"
-                android:text="@string/newest_pos" />
-
-            <TextView
-                android:id="@+id/path"
-                android:layout_width="@dimen/main_map_button_width"
-                android:layout_height="@dimen/main_map_button_height"
-                android:background="@drawable/button_normal"
-                android:gravity="center"
-                android:layout_margin="2dip"
-                android:layout_weight="1"
-                android:text="@string/path" />
-
-            <TextView
-                android:id="@+id/range"
-                android:layout_width="@dimen/main_map_button_width"
-                android:layout_height="@dimen/main_map_button_height"
-                android:background="@drawable/button_normal"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:layout_margin="2dip"
-                android:text="@string/range" />
-        </LinearLayout>
-
         <WebView
             android:id="@+id/wv"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:layout_weight="6" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dip"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/main_board_toolbar_height"
+                android:background="@color/main_board_toolbar_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/newest_pos"
+                    android:layout_width="@dimen/main_map_button_width"
+                    android:layout_height="@dimen/main_map_button_height"
+                    android:layout_margin="5dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_normal"
+                    android:gravity="center"
+                    android:text="@string/newest_pos"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/path"
+                    android:layout_width="@dimen/main_map_button_width"
+                    android:layout_height="@dimen/main_map_button_height"
+                    android:layout_margin="5dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_normal"
+                    android:gravity="center"
+                    android:text="@string/path"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/range"
+                    android:layout_width="@dimen/main_map_button_width"
+                    android:layout_height="@dimen/main_map_button_height"
+                    android:layout_margin="5dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_normal"
+                    android:gravity="center"
+                    android:text="@string/range"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

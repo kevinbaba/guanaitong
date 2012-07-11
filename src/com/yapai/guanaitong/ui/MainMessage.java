@@ -259,7 +259,7 @@ public class MainMessage extends ListActivity {
 					if (mGotpageNum == 1 && count == 0)
 						buttonMore.setText("没有消息");
 					else
-						buttonMore.setText("");
+						buttonMore.setText("没有更多消息了");
 				}
 				mAdapter.notifyDataSetChanged(); // 通知适配器重新适配
 				progress.setVisibility(View.INVISIBLE);
@@ -380,9 +380,9 @@ public class MainMessage extends ListActivity {
 //		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH));
 
-		MainBoard.setRefreshStatus(View.VISIBLE,
-				getResources().getString(R.string.get_new_message));
-		MainBoard.setSwitchStatus(View.INVISIBLE, "所有成员信息");
+//		MainBoard.setRefreshStatus(View.VISIBLE,
+//				getResources().getString(R.string.get_new_message));
+//		MainBoard.setSwitchStatus(View.INVISIBLE, "所有成员信息");
 
 		super.onResume();
 	}

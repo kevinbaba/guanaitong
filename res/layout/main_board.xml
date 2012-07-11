@@ -23,6 +23,35 @@
                 android:orientation="horizontal" >
 
                 <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dip"
+                    android:orientation="vertical" >
+
+                    <HorizontalScrollView
+                        android:id="@+id/mScrollView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fadeScrollbars="false"
+                        android:scrollbarSize="3dip"
+                        android:scrollbarThumbHorizontal="@drawable/scrollbar" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <GridView
+                                android:id="@+id/accountsGridView"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:listSelector="@drawable/grid_item_bg_s" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
+
+                <!--
+                LinearLayout
                     android:id="@+id/headerAndAcount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -61,7 +90,7 @@
                     android:layout_marginRight="5dip"
                     android:background="@drawable/button_normal"
                     android:gravity="center"
-                    android:text="@string/get_new_status" />
+                    android:text="@string/get_new_status" /-->
             </RelativeLayout>
 
             <FrameLayout
@@ -118,7 +147,7 @@
             </RadioGroup>
         </LinearLayout>
     </TabHost>
-    
+
     <LinearLayout
         android:id="@+id/progress"
         android:layout_width="fill_parent"
@@ -147,6 +176,5 @@
                 android:textColor="#ffffffff" />
         </RelativeLayout>
     </LinearLayout>
-
 
 </FrameLayout>

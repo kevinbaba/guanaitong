@@ -3,10 +3,10 @@
 
     <EditTextPreference android:title="设置亲情号码" />
 
-    <PreferenceCategory android:title="其它" >
+    <!--PreferenceCategory android:title="其它" >
 
         <CheckBoxPreference android:title="其它" />
-    </PreferenceCategory>
+    </PreferenceCategory-->
 
     <PreferenceCategory android:title="全局设置" >
 

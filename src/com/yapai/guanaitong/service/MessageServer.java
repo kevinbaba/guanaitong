@@ -110,7 +110,7 @@ public class MessageServer extends Service {
 					if (num == MainMessage.ERROR) {
 						Log.e(TAG, "checkNewMessage error");
 					}
-					if (num > -1) {
+					if (num > 0) {
 						sendNotifycation(num);
 					}
 					try {

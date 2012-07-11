@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,7 +38,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Gallery;
+import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,23 +54,27 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
+//TODO 清理无用代码
 public class MainBoard extends TabActivity {
 	private final String TAG = "MainBoard";
 	private RadioGroup mRadioGroup;
 	private TabHost tabHost;
-	private static LinearLayout headerAndAcount;
-	private static TextView accountView;
-	private static ImageView headerView;
-	private static ImageView popuparrowView;
+	// private static LinearLayout headerAndAcount;
+	private static GridView accountsGridView;
+	private HorizontalScrollView mScrollView;
+	// private static TextView accountView;
+	// private static ImageView headerView;
+	// private static ImageView popuparrowView;
 	private static LinearLayout progress;
-	private static TextView refresh;
+	// private static TextView refresh;
 	public static final String TAB_MAP = "tabMap";
 	public static final String TAB_MES = "tabMes";
 	public static final String TAB_SET = "tabSet";
 	public static final String TAB_STATUS = "tabStatus";
-	public static final String GOTOMESSAGE= "goto_message";
-	
+	public static final String GOTOMESSAGE = "goto_message";
+
 	boolean mGotoMessage;
 
 	LoginDb mLoginDb;
@@ -77,7 +86,7 @@ public class MainBoard extends TabActivity {
 	public myAdapter adapter;
 	ListView listView;
 	public PopupWindow pop;
-	
+
 	LoginWardProfile mLwp;
 	public static List<LoginWards> mLwList;
 
@@ -89,26 +98,34 @@ public class MainBoard extends TabActivity {
 	public final String SWITCH_WARD_SUCCESS = "SUCCESS";
 	public final String SWITCH_WARD_ERROR = "ERROR";
 	public final String POSITION = "position";
-	
+
 	public final int MSG_SWITCH_WARD = 0;
-	public final int MSG_GOT_CUR_HEAD = 1;
-	
+	public final int MSG_GOT_HEAD = 1;
+	public final int MSG_DELAY = 2;
+	public final int DELAY_TIME = 50;
+
+	private final int CELL_WIDTH = 100;
+	private final int CELL_HSPACING = 5;
+
+	int mPrePosition = 0;
+
 	private void safeReleaseCursor(Cursor cursor) {
 		cursor.close();
 		cursor = null;
 	}
-	
-	BitmapDrawable getAccountHeadByID(int id){
+
+	BitmapDrawable getAccountHeadByID(int id) {
 		BitmapDrawable exist = accoutID2HeadImg.get(id);
-		if(exist != null)	return exist; 
-		Cursor cursor = mLoginDb
-				.getCursorByID(null, new String[] { String.valueOf(id) });
+		if (exist != null)
+			return exist;
+		Cursor cursor = mLoginDb.getCursorByID(null,
+				new String[] { String.valueOf(id) });
 		final boolean accoutExists = cursor.getCount() > 0;
 		if (accoutExists) {
 			int headindex = cursor.getColumnIndexOrThrow(LoginDb.HEADER);
 			String head = cursor.getString(headindex);
 			safeReleaseCursor(cursor);
-			if(Util.IsStringValuble(head)){
+			if (Util.IsStringValuble(head)) {
 				try {
 					FileInputStream fis = openFileInput(head);
 					InputStream is = new BufferedInputStream(fis, 8192);
@@ -122,12 +139,13 @@ public class MainBoard extends TabActivity {
 		}
 		return null;
 	}
-	
-	public void prepareHead(final int id, final String account, final String headPath, final String name) {
+
+	public void prepareHead(final int id, final String account,
+			final String headPath) {
 		if (!Util.IsStringValuble(headPath))
 			return;
-		Cursor cursor = mLoginDb
-				.getCursorByID(null, new String[] { String.valueOf(id) });
+		Cursor cursor = mLoginDb.getCursorByID(null,
+				new String[] { String.valueOf(id) });
 		String headPathDb = "";
 		final boolean idExists = cursor.getCount() > 0;
 		if (idExists) {
@@ -135,7 +153,7 @@ public class MainBoard extends TabActivity {
 			headPathDb = cursor.getString(headPathindex);
 		}
 		safeReleaseCursor(cursor);
-		if (headPath.equals(headPathDb)){
+		if (headPath.equals(headPathDb)) {
 			getAccountHeadByID(id);
 			return;
 		}
@@ -149,33 +167,67 @@ public class MainBoard extends TabActivity {
 					} else {
 						mLoginDb.insert(id, account, "", headPath, saveName);
 					}
-					if(id == mCurID){
-						mHandler.sendEmptyMessage(MSG_GOT_CUR_HEAD);
-					}
+					mHandler.sendEmptyMessage(MSG_GOT_HEAD);
 					getAccountHeadByID(id);
 				}
 			}
 		}.start();
 	}
 
+	private void setAccountsGridView() {
+		if (adapter == null) {
+			adapter = new myAdapter();
+			accountsGridView.setAdapter(adapter);
+			accountsGridView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View v,
+						int position, long id) {
+//					Log.d(TAG, "----------------position:"+position+",id:"+id);
+					int wardId = mLwList.get(position).getId();
+					if(wardId == mCurID) return;
+					menuClicked(position);
+					accountsGridView.getChildAt(mPrePosition).setBackgroundColor(0);
+				}
+			});
+			int width = (int) (adapter.getCount()
+					* (CELL_WIDTH + CELL_HSPACING) * MyApplication.density);
+			LayoutParams params = new LayoutParams(width,
+					LayoutParams.WRAP_CONTENT);
+			accountsGridView.setLayoutParams(params);
+			accountsGridView
+					.setColumnWidth((int) (CELL_WIDTH * MyApplication.density));
+			accountsGridView
+					.setHorizontalSpacing((int) (CELL_HSPACING * MyApplication.density));
+			accountsGridView.setStretchMode(GridView.NO_STRETCH);
+			accountsGridView.setNumColumns(adapter.getCount());
+			//TODO 应该有更好更直接的办法
+			mHandler.sendEmptyMessageDelayed(MSG_DELAY, DELAY_TIME);
+
+		}
+
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Intent intent = getIntent();
 		mGotoMessage = intent.getBooleanExtra(GOTOMESSAGE, false);
-		
+
 		setContentView(R.layout.main_board);
 		mLoginDb = LoginDb.getDBInstanc(this);
 
 		mRadioGroup = (RadioGroup) findViewById(R.id.main_radio);
-		headerAndAcount = (LinearLayout) findViewById(R.id.headerAndAcount);
-		headerView = (ImageView) findViewById(R.id.header);
-		popuparrowView = (ImageView) findViewById(R.id.popuparrow);
-		refresh = (TextView) findViewById(R.id.refresh);
-		accountView = (TextView) findViewById(R.id.account);
-		progress = (LinearLayout)findViewById(R.id.progress);
-		
+		// headerAndAcount = (LinearLayout) findViewById(R.id.headerAndAcount);
+		accountsGridView = (GridView) findViewById(R.id.accountsGridView);
+		mScrollView = (HorizontalScrollView) findViewById(R.id.mScrollView);
+		mScrollView.setHorizontalScrollBarEnabled(true);
+		// headerView = (ImageView) findViewById(R.id.header);
+		// popuparrowView = (ImageView) findViewById(R.id.popuparrow);
+		// refresh = (TextView) findViewById(R.id.refresh);
+		// accountView = (TextView) findViewById(R.id.account);
+		progress = (LinearLayout) findViewById(R.id.progress);
+
 		progress.setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View arg0, MotionEvent arg1) {
 				return true;
@@ -186,20 +238,17 @@ public class MainBoard extends TabActivity {
 		accoutID2HeadImg = new HashMap<Integer, BitmapDrawable>();
 		accoutID2Name = new HashMap<Integer, String>();
 		try {
-			mLwp = JSONUtil.json2LoginWardProfile(login
-					.getWard_profile());
+			mLwp = JSONUtil.json2LoginWardProfile(login.getWard_profile());
 
 			mCurID = login.getIdentity();
-//			mCurName = mLwp.getName();
+			mCurName = mLwp.getName();
 			mCurAccount = mLwp.getPhone();
 			MyApplication.account = mCurAccount;
 			String headLwp = mLwp.getHead_48();
 
 			if (GUARDIAN.equals(login.getLogin_by())) { // 如果是家庭组帐户登陆
-			// LoginGuardian lg =
-			// JSONUtil.json2LoginGuardian(login.getGuardian());
-				mLwList = JSONUtil.json2LoginWardsList(login
-						.getWards());
+				Log.d(TAG, "Login by---->GUARDIAN");
+				mLwList = JSONUtil.json2LoginWardsList(login.getWards());
 				for (int i = 0; i < mLwList.size(); i++) {
 					LoginWards lw = mLwList.get(i);
 					String phone = lw.getPhone();
@@ -210,64 +259,48 @@ public class MainBoard extends TabActivity {
 					String head = lw.getHead_48();
 					String gender = lw.getGender();
 					accoutID2Name.put(id, getFinalName(nickName, name, phone));
-					prepareHead(id, phone, head, nickName);
+					prepareHead(id, phone, head);
 				}
-				if (mLwList.size() > 1)
-					popuparrowView.setVisibility(View.VISIBLE);
+				// if (mLwList.size() > 1)
+				// popuparrowView.setVisibility(View.VISIBLE);
+			}else if(WARD.equals(login.getLogin_by())){
+				Log.d(TAG, "Login by---->WARD");
+				mLwList = new ArrayList <LoginWards>();
+				LoginWards lw = new LoginWards();
+				lw.setPhone(mCurAccount);
+				lw.setId(mCurID);
+				lw.setName(mCurName);
+				lw.setNickName(mCurName);
+				lw.setHead_48(headLwp);
+				mLwList.add(lw);
+				accoutID2Name.put(mCurID, getFinalName(mCurName, mCurName, mCurAccount));
+				prepareHead(mCurID, mCurAccount, headLwp);
 			}
-			mCurName = accoutID2Name.get(mCurID);
-			headerView.setBackgroundDrawable(getAccountHeadByID(mCurID));
-			accountView.setText(unionString(mCurName, mCurAccount));
+			// mCurName = accoutID2Name.get(mCurID);
+			// headerView.setBackgroundDrawable(getAccountHeadByID(mCurID));
+			// accountView.setText(unionString(mCurName, mCurAccount));
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
-		refresh.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sendBroadcastRefresh();
-			}
-		});
+		setAccountsGridView();
 
-		refresh.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					((TextView) v).setBackgroundResource(R.drawable.button_pressed);
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					((TextView) v).setBackgroundResource(R.drawable.button_normal);
-				}
-				return false;
-			}
-		});
-
-		headerAndAcount.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (popuparrowView.getVisibility() != View.VISIBLE
-						|| popuparrowView.isEnabled() == false)
-					return;
-				if (pop == null) {
-					if (adapter == null) {
-						adapter = new myAdapter();
-						listView = new ListView(MainBoard.this);
-						pop = new PopupWindow(listView, headerAndAcount
-								.getWidth(), LayoutParams.WRAP_CONTENT);
-						listView.setAdapter(adapter);
-						pop.showAsDropDown(headerAndAcount, 0, 1);
-					} else {
-						adapter.notifyDataSetChanged();
-						pop = new PopupWindow(listView, headerAndAcount
-								.getWidth(), LayoutParams.WRAP_CONTENT);
-						pop.showAsDropDown(headerAndAcount, 0, 1);
-					}
-				} else {
-					pop.dismiss();
-					pop = null;
-				}
-			}
-		});
+		/*
+		 * headerAndAcount.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { if
+		 * (popuparrowView.getVisibility() != View.VISIBLE ||
+		 * popuparrowView.isEnabled() == false) return; if (pop == null) { if
+		 * (adapter == null) { adapter = new myAdapter(); listView = new
+		 * ListView(MainBoard.this); pop = new PopupWindow(listView,
+		 * headerAndAcount .getWidth(), LayoutParams.WRAP_CONTENT);
+		 * listView.setAdapter(adapter); pop.showAsDropDown(headerAndAcount, 0,
+		 * 1); } else { adapter.notifyDataSetChanged(); pop = new
+		 * PopupWindow(listView, headerAndAcount .getWidth(),
+		 * LayoutParams.WRAP_CONTENT); pop.showAsDropDown(headerAndAcount, 0,
+		 * 1); } } else { pop.dismiss(); pop = null; } } });
+		 */
 
 		tabHost = getTabHost();
 		tabHost.addTab(tabHost.newTabSpec(TAB_STATUS).setIndicator(TAB_STATUS)
@@ -280,7 +313,7 @@ public class MainBoard extends TabActivity {
 				.setContent(new Intent(this, MainSetting.class)));
 		mRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				closePopup();
+//				closePopup();
 				switch (checkedId) {
 				case R.id.radio_button_status:
 					tabHost.setCurrentTabByTag(TAB_STATUS);
@@ -300,16 +333,16 @@ public class MainBoard extends TabActivity {
 				}
 			}
 		});
-		
-		if(mGotoMessage){
+
+		if (mGotoMessage) {
 			mRadioGroup.check(R.id.radio_button_message);
 		}
 	}
 
-	public static String getFinalName(String nickName, String name, String phone){
-		if(Util.IsStringValuble(nickName))
+	public static String getFinalName(String nickName, String name, String phone) {
+		if (Util.IsStringValuble(nickName))
 			return nickName;
-		if(Util.IsStringValuble(name))
+		if (Util.IsStringValuble(name))
 			return name;
 		return phone;
 	}
@@ -341,10 +374,8 @@ public class MainBoard extends TabActivity {
 		finish();
 	}
 
-	// 下拉框Adapter
 	class myAdapter extends BaseAdapter {
 		LayoutInflater mInflater;
-		int mAfterCurAccount;
 
 		public myAdapter() {
 			mInflater = LayoutInflater.from(MainBoard.this);
@@ -352,7 +383,7 @@ public class MainBoard extends TabActivity {
 
 		@Override
 		public int getCount() {
-			return mLwList.size() -1; //除掉当前ward
+			return mLwList.size();
 		}
 
 		@Override
@@ -366,12 +397,11 @@ public class MainBoard extends TabActivity {
 		}
 
 		@Override
-		public View getView(int position, View convertView,
-				ViewGroup parent) {
+		public View getView(int position, View convertView, ViewGroup parent) {
 			Holder holder = null;
 			if (convertView == null) {
-				convertView = mInflater
-						.inflate(R.layout.main_board_popup, null);
+				convertView = mInflater.inflate(R.layout.main_board_gridview,
+						null);
 				holder = new Holder();
 				holder.view = (TextView) convertView.findViewById(R.id.account);
 				holder.button = (ImageView) convertView
@@ -381,63 +411,22 @@ public class MainBoard extends TabActivity {
 				holder = (Holder) convertView.getTag();
 			}
 			if (holder != null) {
-				if(position == 0)
-					mAfterCurAccount = 0;
 				String phone = mLwList.get(position).getPhone();
-				if(phone.equals(mCurAccount)){
-					mAfterCurAccount = 1;
-				}
-				position += mAfterCurAccount;
 				convertView.setId(position);
 				holder.setId(position);
-				
+
 				phone = mLwList.get(position).getPhone();
-				holder.view.setText(unionString(mLwList.get(position).getNickName(), phone));
-				holder.button.setBackgroundDrawable(getAccountHeadByID(mLwList.get(position).getId()));
-				holder.view.setOnTouchListener(new OnTouchListener() {
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						if (event.getAction() == MotionEvent.ACTION_UP) {
-							menuClicked(v.getId());
-						}
-						return true;
-					}
-				});
-				holder.button.setOnTouchListener(new OnTouchListener() {
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						if (event.getAction() == MotionEvent.ACTION_UP) {
-							menuClicked(v.getId());
-						}
-						return true;
-					}
-				});
+				holder.view.setText(getFinalName(mLwList.get(position)
+						.getNickName(), phone));
+				BitmapDrawable bitD = getAccountHeadByID(mLwList.get(position).getId());
+				if(bitD != null){
+					holder.button.setBackgroundDrawable(getAccountHeadByID(mLwList
+							.get(position).getId()));
+				}else{
+					holder.button.setBackgroundResource(R.drawable.header);
+				}
 			}
 			return convertView;
-		}
-
-		void menuClicked(final int position) {
-			closePopup();
-//			popuparrowView.setEnabled(false);
-			setProgressVisible(View.VISIBLE);
-			// 新建线程切换用户
-			new Thread() {
-				public void run() {
-					int id = mLwList.get(position).getId();
-					MyHttpClient mhc = new MyHttpClient(MainBoard.this);
-					String result = mhc.switchward(id);
-					if (SWITCH_WARD_SUCCESS.equals(result)) {
-						Message msg = new Message();
-						msg.what = MSG_SWITCH_WARD;
-						Bundle data = new Bundle();
-						data.putInt(POSITION, position);
-						msg.setData(data);
-						mHandler.sendMessage(msg);
-					} else if (SWITCH_WARD_ERROR.equals(result)) {
-						mHandler.sendEmptyMessage(MSG_SWITCH_WARD);
-					}
-				}
-			}.start();
 		}
 
 		class Holder {
@@ -452,28 +441,53 @@ public class MainBoard extends TabActivity {
 
 	}
 
-	static void setProgressVisible(int visible){
-		progress.setVisibility(visible);
+	void menuClicked(final int position) {
+//		closePopup();
+		// popuparrowView.setEnabled(false);
+		setProgressVisible(View.VISIBLE);
+		// 新建线程切换用户
+		new Thread() {
+			public void run() {
+				int id = mLwList.get(position).getId();
+				MyHttpClient mhc = new MyHttpClient(MainBoard.this);
+				String result = mhc.switchward(id);
+				if (SWITCH_WARD_SUCCESS.equals(result)) {
+					Message msg = new Message();
+					msg.what = MSG_SWITCH_WARD;
+					Bundle data = new Bundle();
+					data.putInt(POSITION, position);
+					msg.setData(data);
+					mHandler.sendMessage(msg);
+				} else if (SWITCH_WARD_ERROR.equals(result)) {
+					mHandler.sendEmptyMessage(MSG_SWITCH_WARD);
+				}
+			}
+		}.start();
 	}
 	
+	static void setProgressVisible(int visible) {
+		progress.setVisibility(visible);
+	}
+
 	Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MSG_SWITCH_WARD:
 				Bundle data = msg.getData();
-				if(data == null){ //失败
+				if (data == null) { // 失败
 					Toast.makeText(
 							MainBoard.this,
 							MainBoard.this.getResources().getString(
-									R.string.switch_ward_error), Toast.LENGTH_SHORT)
-							.show();
-				}else{// 服务端切换用户成功，设置界面
+									R.string.switch_ward_error),
+							Toast.LENGTH_SHORT).show();
+					accountsGridView.getChildAt(mPrePosition).setBackgroundColor(getResources().getColor(R.color.button_selected));
+				} else {// 服务端切换用户成功，设置界面
 					int position = data.getInt(POSITION);
 					String act = mLwList.get(position).getPhone();
 					String name = mLwList.get(position).getNickName();
-					accountView.setText(unionString(name, act));
-					headerView.setBackgroundDrawable(getAccountHeadByID(mLwList.get(position).getId()));
+					// accountView.setText(unionString(name, act));
+					// headerView.setBackgroundDrawable(getAccountHeadByID(mLwList.get(position).getId()));
 					// 更新
 					mCurAccount = act;
 					mCurID = mLwList.get(position).getId();
@@ -482,14 +496,27 @@ public class MainBoard extends TabActivity {
 					sendBroadcastWardChange();
 					// 这里用于跳到其它Activity时判断是否用户已经发生变化
 					MyApplication.account = mCurAccount;
+
+					// popuparrowView.setEnabled(true);
+					// 在二级activity关闭该progress
+					// progress.setVisibility(View.INVISIBLE);
 					
-//					popuparrowView.setEnabled(true);
-//					在二级activity关闭该progress
-//					progress.setVisibility(View.INVISIBLE);
+					accountsGridView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.button_selected));
+					mPrePosition = position;
+
 				}
 				break;
-			case MSG_GOT_CUR_HEAD: 
-				headerView.setBackgroundDrawable(getAccountHeadByID(mCurID));
+			case MSG_GOT_HEAD:
+				adapter.notifyDataSetChanged();
+				break;
+			case MSG_DELAY:
+				View v = accountsGridView.getChildAt(0);
+				Log.d(TAG, "=========>accountsGridView.getChildAt(0):"+v);
+				if(v != null){
+					v.setBackgroundColor(getResources().getColor(R.color.button_selected));
+				}else{
+					mHandler.sendEmptyMessageDelayed(MSG_DELAY, DELAY_TIME);
+				}
 				break;
 			}
 		}
@@ -502,23 +529,23 @@ public class MainBoard extends TabActivity {
 		intent.putExtra("ward", mCurAccount);
 		MainBoard.this.sendBroadcast(intent);
 	}
-	
-	public static void setRefreshStatus(int visibility, String hint){
-		refresh.setVisibility(visibility);
-		refresh.setText(hint);
-	}
-	
-	public static void setSwitchStatus(int visibility, String hint){
-		headerView.setVisibility(visibility);
-		popuparrowView.setVisibility(visibility);
-		if(hint == null){
-			accountView.setVisibility(visibility);
-			accountView.setText(unionString(mCurName, mCurAccount));
-		}else{
-			accountView.setVisibility(View.VISIBLE);
-			accountView.setText(hint);
-		}
-	}
+
+	/*
+	 * public static void setRefreshStatus(int visibility, String hint) {
+	 * refresh.setVisibility(visibility); refresh.setText(hint); }
+	 */
+
+	// public static void setSwitchStatus(int visibility, String hint){
+	// headerView.setVisibility(visibility);
+	// popuparrowView.setVisibility(visibility);
+	// if(hint == null){
+	// accountView.setVisibility(visibility);
+	// accountView.setText(unionString(mCurName, mCurAccount));
+	// }else{
+	// accountView.setVisibility(View.VISIBLE);
+	// accountView.setText(hint);
+	// }
+	// }
 
 	public void sendBroadcastRefresh() {
 		// 发送用户切换广播
@@ -527,26 +554,24 @@ public class MainBoard extends TabActivity {
 		MainBoard.this.sendBroadcast(intent);
 	}
 
-	public void closePopup() {
+/*	public void closePopup() {
 		if (pop != null) {
 			pop.dismiss();
 			pop = null;
 		}
-	}
-	
+	}*/
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		closePopup();
+//		closePopup();
 		return super.onTouchEvent(event);
 	}
 
-	public static String unionString(String str1, String str2) {
-		String union = "";
-		if (Util.IsStringValuble(str1)) {
-			union += str1 + "\n";
+	public static String getFinalName(String nickName, String phone) {
+		if (Util.IsStringValuble(nickName)) {
+			return nickName;
 		}
-		union += str2;
-		return union;
+		return phone;
 	}
-	
+
 }

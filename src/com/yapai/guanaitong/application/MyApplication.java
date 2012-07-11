@@ -22,7 +22,11 @@ import com.yapai.guanaitong.db.DatabaseHelper;
   
 import android.app.Application;
 import com.yapai.guanaitong.struct.LoginStruct;
+
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class MyApplication extends Application {
 	private final String TAG = "MyApplication";
@@ -31,13 +35,24 @@ public class MyApplication extends Application {
     public static LoginStruct login = null;
     public static String account;
     public static boolean needClearCache = false;
+    public static int width, height;
+    public static float density;
     
     @Override  
     public void onCreate() {
-        super.onCreate();  
+        super.onCreate();
         httpClient = createHttpClient();
         mdbHelper=new DatabaseHelper(this);
-    }  
+		//TODO 更好的方式获取大小
+        WindowManager wm = (WindowManager) this.getSystemService(WINDOW_SERVICE);
+        Display dip = wm.getDefaultDisplay();
+        DisplayMetrics metric = new DisplayMetrics();
+        dip.getMetrics(metric);
+        width =metric.widthPixels;
+        height = metric.heightPixels;
+        density = metric.density;
+        Log.d(TAG, "width:"+width+",height:"+height +",density:"+density);
+    }
       
     @Override  
     public void onLowMemory() {  

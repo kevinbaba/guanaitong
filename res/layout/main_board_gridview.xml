@@ -3,7 +3,6 @@
     android:id="@+id/popup_linear"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/main_board_title_popup_color"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 
@@ -20,7 +19,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_vertical"
-        android:textSize="@dimen/main_board_font_size" >
+        android:textSize="@dimen/main_board_font_size"
+        android:textColor="#FFFFFFFF" >
     </TextView>
 
 </LinearLayout>

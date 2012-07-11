@@ -13,10 +13,10 @@
     <string name="opt_silent">静音登录</string>
     <string name="opt_openVibra">开启振动</string>
     <string name="opt_acceptGroupMsg">接收群消息</string>
-    <string name="main_map">地图</string>
+    <string name="main_map">定位服务</string>
     <string name="main_message">信息</string>
     <string name="main_setting">设置</string>
-    <string name="main_status">状态</string>
+    <string name="main_status">日常起居</string>
     <string name="loading_map">正在获取地图...</string>
     <string name="loading_status">正在获取状态...</string>
     <string name="loading_message">正在获取信息...</string>
@@ -24,7 +24,7 @@
     <string name="exit">退出</string>
     <string name="switch_ward_error">切换被监护人失败</string>
     <string name="get_msg_error">获取信息出错</string>
-    <string name="newest_pos">查看最新位置</string>
+    <string name="newest_pos">获取最新位置</string>
     <string name="getting_newest_pos">正在获取最新位置...</string>
     <string name="getting_newest_status">正在获取最新状态...</string>
     <string name="getting_newest_message">正在获取最新信息...</string>

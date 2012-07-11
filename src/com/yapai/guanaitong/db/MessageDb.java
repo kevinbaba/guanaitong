@@ -46,7 +46,7 @@ public class MessageDb {
 	public long insert(String account, int id,int rank, String msg, String time){
 		ContentValues values=new ContentValues();
 		values.put(ACCOUNT, account);
-		values.put(ID, id);
+		values.put(ID, id); 
 		values.put(RANK, rank);
 		values.put(MSG, msg);
 		values.put(TIME, time);
@@ -55,7 +55,7 @@ public class MessageDb {
 		
 //	删除对应id的所有记录
 	public boolean delete(String account, int id){
-		//TODO 
+		//TODO  
 		return mdb.delete(TABLE_MESSAGE_NAME, ID+"="+id, null)>0;
 	}
 	

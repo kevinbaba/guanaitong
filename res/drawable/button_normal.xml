@@ -3,8 +3,8 @@
     android:shape="rectangle" 
     > 
     <gradient 
-        android:startColor="@color/button_normal" 
-        android:endColor="@color/button_normal" 
+        android:startColor="@color/button_normal_start" 
+        android:endColor="@color/button_normal_end" 
         android:angle="90" 
         > 
     </gradient> 

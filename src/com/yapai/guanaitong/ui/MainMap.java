@@ -47,7 +47,7 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 	LinearLayout mProgress;
 	TextView loadinghint;
 	final float PERCENT_HORI = 0.95f;
-	final float PERCENT_VER = 0.64f;
+	final float PERCENT_VER = 0.62f;
 	
 	final static int DISPLAY_PROGRESSBAR = 0;
 	final static int HIDE_PROGRESSBAR = 1;
@@ -60,10 +60,11 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 	String URL_INDEX = Config.MAP_URL_INDEX;
 	String MAP_URL_TRACK = Config.MAP_URL_TRACK;
 	
-	int width, height;
 	private String mCurUrl;
 	BroadcastReceiver mBr;
 	private String account;
+	
+	int width, height;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,26 +115,17 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
     	    }
         };
         
-        getDisplaySize();
+        setMapSize();
         
         String url = URL_INDEX+"?"+"width="+width+"&height="+height;
         mCurUrl = url;
         
 	}
 	
-	void getDisplaySize(){
-        //获得地图显示大小
-		//TODO 更好的方式获取大小
-        WindowManager wm = (WindowManager) this.getSystemService(WINDOW_SERVICE);
-        Display dip = wm.getDefaultDisplay();
-        DisplayMetrics metric = new DisplayMetrics();
-        dip.getMetrics(metric);
-        width =metric.widthPixels;
-        height = metric.heightPixels;
-        float density = metric.density;
-        Log.d(TAG, "width:"+width+",height:"+height +",density:"+density);
-        width = (int) (width / density * PERCENT_HORI);
-        height = (int) (height / density * PERCENT_VER);
+	void setMapSize(){
+        //设置地图显示大小
+        width = (int) (MyApplication.width / MyApplication.density * PERCENT_HORI);
+        height = (int) (MyApplication.height / MyApplication.density * PERCENT_VER);
 	}
 	
 	void addCookie(){
@@ -204,16 +196,12 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 				String action = intent.getAction();
 				if(action.equals(MainBoard.ACTION_WARD_CHANGE))
 					loadURL(wv, mCurUrl);
-				else if(action.equals(MainBoard.ACTION_REFRESH)
-						&& mProgress.getVisibility() != View.VISIBLE)
-					loadURL(wv, mCurUrl);
 			}
 		};
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE)); 
-		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
 		
-		MainBoard.setRefreshStatus(View.VISIBLE, getResources().getString(R.string.refresh_map));
-		MainBoard.setSwitchStatus(View.VISIBLE, null);
+//		MainBoard.setRefreshStatus(View.VISIBLE, getResources().getString(R.string.refresh_map));
+//		MainBoard.setSwitchStatus(View.VISIBLE, null);
 		
 		super.onResume();
 	}
