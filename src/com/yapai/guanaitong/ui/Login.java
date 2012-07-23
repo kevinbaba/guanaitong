@@ -1,3 +1,7 @@
+/**
+ * µÇÂ½½çÃæ
+ * 
+ */
 package com.yapai.guanaitong.ui;
 
 import java.io.BufferedInputStream;
@@ -13,10 +17,10 @@ import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
+import com.yapai.guanaitong.beans.LoginStruct;
 import com.yapai.guanaitong.db.LoginDb;
 import com.yapai.guanaitong.net.MyHttpClient;
 import com.yapai.guanaitong.service.MessageServer;
-import com.yapai.guanaitong.struct.LoginStruct;
 import com.yapai.guanaitong.util.EncryptUtil;
 import com.yapai.guanaitong.util.JSONUtil;
 import com.yapai.guanaitong.util.Util;

@@ -1,3 +1,8 @@
+/**
+ * 暂时所有的http相关的连接都罗列在这里
+ * 后续应考虑按功能分类
+ */
+
 package com.yapai.guanaitong.net;
 
 import java.io.ByteArrayOutputStream;

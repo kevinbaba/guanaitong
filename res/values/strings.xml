@@ -24,6 +24,7 @@
     <string name="exit">退出</string>
     <string name="switch_ward_error">切换被监护人失败</string>
     <string name="get_msg_error">获取信息出错</string>
+    <string name="get_msg_timeout">获取信息超时</string>
     <string name="newest_pos">获取最新位置</string>
     <string name="getting_newest_pos">正在获取最新位置...</string>
     <string name="getting_newest_status">正在获取最新状态...</string>
@@ -35,6 +36,7 @@
     <string name="getting_msg_failed">获取消息失败</string>
     <string name="getting_new_msg_failed">信息查询失败</string>
     <string name="getting_new_msg_none">没有新信息</string>
+    <string name="more_message">更多信息</string>
     <string name="path">查看轨迹</string>
     <string name="range">设置安全范围</string>
     <string name="get_new_status">获取最新状态</string>

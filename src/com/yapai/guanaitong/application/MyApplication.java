@@ -1,3 +1,8 @@
+/**
+ * 应用程序实例
+ * 全局的东西放在这里
+ * 例如：httpClient,登陆信息
+ */
 package com.yapai.guanaitong.application;
 
 import java.util.List;
@@ -18,10 +23,10 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;  
 import org.apache.http.protocol.HTTP;  
 
+import com.yapai.guanaitong.beans.LoginStruct;
 import com.yapai.guanaitong.db.DatabaseHelper;
   
 import android.app.Application;
-import com.yapai.guanaitong.struct.LoginStruct;
 
 import android.util.DisplayMetrics;
 import android.util.Log;

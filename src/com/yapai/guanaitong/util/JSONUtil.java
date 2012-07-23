@@ -1,3 +1,6 @@
+/**
+ * 所有的json的解析都放在这里
+ */
 package com.yapai.guanaitong.util;
 
 import java.util.ArrayList;
@@ -7,7 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.yapai.guanaitong.struct.*;
+import com.yapai.guanaitong.beans.*;
 
 public class JSONUtil {
 	//Login

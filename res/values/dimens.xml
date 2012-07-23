@@ -2,16 +2,17 @@
 <resources>
     <dimen name="button_height">45.0dip</dimen>
     <dimen name="bottom_tab_font_size">14sp</dimen>
+    <dimen name="bottom_tab_font_size_small">13sp</dimen>
     <dimen name="bottom_tab_padding_up">10.0dip</dimen>
     <dimen name="bottom_tab_padding_drawable">2.0dip</dimen>
     <dimen name="main_status_margin">12dip</dimen>
     <dimen name="main_board_icon_padding">4dip</dimen>
     <dimen name="main_board_font_size">16sp</dimen>
     <dimen name="main_status_item_width">160dip</dimen>
-    <dimen name="main_status_button_width">100.0dip</dimen>
-    <dimen name="main_status_button_height">36.0dip</dimen>
-    <dimen name="main_map_button_width">100.0dip</dimen>
-    <dimen name="main_map_button_height">36.0dip</dimen>
+    <dimen name="main_status_button_width">120.0dip</dimen>
+    <dimen name="main_status_button_height">46.0dip</dimen>
+    <dimen name="main_map_button_width">120.0dip</dimen>
+    <dimen name="main_map_button_height">46.0dip</dimen>
     <dimen name="button_corners">5.0dip</dimen>
     <dimen name="small_icon_size">40.0dip</dimen>
     <dimen name="main_status_entry_size">14sp</dimen>

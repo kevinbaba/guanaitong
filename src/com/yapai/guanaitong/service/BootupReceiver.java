@@ -1,3 +1,6 @@
+/**
+ * 开机即启动服务以接收信息
+ */
 package com.yapai.guanaitong.service;
 
 import android.content.BroadcastReceiver;

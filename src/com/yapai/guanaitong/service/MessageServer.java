@@ -1,3 +1,8 @@
+/**
+ * 后台服务
+ * 用于检测是否有新信息
+ * 带后台登陆功能
+ */
 package com.yapai.guanaitong.service;
 
 import com.yapai.guanaitong.R;
@@ -27,7 +32,7 @@ import android.os.Message;
 import android.util.Log;
 
 /**
- * @author Kevin 消息推送 每 CHECK_CYCLE_TIME 检测一次，如果有新的消息，则发送notify
+ * 消息推送 每 CHECK_CYCLE_TIME 检测一次，如果有新的消息，则发送notify
  */
 public class MessageServer extends Service {
 	final String TAG = "MessageServer";
@@ -99,8 +104,9 @@ public class MessageServer extends Service {
 		        contentIntent);
 		nm.notify(R.string.app_name, n);
 	}
-
-	// 返回最新获得信息的ID，没有则返回-1
+	/**
+	 *检查是否有新的信息
+	 */
 	public void checkNewMessage() {
 		new Thread() {
 			public void run() {

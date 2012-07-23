@@ -281,12 +281,12 @@
                 android:layout_height="@dimen/main_board_toolbar_height"
                 android:background="@color/main_board_toolbar_bg"
                 android:gravity="center_vertical"
+                android:padding="2dip"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="100dip"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:textColor="@android:color/white"
                     android:text="状态收集时间"
@@ -294,23 +294,21 @@
 
                 <TextView
                     android:id="@+id/report_time"
-                    android:layout_width="100dip"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:textColor="@android:color/white"
                     android:text="..."
                     android:textSize="@dimen/main_status_status_size" />
 
-                <TextView
+                <Button
                     android:id="@+id/refresh"
-                    android:layout_width="@dimen/main_status_button_width"
+                    android:layout_width="fill_parent"
                     android:layout_height="@dimen/main_status_button_height"
-                    android:layout_margin="5dip"
-                    android:layout_marginRight="@dimen/main_status_margin"
                     android:layout_weight="1"
-                    android:background="@drawable/button_normal"
                     android:gravity="center"
+                    android:layout_marginTop="2dip"
+                    android:textSize="@dimen/bottom_tab_font_size_small"
                     android:text="@string/get_new_status"
                     android:textColor="@android:color/black" />
             </LinearLayout>

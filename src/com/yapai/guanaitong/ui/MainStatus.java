@@ -4,8 +4,8 @@ import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
+import com.yapai.guanaitong.beans.Status;
 import com.yapai.guanaitong.net.MyHttpClient;
-import com.yapai.guanaitong.struct.Status;
 import com.yapai.guanaitong.util.JSONUtil;
 import com.yapai.guanaitong.util.Util;
 
@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,9 +31,11 @@ public class MainStatus extends Activity implements OnTouchListener{
 	final String TAG = "MainStatus";
 	final int LOAD_COMPLETE = 0;
 	final int LOAD_ERROR = 1;
-	final int PROGRESS_DELAY_INVISIBLE = 2;
+	final int LOAD_TIMEOUT = 2;
 
 	final String STATUS_NOTREADY = "NOT_READY";
+	final int CHECK_NEW_STATUS_CYCLE_TIME = 3000;
+	final int CHECK_NEW_STATUS_TIMES = 40;
 
 	Status st;
 	TextView poweron;
@@ -47,7 +50,7 @@ public class MainStatus extends Activity implements OnTouchListener{
 	TextView safe_region_in;
 	LinearLayout progress;
 	TextView loadinghint;
-	private TextView refresh;
+	private Button refresh;
 
 	BroadcastReceiver mBr;
 	public String account;
@@ -74,14 +77,14 @@ public class MainStatus extends Activity implements OnTouchListener{
 				return true;
 			}
 		});
-		refresh = (TextView) findViewById(R.id.refresh);
+		refresh = (Button) findViewById(R.id.refresh);
 		refresh.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				getUserNewStatus();
 			}
 		});
-		refresh.setOnTouchListener(this);
+//		refresh.setOnTouchListener(this);
 	}
 
 	protected void onResume() {
@@ -135,6 +138,13 @@ public class MainStatus extends Activity implements OnTouchListener{
 								R.string.get_msg_error), Toast.LENGTH_SHORT)
 						.show();
 				break;
+			case LOAD_TIMEOUT:
+				Toast.makeText(
+						MainStatus.this,
+						MainStatus.this.getResources().getString(
+								R.string.get_msg_timeout), Toast.LENGTH_SHORT)
+						.show();
+				break;
 			}
 			progress.setVisibility(View.INVISIBLE);
 			super.handleMessage(msg);
@@ -157,9 +167,15 @@ public class MainStatus extends Activity implements OnTouchListener{
 					mHandler.sendEmptyMessage(LOAD_ERROR);
 					return;
 				}
+				int checkTimes = 0;
 				while (true) {
+					if( checkTimes > CHECK_NEW_STATUS_TIMES){
+						mHandler.sendEmptyMessage(LOAD_TIMEOUT);
+						break;
+					}
+					checkTimes ++;
 					try {
-						Thread.sleep(3000);
+						Thread.sleep(CHECK_NEW_STATUS_CYCLE_TIME);
 					} catch (InterruptedException e) {
 						Log.d(TAG, "" + e);
 					}
@@ -219,7 +235,7 @@ public class MainStatus extends Activity implements OnTouchListener{
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		int action = event.getAction();
-		if(v == refresh){
+/*		if(v == refresh){
 			if (action == MotionEvent.ACTION_DOWN) {
 				((TextView) v)
 						.setBackgroundResource(R.drawable.button_pressed);
@@ -228,7 +244,7 @@ public class MainStatus extends Activity implements OnTouchListener{
 				((TextView) v)
 						.setBackgroundResource(R.drawable.button_normal);
 			}
-		}
+		}*/
 		return false;
 	}
 }

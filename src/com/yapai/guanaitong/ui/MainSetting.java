@@ -69,14 +69,15 @@ public class MainSetting extends PreferenceActivity {
 				String action = intent.getAction();
 				if(action.equals(MainBoard.ACTION_WARD_CHANGE)){
 //					getUserStatus();
+					MainBoard.setProgressVisible(View.INVISIBLE);
 				}
-				else if(action.equals(MainBoard.ACTION_REFRESH)){
-//					getUserNewStatus();
-				}
+//				else if(action.equals(MainBoard.ACTION_REFRESH)){
+////					getUserNewStatus();
+//				}
 			}
 		};
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
-		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
+//		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH)); 
 		
 //		MainBoard.setRefreshStatus(View.INVISIBLE, "");
 //		MainBoard.setSwitchStatus(View.VISIBLE, null);

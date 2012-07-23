@@ -6,9 +6,9 @@ import java.util.List;
 import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
+import com.yapai.guanaitong.beans.MessageStruct;
 import com.yapai.guanaitong.db.MessageDb;
 import com.yapai.guanaitong.net.MyHttpClient;
-import com.yapai.guanaitong.struct.MessageStruct;
 import com.yapai.guanaitong.util.Config;
 import com.yapai.guanaitong.util.JSONUtil;
 import com.yapai.guanaitong.util.Util;
@@ -257,9 +257,9 @@ public class MainMessage extends ListActivity {
 				if (count < GET_MSG_ONCETIME) {
 					buttonMore.setClickable(false);
 					if (mGotpageNum == 1 && count == 0)
-						buttonMore.setText("没有消息");
+						buttonMore.setText("没有信息");
 					else
-						buttonMore.setText("没有更多消息了");
+						buttonMore.setText("没有更多信息了");
 				}
 				mAdapter.notifyDataSetChanged(); // 通知适配器重新适配
 				progress.setVisibility(View.INVISIBLE);
@@ -355,9 +355,10 @@ public class MainMessage extends ListActivity {
 			public void onReceive(Context context, Intent intent) {
 				Log.d(TAG, "-------------onReceive:" + intent.getAction());
 				String action = intent.getAction();
-				/*if (action.equals(MainBoard.ACTION_WARD_CHANGE)) {
-					getMessage(1);
-				} else */if (action.equals(MainBoard.ACTION_REFRESH)) {
+				if (action.equals(MainBoard.ACTION_WARD_CHANGE)) {
+//					getMessage(1);
+					MainBoard.setProgressVisible(View.INVISIBLE);
+				}/* else if (action.equals(MainBoard.ACTION_REFRESH)) {
 					if (progress.getVisibility() == View.VISIBLE)
 						return;
 					progress.setVisibility(View.VISIBLE);
@@ -374,11 +375,11 @@ public class MainMessage extends ListActivity {
 							}
 						}
 					}.start();
-				}
+				}*/
 			}
 		};
-//		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
-		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH));
+		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
+//		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_REFRESH));
 
 //		MainBoard.setRefreshStatus(View.VISIBLE,
 //				getResources().getString(R.string.get_new_message));

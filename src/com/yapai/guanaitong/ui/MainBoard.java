@@ -12,9 +12,9 @@ import org.json.JSONException;
 
 import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
+import com.yapai.guanaitong.beans.*;
 import com.yapai.guanaitong.db.LoginDb;
 import com.yapai.guanaitong.net.MyHttpClient;
-import com.yapai.guanaitong.struct.*;
 import com.yapai.guanaitong.util.Config;
 import com.yapai.guanaitong.util.JSONUtil;
 import com.yapai.guanaitong.util.Util;
@@ -90,7 +90,7 @@ public class MainBoard extends TabActivity {
 	LoginWardProfile mLwp;
 	public static List<LoginWards> mLwList;
 
-	com.yapai.guanaitong.struct.LoginStruct login = null;
+	com.yapai.guanaitong.beans.LoginStruct login = null;
 	final String WARD = "ward";
 	final String GUARDIAN = "guardian";
 	public static final String ACTION_WARD_CHANGE = "action.ward.change";

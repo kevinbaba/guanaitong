@@ -1,4 +1,4 @@
-package com.yapai.guanaitong.struct;
+package com.yapai.guanaitong.beans;
 
 import java.io.Serializable;
 

@@ -29,36 +29,36 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
-                <TextView
+                <Button
                     android:id="@+id/newest_pos"
-                    android:layout_width="@dimen/main_map_button_width"
+                    android:layout_width="fill_parent"
                     android:layout_height="@dimen/main_map_button_height"
-                    android:layout_margin="5dip"
                     android:layout_weight="1"
-                    android:background="@drawable/button_normal"
                     android:gravity="center"
+                    android:layout_marginTop="2dip"
+                    android:textSize="@dimen/bottom_tab_font_size_small"
                     android:text="@string/newest_pos"
                     android:textColor="@android:color/black" />
 
-                <TextView
+                <Button
                     android:id="@+id/path"
-                    android:layout_width="@dimen/main_map_button_width"
+                    android:layout_width="fill_parent"
                     android:layout_height="@dimen/main_map_button_height"
-                    android:layout_margin="5dip"
                     android:layout_weight="1"
-                    android:background="@drawable/button_normal"
                     android:gravity="center"
+                    android:layout_marginTop="2dip"
+                    android:textSize="@dimen/bottom_tab_font_size_small"
                     android:text="@string/path"
                     android:textColor="@android:color/black" />
 
-                <TextView
+                <Button
                     android:id="@+id/range"
-                    android:layout_width="@dimen/main_map_button_width"
+                    android:layout_width="fill_parent"
                     android:layout_height="@dimen/main_map_button_height"
-                    android:layout_margin="5dip"
                     android:layout_weight="1"
-                    android:background="@drawable/button_normal"
                     android:gravity="center"
+                    android:layout_marginTop="2dip"
+                    android:textSize="@dimen/bottom_tab_font_size_small"
                     android:text="@string/range"
                     android:textColor="@android:color/black" />
             </LinearLayout>

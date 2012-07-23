@@ -1,13 +1,11 @@
 package com.yapai.guanaitong.ui;
 
-import java.nio.MappedByteBuffer;
 import java.util.List;
 
 import org.apache.http.cookie.Cookie;
 
 import com.yapai.guanaitong.R;
 import com.yapai.guanaitong.application.MyApplication;
-import com.yapai.guanaitong.net.MyHttpClient;
 import com.yapai.guanaitong.util.Config;
 
 import android.app.Activity;
@@ -15,34 +13,31 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainMap extends Activity implements OnClickListener, OnTouchListener{
+public class MainMap extends Activity implements OnClickListener{
 	final String TAG = "MainMap";
 	static WebView wv;
-	static TextView newestPos;
-	static TextView path;
-	static TextView range;
+	static Button newestPos;
+	static Button path;
+	static Button range;
 	static Handler handler;
 	LinearLayout mProgress;
 	TextView loadinghint;
@@ -73,16 +68,13 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 		
 		mProgress = (LinearLayout)findViewById(R.id.progress);
 		loadinghint = (TextView)findViewById(R.id.loadinghint);
-		newestPos = (TextView)findViewById(R.id.newest_pos);
-		path = (TextView)findViewById(R.id.path);
-		range = (TextView)findViewById(R.id.range);
+		newestPos = (Button)findViewById(R.id.newest_pos);
+		path = (Button)findViewById(R.id.path);
+		range = (Button)findViewById(R.id.range);
 		
 		newestPos.setOnClickListener(this);
 		path.setOnClickListener(this);
 		range.setOnClickListener(this);
-		newestPos.setOnTouchListener(this);
-		path.setOnTouchListener(this);
-		range.setOnTouchListener(this);
 		
 		mProgress.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -232,28 +224,6 @@ public class MainMap extends Activity implements OnClickListener, OnTouchListene
 //        	editor.putLong(LAST_CLEAR_TIME, now);
 //        	editor.commit();
 //        }
-	}
-	
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		int action = event.getAction();
-		if(v == newestPos){
-			if (action == MotionEvent.ACTION_DOWN)
-				newestPos.setBackgroundResource(R.drawable.button_pressed);
-			else if(action == MotionEvent.ACTION_UP)
-				newestPos.setBackgroundResource(R.drawable.button_normal);
-		}else if(v == path){
-			if (action == MotionEvent.ACTION_DOWN)
-				path.setBackgroundResource(R.drawable.button_pressed);
-			else if(action == MotionEvent.ACTION_UP)
-				path.setBackgroundResource(R.drawable.button_normal);
-		}else if(v == range){
-			if (action == MotionEvent.ACTION_DOWN)
-				range.setBackgroundResource(R.drawable.button_pressed);
-			else if(action == MotionEvent.ACTION_UP)
-				range.setBackgroundResource(R.drawable.button_normal);
-		}
-		return false;
 	}
 	
 	@Override
