@@ -16,6 +16,7 @@ public class LoginDb {
 	public final static String ID="id";
 	public final static String ACCOUNTS="accounts";
 	public final static String PASSWORD="pass";
+	public final static String SAVEPWD = "save_pwd";
 	public final static String HEAD_PATH = "head_path";
 	public final static String HEADER = "header";
 	public final static String LOGIN_TIME = "login_time";
@@ -28,6 +29,7 @@ public class LoginDb {
 			+ID+" int primary key , "
 			+ACCOUNTS+" text , "
 			+PASSWORD+" text , "
+			+SAVEPWD+" boolean , "
 			+HEAD_PATH+" text , "
 			+HEADER+" text , "
 			+LOGIN_TIME+" long "
@@ -45,15 +47,16 @@ public class LoginDb {
 		return instanc;
 	}
 	
-	public boolean insert(int id, String accounts,String pass, String headPath, String head){
+	public boolean insert(int id, String accounts,String pass, boolean savePwd, String headPath, String head){
 		Cursor cursor = getCursorByID(null,new String[]{ String.valueOf(id) });
 		if(cursor.getCount() > 0){
-			return update(id, accounts, pass, headPath, head);
+			return update(id, accounts, pass, savePwd, headPath, head);
 		}
 		ContentValues values=new ContentValues();
 		values.put(ID, id);
 		values.put(ACCOUNTS, accounts);
 		values.put(PASSWORD, pass);
+		values.put(SAVEPWD, savePwd);
 		values.put(HEAD_PATH, headPath);
 		values.put(HEADER, head);
 		return mdb.insert(TABLE_LOGIN_NAME, null,values)>0;
@@ -92,14 +95,21 @@ public class LoginDb {
 		return mCursor;
 	}
 	
-	public boolean update(int id, String account,String password, String headPath, String head){
+	public boolean update(int id, String account,String password, boolean savePwd, String headPath, String head){
 		ContentValues values=new ContentValues();
 		values.put(ID, id);
 		values.put(ACCOUNTS, account);
 		values.put(PASSWORD, password);
+		values.put(SAVEPWD, savePwd);
 		values.put(HEAD_PATH, headPath);
 		values.put(HEADER, head);
 		return mdb.update(TABLE_LOGIN_NAME, values, ID+"="+id, null)>0;
+	}
+	
+	public boolean updateSavePwd(String account,boolean savePwd){
+		ContentValues values=new ContentValues();
+		values.put(SAVEPWD,savePwd);
+		return mdb.update(TABLE_LOGIN_NAME, values, ACCOUNTS+"="+account, null)>0;
 	}
 	
 	public boolean updatePwd(String account,String password){

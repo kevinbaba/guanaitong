@@ -133,25 +133,21 @@ public class Login extends Activity implements OnClickListener,
 				new String[] { String.valueOf(id) });
 		if (mRemPassCheck.isChecked()) {
 			// 保存密码
-			if (cursor.getCount() > 0) {
-				db.updatePwd(account, pass);
-			} else {
-				db.insert(id, account, pass, "", "");
-			}
+			db.insert(id, account, pass, true, "", "");
 			mAccount2Pwd.put(account, pass);// 重新替换或者添加记录
 		} else {
 			// 不保存密码
-			if (cursor.getCount() > 0) {
-				db.updatePwd(account, "");
-			}
+			db.insert(id, account, pass, false, "", "");
 			mAccount2Pwd.put(account, "");// 重新替换或者添加记录
 		}
 		safeReleaseCursor(cursor);
 
-		// 保存最后登陆的用户
+		// 更新最后登陆的时间
 		db.updateLoginTime(account, System.currentTimeMillis());
+		
 		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
-		if(settings.getInt(SERVER_VERSION, 0) != mLoginStruct.getVersion()){ //删除缓存
+		//如果服务器的地图有变更，需要改变传过来的服务器版本，以便客户端删除缓存
+		if(settings.getInt(SERVER_VERSION, 0) != mLoginStruct.getVersion()){
 			MyApplication.needClearCache = true;
 		}
 		SharedPreferences.Editor editor = settings.edit();

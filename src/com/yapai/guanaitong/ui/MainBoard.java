@@ -165,7 +165,8 @@ public class MainBoard extends TabActivity {
 					if (idExists) {
 						mLoginDb.updateHead(id, headPath, saveName);
 					} else {
-						mLoginDb.insert(id, account, "", headPath, saveName);
+						//家庭组成员
+						mLoginDb.insert(id, account, "", false, headPath, saveName);
 					}
 					mHandler.sendEmptyMessage(MSG_GOT_HEAD);
 					getAccountHeadByID(id);
