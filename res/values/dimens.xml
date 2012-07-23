@@ -8,6 +8,7 @@
     <dimen name="main_status_margin">12dip</dimen>
     <dimen name="main_board_icon_padding">4dip</dimen>
     <dimen name="main_board_font_size">16sp</dimen>
+    <dimen name="main_board_font_size_small">14sp</dimen>
     <dimen name="main_status_item_width">160dip</dimen>
     <dimen name="main_status_button_width">120.0dip</dimen>
     <dimen name="main_status_button_height">46.0dip</dimen>

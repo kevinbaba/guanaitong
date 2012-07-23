@@ -25,13 +25,47 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dip"
                     android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:id="@+id/group_ll"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="2dip"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="家庭组："
+                                android:textColor="@android:color/white" />
+
+                            <TextView
+                                android:id="@+id/group"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="none"
+                                android:textColor="@android:color/white" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="1dip"
+                            android:layout_marginBottom="2dip"
+                            android:background="@color/half_transparent_white" />
+                    </LinearLayout>
 
                     <HorizontalScrollView
                         android:id="@+id/mScrollView"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dip"
                         android:fadeScrollbars="false"
                         android:scrollbarSize="3dip"
                         android:scrollbarThumbHorizontal="@drawable/scrollbar" >
@@ -90,7 +124,8 @@
                     android:layout_marginRight="5dip"
                     android:background="@drawable/button_normal"
                     android:gravity="center"
-                    android:text="@string/get_new_status" /-->
+                    android:text="@string/get_new_status" /
+                -->
             </RelativeLayout>
 
             <FrameLayout

@@ -83,9 +83,11 @@ public class MainBoard extends TabActivity {
 	int mCurID;
 	public static HashMap<Integer, BitmapDrawable> accoutID2HeadImg;
 	public static HashMap<Integer, String> accoutID2Name;
-	public myAdapter adapter;
-	ListView listView;
-	public PopupWindow pop;
+	private myAdapter adapter;
+	private ListView listView;
+	private PopupWindow pop;
+	private LinearLayout group_ll;
+	private TextView group;
 
 	LoginWardProfile mLwp;
 	public static List<LoginWards> mLwList;
@@ -201,7 +203,8 @@ public class MainBoard extends TabActivity {
 					.setHorizontalSpacing((int) (CELL_HSPACING * MyApplication.density));
 			accountsGridView.setStretchMode(GridView.NO_STRETCH);
 			accountsGridView.setNumColumns(adapter.getCount());
-			//TODO 应该有更好更直接的办法
+			//TODO 界面初始化的时候View还没有实例化，这里的方法有点勉强
+			//应该有更好更直接的办法
 			mHandler.sendEmptyMessageDelayed(MSG_DELAY, DELAY_TIME);
 
 		}
@@ -227,6 +230,8 @@ public class MainBoard extends TabActivity {
 		// popuparrowView = (ImageView) findViewById(R.id.popuparrow);
 		// refresh = (TextView) findViewById(R.id.refresh);
 		// accountView = (TextView) findViewById(R.id.account);
+		group_ll = (LinearLayout) findViewById(R.id.group_ll);
+		group = (TextView) findViewById(R.id.group);
 		progress = (LinearLayout) findViewById(R.id.progress);
 
 		progress.setOnTouchListener(new OnTouchListener() {
@@ -264,6 +269,9 @@ public class MainBoard extends TabActivity {
 				}
 				// if (mLwList.size() > 1)
 				// popuparrowView.setVisibility(View.VISIBLE);
+				group_ll.setVisibility(View.VISIBLE);
+				LoginGuardian lG = JSONUtil.json2LoginGuardian(login.getGuardian());
+				group.setText(lG.getPhone());
 			}else if(WARD.equals(login.getLogin_by())){
 				Log.d(TAG, "Login by---->WARD");
 				mLwList = new ArrayList <LoginWards>();
@@ -404,8 +412,8 @@ public class MainBoard extends TabActivity {
 				convertView = mInflater.inflate(R.layout.main_board_gridview,
 						null);
 				holder = new Holder();
-				holder.view = (TextView) convertView.findViewById(R.id.account);
-				holder.button = (ImageView) convertView
+				holder.name = (TextView) convertView.findViewById(R.id.name);
+				holder.header = (ImageView) convertView
 						.findViewById(R.id.header);
 				convertView.setTag(holder);
 			} else {
@@ -417,26 +425,26 @@ public class MainBoard extends TabActivity {
 				holder.setId(position);
 
 				phone = mLwList.get(position).getPhone();
-				holder.view.setText(getFinalName(mLwList.get(position)
+				holder.name.setText(getFinalName(mLwList.get(position)
 						.getNickName(), phone));
 				BitmapDrawable bitD = getAccountHeadByID(mLwList.get(position).getId());
 				if(bitD != null){
-					holder.button.setBackgroundDrawable(getAccountHeadByID(mLwList
+					holder.header.setBackgroundDrawable(getAccountHeadByID(mLwList
 							.get(position).getId()));
 				}else{
-					holder.button.setBackgroundResource(R.drawable.header);
+					holder.header.setBackgroundResource(R.drawable.header);
 				}
 			}
 			return convertView;
 		}
 
 		class Holder {
-			TextView view;
-			ImageView button;
+			TextView name;
+			ImageView header;
 
 			void setId(int position) {
-				view.setId(position);
-				button.setId(position);
+				name.setId(position);
+				header.setId(position);
 			}
 		}
 
@@ -460,6 +468,8 @@ public class MainBoard extends TabActivity {
 					msg.setData(data);
 					mHandler.sendMessage(msg);
 				} else if (SWITCH_WARD_ERROR.equals(result)) {
+					mHandler.sendEmptyMessage(MSG_SWITCH_WARD);
+				} else {
 					mHandler.sendEmptyMessage(MSG_SWITCH_WARD);
 				}
 			}
