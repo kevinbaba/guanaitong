@@ -28,30 +28,36 @@
                     android:orientation="vertical" >
 
                     <LinearLayout
-                        android:id="@+id/group_ll"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone" >
+                        android:orientation="vertical" >
 
                         <LinearLayout
                             android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="24dip"
                             android:layout_margin="2dip"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal" >
 
                             <TextView
+                                android:id="@+id/user_phone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="家庭组："
                                 android:textColor="@android:color/white" />
 
-                            <TextView
-                                android:id="@+id/group"
+                            <ImageButton
+                                android:id="@+id/dail"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="none"
-                                android:textColor="@android:color/white" />
+                                android:layout_marginLeft="8dip"
+                                android:background="@drawable/dail" />
+
+                            <ImageButton
+                                android:id="@+id/sms"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dip"
+                                android:background="@drawable/sms" />
                         </LinearLayout>
 
                         <TextView
@@ -83,49 +89,6 @@
                         </LinearLayout>
                     </HorizontalScrollView>
                 </LinearLayout>
-
-                <!--
-                LinearLayout
-                    android:id="@+id/headerAndAcount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="5dip"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal" >
-
-                    <ImageView
-                        android:id="@+id/header"
-                        android:layout_width="@dimen/small_icon_size"
-                        android:layout_height="@dimen/small_icon_size"
-                        android:layout_margin="@dimen/main_board_icon_padding"
-                        android:background="@drawable/header" />
-
-                    <TextView
-                        android:id="@+id/account"
-                        android:layout_width="100dip"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/main_board_font_size" />
-
-                    <ImageView
-                        android:id="@+id/popuparrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/more_select"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/refresh"
-                    android:layout_width="88dip"
-                    android:layout_height="36dip"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="5dip"
-                    android:background="@drawable/button_normal"
-                    android:gravity="center"
-                    android:text="@string/get_new_status" /
-                -->
             </RelativeLayout>
 
             <FrameLayout

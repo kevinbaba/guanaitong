@@ -84,7 +84,6 @@ public class MainStatus extends Activity implements OnTouchListener{
 				getUserNewStatus();
 			}
 		});
-//		refresh.setOnTouchListener(this);
 	}
 
 	protected void onResume() {
@@ -102,10 +101,6 @@ public class MainStatus extends Activity implements OnTouchListener{
 			}
 		};
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE));
-
-		// MainBoard.setRefreshStatus(View.VISIBLE,
-		// getResources().getString(R.string.get_new_status));
-		// MainBoard.setSwitchStatus(View.VISIBLE, null);
 
 		super.onResume();
 	}
@@ -163,7 +158,7 @@ public class MainStatus extends Activity implements OnTouchListener{
 			public void run() {
 				MyHttpClient mhc = new MyHttpClient(MainStatus.this);
 				String endTime = mhc.getUserNewStatus(null);
-				if (!Util.IsStringValuble(endTime)) {
+				if (!Util.IsStringValuble2(endTime)) {
 					mHandler.sendEmptyMessage(LOAD_ERROR);
 					return;
 				}
@@ -208,7 +203,7 @@ public class MainStatus extends Activity implements OnTouchListener{
 			public void run() {
 				MyHttpClient mhc = new MyHttpClient(MainStatus.this);
 				String result = mhc.getUserStatus();
-				if (!Util.IsStringValuble(result)) {
+				if (!Util.IsStringValuble2(result)) {
 					mHandler.sendEmptyMessage(LOAD_ERROR);
 					return;
 				}
@@ -234,17 +229,6 @@ public class MainStatus extends Activity implements OnTouchListener{
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		int action = event.getAction();
-/*		if(v == refresh){
-			if (action == MotionEvent.ACTION_DOWN) {
-				((TextView) v)
-						.setBackgroundResource(R.drawable.button_pressed);
-			} else if (action == MotionEvent.ACTION_UP
-					|| action == MotionEvent.ACTION_CANCEL) {
-				((TextView) v)
-						.setBackgroundResource(R.drawable.button_normal);
-			}
-		}*/
 		return false;
 	}
 }

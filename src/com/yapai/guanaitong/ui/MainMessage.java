@@ -299,7 +299,7 @@ public class MainMessage extends ListActivity {
 	public static int getMessageCount(Context context) {
 		MyHttpClient mhc = new MyHttpClient(context);
 		String result = mhc.getMessageCount();
-		if (!Util.IsStringValuble(result)) {
+		if (!Util.IsStringValuble2(result)) {
 			return ERROR;
 		}
 		return Integer.parseInt(result);

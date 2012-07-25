@@ -135,6 +135,7 @@ public class MainMap extends Activity implements OnClickListener{
 	}
 	
 	void initWebView(){
+		//ÎªWebViewÌí¼ÓCookie
 		addCookie();
 		
 		wv=(WebView)findViewById(R.id.wv);
@@ -191,9 +192,6 @@ public class MainMap extends Activity implements OnClickListener{
 			}
 		};
 		registerReceiver(mBr, new IntentFilter(MainBoard.ACTION_WARD_CHANGE)); 
-		
-//		MainBoard.setRefreshStatus(View.VISIBLE, getResources().getString(R.string.refresh_map));
-//		MainBoard.setSwitchStatus(View.VISIBLE, null);
 		
 		super.onResume();
 	}

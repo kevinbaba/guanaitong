@@ -48,7 +48,7 @@ public class MyApplication extends Application {
         super.onCreate();
         httpClient = createHttpClient();
         mdbHelper=new DatabaseHelper(this);
-		//TODO 更好的方式获取大小
+		//TODO width,height,density它们的作用是为了在webview中显示合适的地图大小，现在的做法在不同屏幕的机器上会有误差，应该有更好的方式
         WindowManager wm = (WindowManager) this.getSystemService(WINDOW_SERVICE);
         Display dip = wm.getDefaultDisplay();
         DisplayMetrics metric = new DisplayMetrics();

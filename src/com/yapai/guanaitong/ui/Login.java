@@ -38,11 +38,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -93,6 +95,8 @@ public class Login extends Activity implements OnClickListener,
 	final static int CONNECTTIMEOUT = 0;
 	final static int FAILED = 1;
 	public final static int SUCCESS = 2;
+	public static final String WARD = "ward";
+	public static final String GUARDIAN = "guardian";
 
 	public final static String ISLOGINOUT = "isLoginOut";
 	boolean isLoginOut;
@@ -262,7 +266,14 @@ public class Login extends Activity implements OnClickListener,
 					if (SUCCESSRETURN.equals(info)) {
 						Bundle data = new Bundle();
 						data.putString(LOADINFO, info);
-						data.putInt(ID, mLoginStruct.getIdentity());
+						
+						//TODO GUARDIAN的ID取反，避免和WARD的ID冲突,做法有点勉强，
+						//从设计上讲，WARD和GUARDIAN应该分开两张表来存储
+						if(WARD.equals(mLoginStruct.getLogin_by()))
+							data.putInt(ID, mLoginStruct.getIdentity());
+						if(GUARDIAN.equals(mLoginStruct.getLogin_by()))
+							data.putInt(ID, -mLoginStruct.getGroup_identity());
+						
 						data.putString(ACCOUNT, account);
 						data.putString(PASSWORD, pass);
 						Message msg = new Message();
@@ -367,6 +378,15 @@ public class Login extends Activity implements OnClickListener,
 		mLoginButton = (Button) findViewById(R.id.login_btn_login);
 		mAccountsEditText = (EditText) findViewById(R.id.login_edit_account);
 		mPassEditText = (EditText) findViewById(R.id.login_edit_pwd);
+		mPassEditText.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if(keyCode == KeyEvent.KEYCODE_ENTER){
+					onClick(mLoginButton);
+				}
+				return false;
+			}
+		});
 		mNotify = (TextView) findViewById(R.id.Notify);
 		mRelative.setOnTouchListener(this);
 		mPassEditText.setOnFocusChangeListener(this);
