@@ -479,13 +479,15 @@ public class MainBoard extends TabActivity {
 			switch (msg.what) {
 			case MSG_SWITCH_WARD:
 				Bundle data = msg.getData();
-				if (data == null) { // 失败
+				if (data.isEmpty()) { // 失败
 					Toast.makeText(
 							MainBoard.this,
 							MainBoard.this.getResources().getString(
 									R.string.switch_ward_error),
 							Toast.LENGTH_SHORT).show();
-					accountsGridView.getChildAt(mPrePosition).setBackgroundColor(getResources().getColor(R.color.button_selected));
+					accountsGridView.getChildAt(mPrePosition)
+					.setBackgroundColor(getResources().getColor(R.color.button_selected));
+					progress.setVisibility(View.INVISIBLE);
 				} else {// 服务端切换用户成功，设置界面
 					int position = data.getInt(POSITION);
 					String phone = mLwList.get(position).getPhone();
