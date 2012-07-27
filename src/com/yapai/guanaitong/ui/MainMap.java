@@ -228,7 +228,9 @@ public class MainMap extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		if(v == newestPos){
 			getNewPosition();
-			mLoadingHint = (String) getResources().getText(R.string.getting_newest_pos);
+			mLoadingHint = (String) getResources().getText(R.string.getting_newest_pos)
+					+ "\n"
+					+ getResources().getString(R.string.wait_tip);
 			handler.sendEmptyMessage(DISPLAY_PROGRESSBAR);
 		}else if(v == path){
 	        String url = MAP_URL_TRACK+"?"+"width="+width+"&height="+height;

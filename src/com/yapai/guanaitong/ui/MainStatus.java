@@ -149,8 +149,9 @@ public class MainStatus extends Activity implements OnTouchListener{
 	void getUserNewStatus() {
 		if (progress.getVisibility() == View.VISIBLE)
 			return;
-		loadinghint.setText(getResources().getString(
-				R.string.getting_newest_status));
+		loadinghint.setText(getResources().getString(R.string.getting_newest_status)
+				+ "\n"
+				+ getResources().getString(R.string.wait_tip));
 		progress.setVisibility(View.VISIBLE);
 		MainBoard.setProgressVisible(View.INVISIBLE);
 		new Thread() {

@@ -339,6 +339,7 @@
                 android:layout_below="@+id/progressBar"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="2dip"
+                android:gravity="center"
                 android:text="@string/loading_status"
                 android:textColor="#ffffffff" />
         </RelativeLayout>
